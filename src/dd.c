@@ -58,6 +58,16 @@ HRESULT dd_EnumDisplayModes(
 
         while (EnumDisplaySettings(NULL, i, &m))
         {
+            TRACE_EXT(
+                "     %u: %ux%u@%u %u bpp | flags=0x%08X, FO=%u\n",
+                i,
+                m.dmPelsWidth,
+                m.dmPelsHeight,
+                m.dmDisplayFrequency,
+                m.dmBitsPerPel,
+                m.dmDisplayFlags,
+                m.dmDisplayFixedOutput);
+
             if (refresh_rate != 60 && m.dmDisplayFrequency >= 50)
                 refresh_rate = m.dmDisplayFrequency;
 
