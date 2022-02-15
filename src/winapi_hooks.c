@@ -66,13 +66,13 @@ BOOL WINAPI fake_GetCursorPos(LPPOINT lpPoint)
 
         if (g_ddraw->adjmouse)
         {
-            x = min((DWORD)(roundf(pt.x * g_ddraw->render.unscale_w)), g_ddraw->width);
-            y = min((DWORD)(roundf(pt.y * g_ddraw->render.unscale_h)), g_ddraw->height);
+            x = min((DWORD)(roundf(pt.x * g_ddraw->render.unscale_w)), g_ddraw->width - 1);
+            y = min((DWORD)(roundf(pt.y * g_ddraw->render.unscale_h)), g_ddraw->height - 1);
         }
         else
         {
-            x = pt.x;
-            y = pt.y;
+            x = min(pt.x, g_ddraw->width - 1);
+            y = min(pt.y, g_ddraw->height - 1);
         }
 
         if (g_ddraw->vhack && InterlockedExchangeAdd(&g_ddraw->upscale_hack_active, 0))
