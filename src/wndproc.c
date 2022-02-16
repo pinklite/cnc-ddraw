@@ -460,7 +460,7 @@ LRESULT CALLBACK fake_WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam
             exit(0);
         }
 
-        if (wParam == SC_KEYMENU)
+        if (wParam == SC_KEYMENU && GetMenu(g_ddraw->hwnd) == NULL)
             return 0;
 
         if (!GameHandlesClose)
