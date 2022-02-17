@@ -864,16 +864,18 @@ HRESULT dd_SetCooperativeLevel(HWND hwnd, DWORD dwFlags)
     {
         static BOOL windowed;
 
-        if (!(dwFlags & DDSCL_FULLSCREEN))
+        if (dwFlags & DDSCL_FULLSCREEN)
+        {
+            g_ddraw->windowed = windowed;
+        }
+        else if (dwFlags & DDSCL_NOWINDOWCHANGES)
         {
             windowed = g_ddraw->windowed;
 
-            g_ddraw->windowed = TRUE;
+            if (GetMenu(g_ddraw->hwnd) != NULL)
+                g_ddraw->windowed = TRUE;
+
             dd_SetDisplayMode(640, 480, 16, SDM_MODE_SET_BY_GAME);
-        }
-        else
-        {
-            g_ddraw->windowed = windowed;
         }
     }
 
