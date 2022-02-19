@@ -433,7 +433,7 @@ HRESULT dd_SetDisplayMode(DWORD dwWidth, DWORD dwHeight, DWORD dwBPP, DWORD dwFl
     g_ddraw->render.height = g_config.window_rect.bottom;
 
     /* temporary fix: center window for games that keep changing their resolution */
-    if (g_ddraw->width &&
+    if ((g_ddraw->width || g_ddraw->infantryhack) &&
         (g_ddraw->width != dwWidth || g_ddraw->height != dwHeight) &&
         (dwWidth > g_config.window_rect.right || dwHeight > g_config.window_rect.bottom))
     {
@@ -772,10 +772,10 @@ HRESULT dd_SetDisplayMode(DWORD dwWidth, DWORD dwHeight, DWORD dwBPP, DWORD dwFl
         g_ddraw->render.thread = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)g_ddraw->renderer, NULL, 0, NULL);
     }
 
-    if (dwFlags & SDM_MODE_SET_BY_GAME)
+    if ((dwFlags & SDM_MODE_SET_BY_GAME) && !g_ddraw->infantryhack)
     {
-        //real_SendMessageA(g_ddraw->hwnd, WM_SIZE_DDRAW, 0, MAKELPARAM(g_ddraw->width, g_ddraw->height));
-        //real_SendMessageA(g_ddraw->hwnd, WM_MOVE_DDRAW, 0, MAKELPARAM(0, 0));
+        real_SendMessageA(g_ddraw->hwnd, WM_SIZE_DDRAW, 0, MAKELPARAM(g_ddraw->width, g_ddraw->height));
+        real_SendMessageA(g_ddraw->hwnd, WM_MOVE_DDRAW, 0, MAKELPARAM(0, 0));
         real_SendMessageA(g_ddraw->hwnd, WM_DISPLAYCHANGE_DDRAW, g_ddraw->bpp, MAKELPARAM(g_ddraw->width, g_ddraw->height));
     }
 
