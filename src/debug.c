@@ -4,6 +4,7 @@
 #include "ddraw.h"
 #include "dd.h"
 #include "ddsurface.h"
+#include "wndproc.h"
 #include "debug.h"
 
 
@@ -1219,6 +1220,9 @@ char* dbg_mes_to_str(int id)
     case 8720: return "OCM_PARENTNOTIFY";
     case 32768: return "WM_APP";
     case 52429: return "WM_RASDIALEVENT";
+    case WM_DISPLAYCHANGE_DDRAW: return "WM_DISPLAYCHANGE_DDRAW";
+    case WM_SIZE_DDRAW: return "WM_SIZE_DDRAW";
+    case WM_MOVE_DDRAW: return "WM_MOVE_DDRAW";
     }
 
     return 0;
