@@ -862,18 +862,23 @@ HRESULT dd_SetCooperativeLevel(HWND hwnd, DWORD dwFlags)
     /* Infantry Online Zone List Window */
     if (g_ddraw->infantryhack)
     {
-        static BOOL windowed;
+        static BOOL windowed, fullscreen;
 
         if (dwFlags & DDSCL_FULLSCREEN)
         {
             g_ddraw->windowed = windowed;
+            g_ddraw->fullscreen = fullscreen;
         }
         else if (dwFlags & DDSCL_NOWINDOWCHANGES)
         {
             windowed = g_ddraw->windowed;
+            fullscreen = g_ddraw->fullscreen;
 
             if (GetMenu(g_ddraw->hwnd) != NULL)
+            {
                 g_ddraw->windowed = TRUE;
+                g_ddraw->fullscreen = FALSE;
+            }
 
             dd_SetDisplayMode(640, 480, 16, SDM_MODE_SET_BY_GAME);
         }
