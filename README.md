@@ -94,3 +94,6 @@ If you want to play in windowed mode then start the game once in fullscreen and 
  - ...
 
 There are a lot more games supported but I don't usually update the list, just give it a try and if it doesn't work then check the instructions above.
+
+
+![](https://img.shields.io/github/downloads/cncnet/cnc-ddraw/total)
