@@ -16,7 +16,8 @@
 
 LRESULT CALLBACK fake_WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-    if (uMsg != WM_MOUSEMOVE && uMsg != WM_NCMOUSEMOVE && uMsg != WM_NCHITTEST && uMsg != WM_SETCURSOR)
+    if (uMsg != WM_MOUSEMOVE && uMsg != WM_NCMOUSEMOVE && uMsg != WM_NCHITTEST && uMsg != WM_SETCURSOR &&
+        uMsg != WM_KEYUP && uMsg != WM_KEYDOWN && uMsg != WM_CHAR)
     {
         TRACE_EXT(
             "     uMsg = %s (%d), wParam = %08X (%d), lParam = %08X (%d)\n",
