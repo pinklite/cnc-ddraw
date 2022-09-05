@@ -46,6 +46,7 @@ void cfg_load()
     g_ddraw->gdilinear = cfg_get_bool("gdilinear", FALSE);
     g_ddraw->resolutions = cfg_get_int("resolutions", RESLIST_NORMAL);
     g_ddraw->fpupreserve = cfg_get_bool("fpupreserve", FALSE);
+    g_ddraw->allow_wmactivate = cfg_get_bool("allow_wmactivate", FALSE);
     cfg_get_string("screenshotdir", ".\\Screenshots\\", g_ddraw->screenshot_dir, sizeof(g_ddraw->screenshot_dir));
 
     if (g_ddraw->locktopleft)
@@ -370,6 +371,10 @@ static void cfg_create_ini()
             "; ### Game specific settings ###\n"
             "; The following settings override all settings shown above, section name = executable name\n"
             "\n"
+            "\n"
+            "; Atrox\n"
+            "[Atrox]\n"
+            "allow_wmactivate=true\n"
             "\n"
             "; Atomic Bomberman\n"
             "[BM]\n"

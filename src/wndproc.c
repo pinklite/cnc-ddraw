@@ -502,7 +502,9 @@ LRESULT CALLBACK fake_WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam
         }
 
         //if (g_ddraw->windowed || g_ddraw->noactivateapp)
-        return 0;
+
+        if (!g_ddraw->allow_wmactivate)
+            return 0;
 
         break;
     }
