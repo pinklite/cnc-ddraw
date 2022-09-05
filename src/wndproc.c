@@ -16,16 +16,17 @@
 
 LRESULT CALLBACK fake_WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-    /*
-    TRACE(
-        "     uMsg = %s (%d), wParam = %08X (%d), lParam = %08X (%d)\n",
-        dbg_mes_to_str(uMsg),
-        uMsg,
-        wParam,
-        wParam,
-        lParam,
-        lParam);
-    */
+    if (uMsg != WM_MOUSEMOVE && uMsg != WM_NCMOUSEMOVE && uMsg != WM_NCHITTEST && uMsg != WM_SETCURSOR)
+    {
+        TRACE_EXT(
+            "     uMsg = %s (%d), wParam = %08X (%d), lParam = %08X (%d)\n",
+            dbg_mes_to_str(uMsg),
+            uMsg,
+            wParam,
+            wParam,
+            lParam,
+            lParam);
+    }
 
     static BOOL in_size_move = FALSE;
     static int redraw_count = 0;
