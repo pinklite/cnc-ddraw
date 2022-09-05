@@ -159,13 +159,13 @@ BOOL d3d9_release()
 
     if (g_d3d9.device)
     {
-        IDirect3DDevice9_Release(g_d3d9.device);
+        while (IDirect3DDevice9_Release(g_d3d9.device));
         g_d3d9.device = NULL;
     }
 
     if (g_d3d9.instance)
     {
-        IDirect3D9_Release(g_d3d9.instance);
+        while (IDirect3D9_Release(g_d3d9.instance));
         g_d3d9.instance = NULL;
     }
 
