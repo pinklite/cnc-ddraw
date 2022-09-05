@@ -22,9 +22,11 @@ cnc-ddraw can fix compatibility issues in older games, such as black screen, bad
 ### Instructions
 
 1. Download [cnc-ddraw.zip](https://github.com/CnCNet/cnc-ddraw/releases/latest/download/cnc-ddraw.zip) and extract it into your game folder
-2. Wine only: override `ddraw` in [winecfg](https://wiki.winehq.org/Winecfg#Libraries)
-3. Start the game
+2. Start the game
 
+Wine (Linux/macOS) only: override `ddraw` in [winecfg](https://wiki.winehq.org/Winecfg#Libraries)
+
+&nbsp;
 
 Note: If you use cnc-ddraw with a game that got its own windowed mode built in then **make sure you disable the games own windowed mode** first.
 
@@ -33,6 +35,10 @@ If you want to play in windowed mode then start the game once in fullscreen and 
 &nbsp;
 
 **If the game starts but it doesn't work perfectly** then open the config program and check the **Compatibility settings**. Alternatively you can also open ddraw.ini with notepad and modify the **Compatibility settings** in there.
+
+&nbsp;
+
+Note: cnc-ddraw does not support Direct3D/Glide, it will only work with games that use a DirectDraw (Software) renderer. Usually you can tell by the look of the game if it's a 3D game or not, but you can also let cnc-ddraw generate a debug log and search for "IDirect3D" - Link: https://github.com/CnCNet/cnc-ddraw/issues/44
 
 &nbsp;
 
@@ -60,6 +66,7 @@ If you want to play in windowed mode then start the game once in fullscreen and 
 * [Alt] + [Enter]                  = Switch between windowed and fullscreen mode
 * [Ctrl] + [Tab]                    = Unlock cursor
 * [Right Alt] + [Right Ctrl]  = Unlock cursor
+* [Alt] + [Page Down]        = Maximize window (Window borders must be disabled in config)
 
 &nbsp;
 
