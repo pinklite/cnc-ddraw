@@ -27,6 +27,19 @@ HRESULT dd_EnumDisplayModes(
 
     /* Some games crash when you feed them with too many resolutions so we have to keep the list short */
 
+    DWORD max_w = 0;
+    DWORD max_h = 0;
+    DEVMODE reg_m;
+
+    memset(&reg_m, 0, sizeof(DEVMODE));
+    reg_m.dmSize = sizeof(DEVMODE);
+
+    if (EnumDisplaySettings(NULL, ENUM_REGISTRY_SETTINGS, &reg_m))
+    {
+        max_w = reg_m.dmPelsWidth;
+        max_h = reg_m.dmPelsHeight;
+    }
+
     SIZE resolutions[] =
     {
         { 320, 200 },
@@ -39,8 +52,17 @@ HRESULT dd_EnumDisplayModes(
         { 1280, 1024 },
         { 1600, 1200 },
         { 1280, 720 },
-        { 1920, 1080 },
+        { max_w, max_h },
     };
+    
+    for (int x = 0; x < (sizeof(resolutions) / sizeof(resolutions[0])) - 1; x++)
+    {
+        if (resolutions[x].cx == max_w && resolutions[x].cy == max_h)
+        {
+            resolutions[x].cx = 0;
+            resolutions[x].cy = 0;
+        }
+    }
 
     if (g_ddraw->bpp || g_ddraw->resolutions == RESLIST_FULL)
     {
@@ -176,19 +198,6 @@ HRESULT dd_EnumDisplayModes(
 
     if (!g_ddraw->bpp || g_ddraw->resolutions == RESLIST_FULL)
     {
-        DWORD max_w = 0;
-        DWORD max_h = 0;
-        DEVMODE m;
-
-        memset(&m, 0, sizeof(DEVMODE));
-        m.dmSize = sizeof(DEVMODE);
-
-        if (EnumDisplaySettings(NULL, ENUM_REGISTRY_SETTINGS, &m))
-        {
-            max_w = m.dmPelsWidth;
-            max_h = m.dmPelsHeight;
-        }
-
         for (i = 0; i < sizeof(resolutions) / sizeof(resolutions[0]); i++)
         {
             if (!resolutions[i].cx || !resolutions[i].cy)
@@ -196,6 +205,7 @@ HRESULT dd_EnumDisplayModes(
 
             if ((max_w && resolutions[i].cx > max_w) || (max_h && resolutions[i].cy > max_h))
             {
+                DEVMODE m;
                 memset(&m, 0, sizeof(DEVMODE));
 
                 m.dmSize = sizeof(DEVMODE);
