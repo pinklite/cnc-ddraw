@@ -451,6 +451,7 @@ static void cfg_create_ini()
             "\n"
             "; Blade & Sword\n"
             "[comeon]\n"
+            "maxgameticks=62\n"
             "fixchilds=3\n"
             "fixpitch=true\n"
             "\n"
