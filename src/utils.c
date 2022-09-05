@@ -374,14 +374,14 @@ BOOL CALLBACK util_enum_child_proc(HWND hwnd, LPARAM lparam)
 
     if (real_GetClientRect(hwnd, &size) && real_GetWindowRect(hwnd, &pos) && size.right > 1 && size.bottom > 1)
     {
-        /*
+        /**/
         TRACE(
             "     util_enum_child_proc right=%u, bottom=%u, left=%d, top=%d\n", 
             size.right, 
             size.bottom,
             pos.left,
             pos.top);
-        */
+        
 
         if (g_ddraw->fixchilds == FIX_CHILDS_DETECT_HIDE)
         {
@@ -404,14 +404,7 @@ BOOL CALLBACK util_enum_child_proc(HWND hwnd, LPARAM lparam)
         }
         else
         {
-            if (pos.left == -92 && size.right == 100)
-            {
-                /* hack for Atrox */
-            }
-            else
-            {
-                g_ddraw->got_child_windows = g_ddraw->child_window_exists = TRUE;
-            }
+            g_ddraw->got_child_windows = g_ddraw->child_window_exists = TRUE;
 
             if (g_ddraw->fixchilds == FIX_CHILDS_DETECT_PAINT)
             {
