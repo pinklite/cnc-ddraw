@@ -231,6 +231,9 @@ HRESULT dds_Blt(
                 color_key.dwColorSpaceHighValue =
                     (dwFlags & DDBLT_KEYSRCOVERRIDE) ?
                     lpDDBltFx->ddckSrcColorkey.dwColorSpaceHighValue : src_surface->color_key.dwColorSpaceHighValue;
+
+                if (color_key.dwColorSpaceHighValue < color_key.dwColorSpaceLowValue)
+                    color_key.dwColorSpaceHighValue = color_key.dwColorSpaceLowValue;
             }
 
             float scale_w = (float)src_w / dst_w;
