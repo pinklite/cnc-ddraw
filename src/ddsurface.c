@@ -244,31 +244,88 @@ HRESULT dds_Blt(
                 unsigned char key_low = (unsigned char)color_key.dwColorSpaceLowValue;
                 unsigned char key_high = (unsigned char)color_key.dwColorSpaceHighValue;
 
-                for (int y = 0; y < dst_h; y++)
+                /*
+                if (src_w == dst_w && src_h == dst_h && !mirror_left_right && !mirror_up_down)
                 {
-                    int scaled_y = (int)(y * scale_h);
+                    unsigned char* src =
+                        (unsigned char*)src_buf + (src_x * src_surface->lx_pitch) + (src_surface->l_pitch * src_y);
 
-                    if (mirror_up_down)
-                        scaled_y = src_h - 1 - scaled_y;
+                    unsigned char* dst =
+                        (unsigned char*)dst_buf + (dst_x * This->lx_pitch) + (This->l_pitch * dst_y);
 
-                    int src_row = src_surface->width * (scaled_y + src_y);
-                    int dst_row = This->width * (y + dst_y);
+                    unsigned int dst_p = This->l_pitch - (dst_w * This->lx_pitch);
+                    unsigned int src_p = src_surface->l_pitch - (dst_w * src_surface->lx_pitch);
 
-                    for (int x = 0; x < dst_w; x++)
+                    if (key_low == key_high)
                     {
-                        int scaled_x = (int)(x * scale_w);
-
-                        if (mirror_left_right)
-                            scaled_x = src_w - 1 - scaled_x;
-
-                        unsigned char c = ((unsigned char*)src_buf)[scaled_x + src_x + src_row];
-
-                        if (c < key_low || c > key_high)
+                        for (int y = 0; y < dst_h; y++)
                         {
-                            ((unsigned char*)dst_buf)[x + dst_x + dst_row] = c;
+                            for (int x = 0; x < dst_w; x++)
+                            {
+                                unsigned char c = *src++;
+
+                                if (c != key_low)
+                                {
+                                    *dst = c;
+                                }
+
+                                dst++;
+                            }
+
+                            src += src_p;
+                            dst += dst_p;
+                        }
+                    }
+                    else
+                    {
+                        for (int i = 0; i < dst_h; i++)
+                        {
+                            for (int x = 0; x < dst_w; x++)
+                            {
+                                unsigned char c = *src++;
+
+                                if (c < key_low || c > key_high)
+                                {
+                                    *dst = c;
+                                }
+
+                                dst++;
+                            }
+
+                            src += src_p;
+                            dst += dst_p;
                         }
                     }
                 }
+                else
+                {
+                */
+                    for (int y = 0; y < dst_h; y++)
+                    {
+                        int scaled_y = (int)(y * scale_h);
+
+                        if (mirror_up_down)
+                            scaled_y = src_h - 1 - scaled_y;
+
+                        int src_row = src_surface->width * (scaled_y + src_y);
+                        int dst_row = This->width * (y + dst_y);
+
+                        for (int x = 0; x < dst_w; x++)
+                        {
+                            int scaled_x = (int)(x * scale_w);
+
+                            if (mirror_left_right)
+                                scaled_x = src_w - 1 - scaled_x;
+
+                            unsigned char c = ((unsigned char*)src_buf)[scaled_x + src_x + src_row];
+
+                            if (c < key_low || c > key_high)
+                            {
+                                ((unsigned char*)dst_buf)[x + dst_x + dst_row] = c;
+                            }
+                        }
+                    }
+                //}
             }
             else if (This->bpp == 16)
             {
