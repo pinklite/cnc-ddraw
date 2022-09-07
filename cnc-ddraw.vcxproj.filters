@@ -150,6 +150,9 @@
     <ClCompile Include="src\fps_limiter.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\crc32.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="inc\debug.h">
@@ -255,6 +258,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="inc\ddraw.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\crc32.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
