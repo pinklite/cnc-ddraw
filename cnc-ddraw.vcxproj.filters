@@ -153,6 +153,9 @@
     <ClCompile Include="src\crc32.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\blt.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="inc\debug.h">
@@ -261,6 +264,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="inc\crc32.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\blt.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

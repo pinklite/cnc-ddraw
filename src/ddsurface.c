@@ -5,11 +5,11 @@
 #include "hook.h"
 #include "ddsurface.h"
 #include "mouse.h"
-#include "scale_pattern.h"
 #include "IDirectDrawSurface.h"
 #include "winapi_hooks.h"
 #include "debug.h"
 #include "utils.h"
+#include "blt.h"
 
 
 HRESULT dds_AddAttachedSurface(IDirectDrawSurfaceImpl* This, IDirectDrawSurfaceImpl* lpDDSurface)
@@ -29,11 +29,11 @@ HRESULT dds_AddAttachedSurface(IDirectDrawSurfaceImpl* This, IDirectDrawSurfaceI
 }
 
 HRESULT dds_Blt(
-    IDirectDrawSurfaceImpl* This, 
-    LPRECT lpDestRect, 
-    IDirectDrawSurfaceImpl* lpDDSrcSurface, 
-    LPRECT lpSrcRect, 
-    DWORD dwFlags, 
+    IDirectDrawSurfaceImpl* This,
+    LPRECT lpDestRect,
+    IDirectDrawSurfaceImpl* lpDDSrcSurface,
+    LPRECT lpSrcRect,
+    DWORD dwFlags,
     LPDDBLTFX lpDDBltFx)
 {
     dbg_dump_dds_blt_flags(dwFlags);
@@ -121,79 +121,17 @@ HRESULT dds_Blt(
     void* dst_buf = dds_GetBuffer(This);
     void* src_buf = dds_GetBuffer(src_surface);
 
-    if (dst_buf && (dwFlags & DDBLT_COLORFILL) && dst_w > 0 && dst_h > 0)
+    if (dst_buf && (dwFlags & DDBLT_COLORFILL) && lpDDBltFx && dst_w > 0 && dst_h > 0)
     {
-        unsigned char* dst = (unsigned char*)dst_buf + (dst_x * This->lx_pitch) + (This->l_pitch * dst_y);
-        unsigned char* first_row = dst;
-        unsigned int dst_pitch = dst_w * This->lx_pitch;
-        int x, i;
-
-        if (This->bpp == 8)
-        {
-            unsigned char color = (unsigned char)lpDDBltFx->dwFillColor;
-
-            for (i = 0; i < dst_h; i++)
-            {
-                memset(dst, color, dst_pitch);
-                dst += This->l_pitch;
-            }
-        }
-        else if (This->bpp == 16)
-        {
-            unsigned short* row1 = (unsigned short*)dst;
-            unsigned short color = (unsigned short)lpDDBltFx->dwFillColor;
-
-            if ((color & 0xFF) == (color >> 8))
-            {
-                unsigned char c8 = (unsigned char)(color & 0xFF);
-
-                for (i = 0; i < dst_h; i++)
-                {
-                    memset(dst, c8, dst_pitch);
-                    dst += This->l_pitch;
-                }
-            }
-            else
-            {
-                for (x = 0; x < dst_w; x++)
-                    row1[x] = color;
-
-                for (i = 1; i < dst_h; i++)
-                {
-                    dst += This->l_pitch;
-                    memcpy(dst, first_row, dst_pitch);
-                }
-            }
-        }
-        else if (This->bpp == 32)
-        {
-            unsigned int* row1 = (unsigned int*)dst;
-            unsigned int color = lpDDBltFx->dwFillColor;
-
-            if ((color & 0xFF) == ((color >> 8) & 0xFF) &&
-                (color & 0xFF) == ((color >> 16) & 0xFF) &&
-                (color & 0xFF) == ((color >> 24) & 0xFF))
-            {
-                unsigned char c8 = (unsigned char)(color & 0xFF);
-
-                for (i = 0; i < dst_h; i++)
-                {
-                    memset(dst, c8, dst_pitch);
-                    dst += This->l_pitch;
-                }
-            }
-            else
-            {
-                for (x = 0; x < dst_w; x++)
-                    row1[x] = color;
-
-                for (i = 1; i < dst_h; i++)
-                {
-                    dst += This->l_pitch;
-                    memcpy(dst, first_row, dst_pitch);
-                }
-            }
-        }
+        blt_colorfill(
+            dst_buf, 
+            dst_x, 
+            dst_y, 
+            dst_w, 
+            dst_h, 
+            This->l_pitch, 
+            lpDDBltFx->dwFillColor, 
+            This->bpp);
     }
 
     if (src_surface && src_w > 0 && src_h > 0 && dst_w > 0 && dst_h > 0)
@@ -215,8 +153,8 @@ HRESULT dds_Blt(
             StretchBlt(dst_dc, dst_x, dst_y, dst_w, dst_h, src_dc, src_x, src_y, src_w, src_h, SRCCOPY);
         }
         else if (
-            (dwFlags & DDBLT_KEYSRC) || 
-            (dwFlags & DDBLT_KEYSRCOVERRIDE) || 
+            (dwFlags & DDBLT_KEYSRC) ||
+            (dwFlags & DDBLT_KEYSRCOVERRIDE) ||
             mirror_left_right ||
             mirror_up_down)
         {
@@ -236,410 +174,91 @@ HRESULT dds_Blt(
                     color_key.dwColorSpaceHighValue = color_key.dwColorSpaceLowValue;
             }
 
-            float scale_w = (float)src_w / dst_w;
-            float scale_h = (float)src_h / dst_h;
-
-            if (This->bpp == 8)
+            if (src_w == dst_w && src_h == dst_h && !mirror_left_right && !mirror_up_down)
             {
-                unsigned char key_low = (unsigned char)color_key.dwColorSpaceLowValue;
-                unsigned char key_high = (unsigned char)color_key.dwColorSpaceHighValue;
-
-                /*
-                if (src_w == dst_w && src_h == dst_h && !mirror_left_right && !mirror_up_down)
-                {
-                    unsigned char* src =
-                        (unsigned char*)src_buf + (src_x * src_surface->lx_pitch) + (src_surface->l_pitch * src_y);
-
-                    unsigned char* dst =
-                        (unsigned char*)dst_buf + (dst_x * This->lx_pitch) + (This->l_pitch * dst_y);
-
-                    unsigned int dst_p = This->l_pitch - (dst_w * This->lx_pitch);
-                    unsigned int src_p = src_surface->l_pitch - (dst_w * src_surface->lx_pitch);
-
-                    if (key_low == key_high)
-                    {
-                        for (int y = 0; y < dst_h; y++)
-                        {
-                            for (int x = 0; x < dst_w; x++)
-                            {
-                                unsigned char c = *src++;
-
-                                if (c != key_low)
-                                {
-                                    *dst = c;
-                                }
-
-                                dst++;
-                            }
-
-                            src += src_p;
-                            dst += dst_p;
-                        }
-                    }
-                    else
-                    {
-                        for (int i = 0; i < dst_h; i++)
-                        {
-                            for (int x = 0; x < dst_w; x++)
-                            {
-                                unsigned char c = *src++;
-
-                                if (c < key_low || c > key_high)
-                                {
-                                    *dst = c;
-                                }
-
-                                dst++;
-                            }
-
-                            src += src_p;
-                            dst += dst_p;
-                        }
-                    }
-                }
-                else
-                {
-                */
-                    for (int y = 0; y < dst_h; y++)
-                    {
-                        int scaled_y = (int)(y * scale_h);
-
-                        if (mirror_up_down)
-                            scaled_y = src_h - 1 - scaled_y;
-
-                        int src_row = src_surface->width * (scaled_y + src_y);
-                        int dst_row = This->width * (y + dst_y);
-
-                        for (int x = 0; x < dst_w; x++)
-                        {
-                            int scaled_x = (int)(x * scale_w);
-
-                            if (mirror_left_right)
-                                scaled_x = src_w - 1 - scaled_x;
-
-                            unsigned char c = ((unsigned char*)src_buf)[scaled_x + src_x + src_row];
-
-                            if (c < key_low || c > key_high)
-                            {
-                                ((unsigned char*)dst_buf)[x + dst_x + dst_row] = c;
-                            }
-                        }
-                    }
-                //}
-            }
-            else if (This->bpp == 16)
-            {
-                unsigned short key_low = (unsigned short)color_key.dwColorSpaceLowValue;
-                unsigned short key_high = (unsigned short)color_key.dwColorSpaceHighValue;
-
-                for (int y = 0; y < dst_h; y++)
-                {
-                    int scaled_y = (int)(y * scale_h);
-
-                    if (mirror_up_down)
-                        scaled_y = src_h - 1 - scaled_y;
-
-                    int src_row = src_surface->width * (scaled_y + src_y);
-                    int dst_row = This->width * (y + dst_y);
-
-                    for (int x = 0; x < dst_w; x++)
-                    {
-                        int scaled_x = (int)(x * scale_w);
-
-                        if (mirror_left_right)
-                            scaled_x = src_w - 1 - scaled_x;
-
-                        unsigned short c = ((unsigned short*)src_buf)[scaled_x + src_x + src_row];
-
-                        if (c < key_low || c > key_high)
-                        {
-                            ((unsigned short*)dst_buf)[x + dst_x + dst_row] = c;
-                        }
-                    }
-                }
-            }
-            else if (This->bpp == 32)
-            {
-                unsigned int key_low = color_key.dwColorSpaceLowValue;
-                unsigned int key_high = color_key.dwColorSpaceHighValue;
-
-                for (int y = 0; y < dst_h; y++)
-                {
-                    int scaled_y = (int)(y * scale_h);
-
-                    if (mirror_up_down)
-                        scaled_y = src_h - 1 - scaled_y;
-
-                    int src_row = src_surface->width * (scaled_y + src_y);
-                    int dst_row = This->width * (y + dst_y);
-
-                    for (int x = 0; x < dst_w; x++)
-                    {
-                        int scaled_x = (int)(x * scale_w);
-
-                        if (mirror_left_right)
-                            scaled_x = src_w - 1 - scaled_x;
-
-                        unsigned int c = ((unsigned int*)src_buf)[scaled_x + src_x + src_row];
-
-                        if (c < key_low || c > key_high)
-                        {
-                            ((unsigned int*)dst_buf)[x + dst_x + dst_row] = c;
-                        }
-                    }
-                }
-            }
-        }
-        else
-        {
-            if (!is_stretch_blt)
-            {
-                int width = dst_w > src_w ? src_w : dst_w;
-                int height = dst_h > src_h ? src_h : dst_h;
-
-                unsigned char* src =
-                    (unsigned char*)src_buf + (src_x * src_surface->lx_pitch) + (src_surface->l_pitch * src_y);
-
-                unsigned char* dst =
-                    (unsigned char*)dst_buf + (dst_x * This->lx_pitch) + (This->l_pitch * dst_y);
-
-                unsigned int dst_pitch = width * This->lx_pitch;
-
-                if (This == src_surface)
-                {
-                    if (dst_y > src_y)
-                    {
-                        src += src_surface->l_pitch * height;
-                        dst += This->l_pitch * height;
-
-                        for (int i = height; i-- > 0;)
-                        {
-                            src -= src_surface->l_pitch;
-                            dst -= This->l_pitch;
-
-                            memmove(dst, src, dst_pitch);
-                        }
-                    }
-                    else
-                    {
-                        for (int i = 0; i < height; i++)
-                        {
-                            memmove(dst, src, dst_pitch);
-
-                            src += src_surface->l_pitch;
-                            dst += This->l_pitch;
-                        }
-                    }
-                }
-                else
-                {
-                    for (int i = 0; i < height; i++)
-                    {
-                        memcpy(dst, src, dst_pitch);
-
-                        src += src_surface->l_pitch;
-                        dst += This->l_pitch;
-                    }
-                }
+                blt_colorkey(
+                    dst_buf,
+                    dst_x,
+                    dst_y,
+                    dst_w,
+                    dst_h,
+                    This->l_pitch,
+                    src_buf,
+                    src_x,
+                    src_y,
+                    src_surface->l_pitch,
+                    color_key.dwColorSpaceLowValue,
+                    color_key.dwColorSpaceHighValue,
+                    This->bpp);
             }
             else
             {
-                /* Linear scaling using integer math
-                * Since the scaling pattern for x will aways be the same, the pattern itself gets pre-calculated
-                * and stored in an array.
-                * Y scaling pattern gets calculated during the blit loop
-                */
-                unsigned int x_ratio = (unsigned int)((src_w << 16) / dst_w) + 1;
-                unsigned int y_ratio = (unsigned int)((src_h << 16) / dst_h) + 1;
-
-                unsigned int s_src_x, s_src_y;
-                unsigned int dest_base, source_base;
-
-                scale_pattern* pattern = malloc((dst_w + 1) * (sizeof(scale_pattern)));
-                int pattern_idx = 0;
-                unsigned int last_src_x = 0;
-
-                if (pattern != NULL)
-                {
-                    pattern[pattern_idx] = (scale_pattern){ ONCE, 0, 0, 1 };
-
-                    /* Build the pattern! */
-                    int x;
-                    for (x = 1; x < dst_w; x++) {
-                        s_src_x = (x * x_ratio) >> 16;
-                        if (s_src_x == last_src_x)
-                        {
-                            if (pattern[pattern_idx].type == REPEAT || pattern[pattern_idx].type == ONCE)
-                            {
-                                pattern[pattern_idx].type = REPEAT;
-                                pattern[pattern_idx].count++;
-                            }
-                            else if (pattern[pattern_idx].type == SEQUENCE)
-                            {
-                                pattern_idx++;
-                                pattern[pattern_idx] = (scale_pattern){ REPEAT, x, s_src_x, 1 };
-                            }
-                        }
-                        else if (s_src_x == last_src_x + 1)
-                        {
-                            if (pattern[pattern_idx].type == SEQUENCE || pattern[pattern_idx].type == ONCE)
-                            {
-                                pattern[pattern_idx].type = SEQUENCE;
-                                pattern[pattern_idx].count++;
-                            }
-                            else if (pattern[pattern_idx].type == REPEAT)
-                            {
-                                pattern_idx++;
-                                pattern[pattern_idx] = (scale_pattern){ ONCE, x, s_src_x, 1 };
-                            }
-                        }
-                        else
-                        {
-                            pattern_idx++;
-                            pattern[pattern_idx] = (scale_pattern){ ONCE, x, s_src_x, 1 };
-                        }
-                        last_src_x = s_src_x;
-                    }
-                    pattern[pattern_idx + 1] = (scale_pattern){ END, 0, 0, 0 };
-
-
-                    /* Do the actual blitting */
-                    int count = 0;
-                    int y;
-
-                    for (y = 0; y < dst_h; y++) {
-
-                        dest_base = dst_x + This->width * (y + dst_y);
-
-                        s_src_y = (y * y_ratio) >> 16;
-
-                        source_base = src_x + src_surface->width * (s_src_y + src_y);
-
-                        pattern_idx = 0;
-                        scale_pattern* current = &pattern[pattern_idx];
-
-                        if (This->bpp == 8)
-                        {
-                            unsigned char* d, * s, v;
-                            unsigned char* src = (unsigned char*)src_buf;
-                            unsigned char* dst = (unsigned char*)dst_buf;
-
-                            do {
-                                switch (current->type)
-                                {
-                                case ONCE:
-                                    dst[dest_base + current->dst_index] =
-                                        src[source_base + current->src_index];
-                                    break;
-
-                                case REPEAT:
-                                    d = (dst + dest_base + current->dst_index);
-                                    v = src[source_base + current->src_index];
-
-                                    count = current->count;
-                                    while (count-- > 0)
-                                        *d++ = v;
-
-                                    break;
-
-                                case SEQUENCE:
-                                    d = dst + dest_base + current->dst_index;
-                                    s = src + source_base + current->src_index;
-
-                                    memcpy((void*)d, (void*)s, current->count * This->lx_pitch);
-                                    break;
-
-                                case END:
-                                default:
-                                    break;
-                                }
-
-                                current = &pattern[++pattern_idx];
-                            } while (current->type != END);
-                        }
-                        else if (This->bpp == 16)
-                        {
-                            unsigned short* d, * s, v;
-                            unsigned short* src = (unsigned short*)src_buf;
-                            unsigned short* dst = (unsigned short*)dst_buf;
-
-                            do {
-                                switch (current->type)
-                                {
-                                case ONCE:
-                                    dst[dest_base + current->dst_index] =
-                                        src[source_base + current->src_index];
-                                    break;
-
-                                case REPEAT:
-                                    d = (dst + dest_base + current->dst_index);
-                                    v = src[source_base + current->src_index];
-
-                                    count = current->count;
-                                    while (count-- > 0)
-                                        *d++ = v;
-
-                                    break;
-
-                                case SEQUENCE:
-                                    d = dst + dest_base + current->dst_index;
-                                    s = src + source_base + current->src_index;
-
-                                    memcpy((void*)d, (void*)s, current->count * This->lx_pitch);
-                                    break;
-
-                                case END:
-                                default:
-                                    break;
-                                }
-
-                                current = &pattern[++pattern_idx];
-                            } while (current->type != END);
-                        }
-                        else if (This->bpp == 32)
-                        {
-                            unsigned int* d, * s, v;
-                            unsigned int* src = (unsigned int*)src_buf;
-                            unsigned int* dst = (unsigned int*)dst_buf;
-
-                            do {
-                                switch (current->type)
-                                {
-                                case ONCE:
-                                    dst[dest_base + current->dst_index] =
-                                        src[source_base + current->src_index];
-                                    break;
-
-                                case REPEAT:
-                                    d = (dst + dest_base + current->dst_index);
-                                    v = src[source_base + current->src_index];
-
-                                    count = current->count;
-                                    while (count-- > 0)
-                                        *d++ = v;
-
-                                    break;
-
-                                case SEQUENCE:
-                                    d = dst + dest_base + current->dst_index;
-                                    s = src + source_base + current->src_index;
-
-                                    memcpy((void*)d, (void*)s, current->count * This->lx_pitch);
-                                    break;
-
-                                case END:
-                                default:
-                                    break;
-                                }
-
-                                current = &pattern[++pattern_idx];
-                            } while (current->type != END);
-                        }
-                    }
-                    free(pattern);
-                }
+                blt_colorkey_mirror_stretch(
+                    dst_buf,
+                    dst_x,
+                    dst_y,
+                    dst_w,
+                    dst_h,
+                    This->l_pitch,
+                    src_buf,
+                    src_x,
+                    src_y,
+                    src_w,
+                    src_h,
+                    src_surface->l_pitch,
+                    color_key.dwColorSpaceLowValue,
+                    color_key.dwColorSpaceHighValue,
+                    mirror_up_down,
+                    mirror_left_right,
+                    This->bpp);
             }
-
+        }
+        else if (is_stretch_blt)
+        {
+            blt_stretch(
+                dst_buf,
+                dst_x,
+                dst_y,
+                dst_w,
+                dst_h,
+                This->l_pitch,
+                src_buf,
+                src_x,
+                src_y,
+                src_w,
+                src_h,
+                src_surface->l_pitch,
+                This->bpp);
+        }
+        else if (This == src_surface)
+        {
+            blt_overlap(
+                dst_buf,
+                dst_x,
+                dst_y,
+                min(dst_w, src_w),
+                min(dst_h, src_h),
+                This->l_pitch,
+                src_buf,
+                src_x,
+                src_y,
+                src_surface->l_pitch,
+                This->bpp);
+        }
+        else
+        {
+            blt_clean(
+                dst_buf,
+                dst_x,
+                dst_y,
+                min(dst_w, src_w),
+                min(dst_h, src_h),
+                This->l_pitch,
+                src_buf,
+                src_x,
+                src_y,
+                src_surface->l_pitch,
+                This->bpp);
         }
     }
 
@@ -666,11 +285,11 @@ HRESULT dds_Blt(
 }
 
 HRESULT dds_BltFast(
-    IDirectDrawSurfaceImpl* This, 
-    DWORD dwX, 
-    DWORD dwY, 
-    IDirectDrawSurfaceImpl* lpDDSrcSurface, 
-    LPRECT lpSrcRect, 
+    IDirectDrawSurfaceImpl* This,
+    DWORD dwX,
+    DWORD dwY,
+    IDirectDrawSurfaceImpl* lpDDSrcSurface,
+    LPRECT lpSrcRect,
     DWORD dwFlags)
 {
     dbg_dump_dds_blt_fast_flags(dwFlags);
@@ -772,116 +391,50 @@ HRESULT dds_BltFast(
         }
         else if (dwFlags & DDBLTFAST_SRCCOLORKEY)
         {
-            if (This->bpp == 8)
-            {
-                unsigned char key_low = (unsigned char)src_surface->color_key.dwColorSpaceLowValue;
-                unsigned char key_high = (unsigned char)src_surface->color_key.dwColorSpaceHighValue;
-
-                for (int y = 0; y < dst_h; y++)
-                {
-                    int dst_row = This->width * (y + dst_y);
-                    int src_row = src_surface->width * (y + src_y);
-
-                    for (int x = 0; x < dst_w; x++)
-                    {
-                        unsigned char c = ((unsigned char*)src_buf)[x + src_x + src_row];
-
-                        if (c < key_low || c > key_high)
-                        {
-                            ((unsigned char*)dst_buf)[x + dst_x + dst_row] = c;
-                        }
-                    }
-                }
-            }
-            else if (This->bpp == 16)
-            {
-                unsigned short key_low = (unsigned short)src_surface->color_key.dwColorSpaceLowValue;
-                unsigned short key_high = (unsigned short)src_surface->color_key.dwColorSpaceHighValue;
-
-                for (int y = 0; y < dst_h; y++)
-                {
-                    int dst_row = This->width * (y + dst_y);
-                    int src_row = src_surface->width * (y + src_y);
-
-                    for (int x = 0; x < dst_w; x++)
-                    {
-                        unsigned short c = ((unsigned short*)src_buf)[x + src_x + src_row];
-
-                        if (c < key_low || c > key_high)
-                        {
-                            ((unsigned short*)dst_buf)[x + dst_x + dst_row] = c;
-                        }
-                    }
-                }
-            }
-            else if (This->bpp == 32)
-            {
-                unsigned int key_low = src_surface->color_key.dwColorSpaceLowValue;
-                unsigned int key_high = src_surface->color_key.dwColorSpaceHighValue;
-
-                for (int y = 0; y < dst_h; y++)
-                {
-                    int dst_row = This->width * (y + dst_y);
-                    int src_row = src_surface->width * (y + src_y);
-
-                    for (int x = 0; x < dst_w; x++)
-                    {
-                        unsigned int c = ((unsigned int*)src_buf)[x + src_x + src_row];
-
-                        if (c < key_low || c > key_high)
-                        {
-                            ((unsigned int*)dst_buf)[x + dst_x + dst_row] = c;
-                        }
-                    }
-                }
-            }
+            blt_colorkey(
+                dst_buf,
+                dst_x,
+                dst_y,
+                dst_w,
+                dst_h,
+                This->l_pitch,
+                src_buf,
+                src_x,
+                src_y,
+                src_surface->l_pitch,
+                src_surface->color_key.dwColorSpaceLowValue,
+                src_surface->color_key.dwColorSpaceHighValue,
+                This->bpp);
+        }
+        else if (This == src_surface)
+        {
+            blt_overlap(
+                dst_buf,
+                dst_x,
+                dst_y,
+                dst_w,
+                dst_h,
+                This->l_pitch,
+                src_buf,
+                src_x,
+                src_y,
+                src_surface->l_pitch,
+                This->bpp);
         }
         else
         {
-            unsigned char* src =
-                (unsigned char*)src_buf + (src_x * src_surface->lx_pitch) + (src_surface->l_pitch * src_y);
-
-            unsigned char* dst =
-                (unsigned char*)dst_buf + (dst_x * This->lx_pitch) + (This->l_pitch * dst_y);
-
-            unsigned int dst_pitch = dst_w * This->lx_pitch;
-
-            if (This == src_surface)
-            {
-                if (dst_y > src_y)
-                {
-                    src += src_surface->l_pitch * dst_h;
-                    dst += This->l_pitch * dst_h;
-
-                    for (int i = dst_h; i-- > 0;)
-                    {
-                        src -= src_surface->l_pitch;
-                        dst -= This->l_pitch;
-
-                        memmove(dst, src, dst_pitch);
-                    }
-                }
-                else
-                {
-                    for (int i = 0; i < dst_h; i++)
-                    {
-                        memmove(dst, src, dst_pitch);
-
-                        src += src_surface->l_pitch;
-                        dst += This->l_pitch;
-                    }
-                }
-            }
-            else
-            {
-                for (int i = 0; i < dst_h; i++)
-                {
-                    memcpy(dst, src, dst_pitch);
-
-                    src += src_surface->l_pitch;
-                    dst += This->l_pitch;
-                }
-            }
+            blt_clean(
+                dst_buf,
+                dst_x,
+                dst_y,
+                dst_w,
+                dst_h,
+                This->l_pitch,
+                src_buf,
+                src_x,
+                src_y,
+                src_surface->l_pitch,
+                This->bpp);
         }
     }
 
@@ -960,8 +513,8 @@ HRESULT dds_GetSurfaceDesc(IDirectDrawSurfaceImpl* This, LPDDSURFACEDESC lpDDSur
 }
 
 HRESULT dds_EnumAttachedSurfaces(
-    IDirectDrawSurfaceImpl* This, 
-    LPVOID lpContext, 
+    IDirectDrawSurfaceImpl* This,
+    LPVOID lpContext,
     LPDDENUMSURFACESCALLBACK lpEnumSurfacesCallback)
 {
     static DDSURFACEDESC2 desc;
@@ -1163,10 +716,10 @@ HRESULT dds_GetPixelFormat(IDirectDrawSurfaceImpl* This, LPDDPIXELFORMAT ddpfPix
 }
 
 HRESULT dds_Lock(
-    IDirectDrawSurfaceImpl* This, 
-    LPRECT lpDestRect, 
-    LPDDSURFACEDESC lpDDSurfaceDesc, 
-    DWORD dwFlags, 
+    IDirectDrawSurfaceImpl* This,
+    LPRECT lpDestRect,
+    LPDDSURFACEDESC lpDDSurfaceDesc,
+    DWORD dwFlags,
     HANDLE hEvent)
 {
     dbg_dump_dds_lock_flags(dwFlags);
@@ -1409,9 +962,9 @@ void* dds_GetBuffer(IDirectDrawSurfaceImpl* This)
 }
 
 HRESULT dd_CreateSurface(
-    IDirectDrawImpl* This, 
-    LPDDSURFACEDESC lpDDSurfaceDesc, 
-    IDirectDrawSurfaceImpl** lpDDSurface, 
+    IDirectDrawImpl* This,
+    LPDDSURFACEDESC lpDDSurfaceDesc,
+    IDirectDrawSurfaceImpl** lpDDSurface,
     IUnknown FAR* unkOuter)
 {
     dbg_dump_dds_flags(lpDDSurfaceDesc->dwFlags);
@@ -1429,7 +982,7 @@ HRESULT dd_CreateSurface(
         return DD_OK;
     }
 
-    IDirectDrawSurfaceImpl* dst_surface = 
+    IDirectDrawSurfaceImpl* dst_surface =
         (IDirectDrawSurfaceImpl*)HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, sizeof(IDirectDrawSurfaceImpl));
 
     dst_surface->lpVtbl = &g_dds_vtbl;
@@ -1490,7 +1043,7 @@ HRESULT dd_CreateSurface(
             }
         }
 
-        dst_surface->bmi = 
+        dst_surface->bmi =
             HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, sizeof(BITMAPINFOHEADER) + sizeof(RGBQUAD) * 256);
 
         dst_surface->bmi->bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
@@ -1507,7 +1060,7 @@ HRESULT dd_CreateSurface(
             dst_surface->bmi->bmiHeader.biClrUsed = (1 << clr_bits);
         }
 
-        dst_surface->bmi->bmiHeader.biSizeImage = 
+        dst_surface->bmi->bmiHeader.biSizeImage =
             ((dst_surface->width * clr_bits + 31) & ~31) / 8 * dst_surface->height;
 
         if (dst_surface->bpp == 8)
@@ -1534,7 +1087,7 @@ HRESULT dd_CreateSurface(
         }
 
         dst_surface->hdc = CreateCompatibleDC(g_ddraw->render.hdc);
-        dst_surface->bitmap = 
+        dst_surface->bitmap =
             CreateDIBSection(dst_surface->hdc, dst_surface->bmi, DIB_RGB_COLORS, (void**)&dst_surface->surface, NULL, 0);
 
         dst_surface->bmi->bmiHeader.biHeight = -((int)dst_surface->height);
@@ -1579,10 +1132,10 @@ HRESULT dd_CreateSurface(
     }
 
     TRACE(
-        "     surface = %p (%ux%u@%u)\n", 
-        dst_surface, 
-        dst_surface->width, 
-        dst_surface->height, 
+        "     surface = %p (%ux%u@%u)\n",
+        dst_surface,
+        dst_surface->width,
+        dst_surface->height,
         dst_surface->bpp);
 
     *lpDDSurface = dst_surface;

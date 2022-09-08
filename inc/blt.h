@@ -1,0 +1,93 @@
+#ifndef BLT_H
+#define BLT_H
+
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+
+
+void blt_clean(
+    unsigned char* dst,
+    int dst_x,
+    int dst_y,
+    int dst_w,
+    int dst_h,
+    int dst_p,
+    unsigned char* src,
+    int src_x,
+    int src_y,
+    int src_p,
+    int bpp);
+    
+void blt_overlap(
+    unsigned char* dst,
+    int dst_x,
+    int dst_y,
+    int dst_w,
+    int dst_h,
+    int dst_p,
+    unsigned char* src,
+    int src_x,
+    int src_y,
+    int src_p,
+    int bpp);
+
+void blt_colorkey(
+    unsigned char* dst,
+    int dst_x,
+    int dst_y,
+    int dst_w,
+    int dst_h,
+    int dst_p,
+    unsigned char* src,
+    int src_x,
+    int src_y,
+    int src_p,
+    unsigned int key_low,
+    unsigned int key_high,
+    int bpp);
+
+void blt_colorkey_mirror_stretch(
+    unsigned char* dst,
+    int dst_x,
+    int dst_y,
+    int dst_w,
+    int dst_h,
+    int dst_p,
+    unsigned char* src,
+    int src_x,
+    int src_y,
+    int src_w,
+    int src_h,
+    int src_p,
+    unsigned int key_low,
+    unsigned int key_high,
+    BOOL mirror_up_down,
+    BOOL mirror_left_right,
+    int bpp);
+
+void blt_colorfill(
+    unsigned char* dst,
+    int dst_x,
+    int dst_y,
+    int dst_w,
+    int dst_h,
+    int dst_p,
+    unsigned int color,
+    int bpp);
+
+void blt_stretch(
+    unsigned char* dst_buf,
+    int dst_x,
+    int dst_y,
+    int dst_w,
+    int dst_h,
+    int dst_p,
+    unsigned char* src_buf,
+    int src_x,
+    int src_y,
+    int src_w,
+    int src_h,
+    int src_p,
+    int bpp);
+
+#endif

@@ -15,6 +15,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\blt.c" />
     <ClCompile Include="src\crc32.c" />
     <ClCompile Include="src\ddclipper.c" />
     <ClCompile Include="src\debug.c" />
@@ -61,6 +62,7 @@
     <ClCompile Include="src\wndproc.c" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="inc\blt.h" />
     <ClInclude Include="inc\crc32.h" />
     <ClInclude Include="inc\d3d9shader.h" />
     <ClInclude Include="inc\ddclipper.h" />

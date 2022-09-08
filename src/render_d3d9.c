@@ -8,6 +8,7 @@
 #include "render_d3d9.h"
 #include "utils.h"
 #include "wndproc.h"
+#include "blt.h"
 #include "debug.h"
 
 
@@ -388,17 +389,18 @@ DWORD WINAPI d3d9_render_main(void)
                 if (SUCCEEDED(IDirect3DDevice9_SetTexture(g_d3d9.device, 0, (IDirect3DBaseTexture9*)g_d3d9.surface_tex[tex_index])) &&
                     SUCCEEDED(IDirect3DTexture9_LockRect(g_d3d9.surface_tex[tex_index], 0, &lock_rc, &rc, 0)))
                 {
-                    unsigned char* src = (unsigned char*)g_ddraw->primary->surface;
-                    unsigned char* dst = (unsigned char*)lock_rc.pBits;
-
-                    int i;
-                    for (i = 0; i < g_ddraw->height; i++)
-                    {
-                        memcpy(dst, src, g_ddraw->primary->l_pitch);
-
-                        src += g_ddraw->primary->l_pitch;
-                        dst += lock_rc.Pitch;
-                    }
+                    blt_clean(
+                        lock_rc.pBits,
+                        0,
+                        0,
+                        min(g_ddraw->width, g_ddraw->primary->width),
+                        min(g_ddraw->height, g_ddraw->primary->height),
+                        lock_rc.Pitch,
+                        g_ddraw->primary->surface,
+                        0,
+                        0,
+                        g_ddraw->primary->l_pitch,
+                        g_ddraw->primary->bpp);
 
                     IDirect3DTexture9_UnlockRect(g_d3d9.surface_tex[tex_index], 0);
                 }
