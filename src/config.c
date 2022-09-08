@@ -9,6 +9,7 @@
 #include "render_ogl.h"
 #include "hook.h"
 #include "debug.h"
+#include "dllmain.h"
 
 static void cfg_init();
 static void cfg_create_ini();
@@ -54,7 +55,11 @@ void cfg_load()
 
     g_ddraw->armadahack = cfg_get_bool("armadahack", FALSE);
     g_ddraw->tshack = cfg_get_bool("tshack", FALSE);
-    g_ddraw->infantryhack = cfg_get_bool("infantryhack", FALSE);
+
+    if (g_ddraw->infantryhack = cfg_get_bool("infantryhack", FALSE))
+    {
+        GameHandlesClose = TRUE;
+    }
 
     g_ddraw->hotkeys.toggle_fullscreen = cfg_get_int("keytogglefullscreen", VK_RETURN);
     g_ddraw->hotkeys.toggle_maximize = cfg_get_int("keytogglemaximize", VK_NEXT);
