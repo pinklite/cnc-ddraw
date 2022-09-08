@@ -1047,9 +1047,10 @@ static void cfg_init()
     /* get process filename and directory */
     if (GetModuleFileNameA(NULL, g_config.game_path, sizeof(g_config.game_path) - 1) > 0)
     {
-        _splitpath(g_config.game_path, NULL, NULL, g_config.process_file_name, NULL);
+        _splitpath(g_config.game_path, NULL, NULL, g_config.process_file_name, g_config.process_file_ext);
 
-        char* end = strstr(g_config.game_path, g_config.process_file_name);
+        int len = strlen(g_config.game_path) - strlen(g_config.process_file_name) - strlen(g_config.process_file_ext);
+        char* end = strstr(g_config.game_path + len, g_config.process_file_name);
 
         if (end)
         {
@@ -1066,6 +1067,14 @@ static void cfg_init()
 
     if (GetFileAttributes(g_config.ini_path) == INVALID_FILE_ATTRIBUTES)
         cfg_create_ini();
+
+    if (GetFileAttributes(g_config.ini_path) == INVALID_FILE_ATTRIBUTES)
+    {
+        _snprintf(g_config.ini_path, sizeof(g_config.ini_path) - 1, "%sddraw.ini", g_config.game_path);
+        
+        if (GetFileAttributes(g_config.ini_path) == INVALID_FILE_ATTRIBUTES)
+            cfg_create_ini();
+    }
 }
 
 DWORD cfg_get_string(LPCSTR key, LPCSTR default_value, LPSTR out_string, DWORD out_size)
