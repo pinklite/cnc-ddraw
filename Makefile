@@ -1,7 +1,7 @@
 -include config.mk
 
 WINDRES  ?= windres
-LDFLAGS   = -Iinc -Wall -Wl,--enable-stdcall-fixup -s
+LDFLAGS   = -Iinc -Wall -Wl,--enable-stdcall-fixup -s -O3
 CFLAGS    = -std=c99
 LIBS      = -lgdi32 -lwinmm -lpsapi -ldbghelp -lole32
 
