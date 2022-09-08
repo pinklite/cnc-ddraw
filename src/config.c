@@ -56,7 +56,7 @@ void cfg_load()
     g_ddraw->armadahack = cfg_get_bool("armadahack", FALSE);
     g_ddraw->tshack = cfg_get_bool("tshack", FALSE);
 
-    if (g_ddraw->infantryhack = cfg_get_bool("infantryhack", FALSE))
+    if ((g_ddraw->infantryhack = cfg_get_bool("infantryhack", FALSE)))
     {
         GameHandlesClose = TRUE;
     }

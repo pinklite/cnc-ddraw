@@ -95,8 +95,8 @@ void blt_colorkey(
 {
     int bytes_pp = bpp / 8;
 
-    size_t d_p = dst_p - (dst_w * bytes_pp);
-    size_t s_p = src_p - (dst_w * bytes_pp);
+    size_t d_p = (dst_p / bytes_pp) - dst_w;
+    size_t s_p = (src_p / bytes_pp) - dst_w;
 
     src += (src_x * bytes_pp) + (src_p * src_y);
     dst += (dst_x * bytes_pp) + (dst_p * dst_y);
@@ -152,24 +152,27 @@ void blt_colorkey(
         unsigned short key_l = (unsigned short)key_low;
         unsigned short key_h = (unsigned short)key_high;
 
+        unsigned short* d = (unsigned short*)dst;
+        unsigned short* s = (unsigned short*)src;
+
         if (key_l == key_h)
         {
             for (int y = 0; y < dst_h; y++)
             {
                 for (int x = 0; x < dst_w; x++)
                 {
-                    unsigned short c = *((unsigned short*)src)++;
+                    unsigned short c = *s++;
 
                     if (c != key_l)
                     {
-                        *((unsigned short*)dst) = c;
+                        *d = c;
                     }
 
-                    ((unsigned short*)dst)++;
+                    d++;
                 }
 
-                src += s_p;
-                dst += d_p;
+                s += s_p;
+                d += d_p;
             }
         }
         else
@@ -178,18 +181,18 @@ void blt_colorkey(
             {
                 for (int x = 0; x < dst_w; x++)
                 {
-                    unsigned short c = *((unsigned short*)src)++;
+                    unsigned short c = *s++;
 
                     if (c < key_l || c > key_h)
                     {
-                        *((unsigned short*)dst) = c;
+                        *d = c;
                     }
 
-                    ((unsigned short*)dst)++;
+                    d++;
                 }
 
-                src += s_p;
-                dst += d_p;
+                s += s_p;
+                d += d_p;
             }
         }
     }
@@ -198,24 +201,27 @@ void blt_colorkey(
         unsigned int key_l = (unsigned int)key_low;
         unsigned int key_h = (unsigned int)key_high;
 
+        unsigned int* d = (unsigned int*)dst;
+        unsigned int* s = (unsigned int*)src;
+
         if (key_l == key_h)
         {
             for (int y = 0; y < dst_h; y++)
             {
                 for (int x = 0; x < dst_w; x++)
                 {
-                    unsigned int c = *((unsigned int*)src)++;
+                    unsigned int c = *s++;
 
                     if (c != key_l)
                     {
-                        *((unsigned int*)dst) = c;
+                        *d = c;
                     }
 
-                    ((unsigned int*)dst)++;
+                    d++;
                 }
 
-                src += s_p;
-                dst += d_p;
+                s += s_p;
+                d += d_p;
             }
         }
         else
@@ -224,18 +230,18 @@ void blt_colorkey(
             {
                 for (int x = 0; x < dst_w; x++)
                 {
-                    unsigned int c = *((unsigned int*)src)++;
+                    unsigned int c = *s++;
 
                     if (c < key_l || c > key_h)
                     {
-                        *((unsigned int*)dst) = c;
+                        *d = c;
                     }
 
-                    ((unsigned int*)dst)++;
+                    d++;
                 }
 
-                src += s_p;
-                dst += d_p;
+                s += s_p;
+                d += d_p;
             }
         }
     }
