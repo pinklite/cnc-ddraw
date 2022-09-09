@@ -184,8 +184,6 @@ static void ogl_create_textures(int width, int height)
     g_ogl.surface_tex =
         HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, g_ogl.surface_tex_width * g_ogl.surface_tex_height * sizeof(int));
 
-    g_ogl.adjust_alignment = (width % 4) != 0;
-
     g_ogl.scale_w = (float)width / g_ogl.surface_tex_width;
     g_ogl.scale_h = (float)height / g_ogl.surface_tex_height;
 
@@ -598,6 +596,8 @@ static void ogl_render()
 
         if (g_ddraw->primary && 
             g_ddraw->primary->bpp == g_ddraw->bpp &&
+            g_ddraw->primary->width == g_ddraw->width &&
+            g_ddraw->primary->height == g_ddraw->height &&
             (g_ddraw->bpp == 16 || g_ddraw->bpp == 32 || g_ddraw->primary->palette))
         {
             if (g_ddraw->vhack)
@@ -644,8 +644,10 @@ static void ogl_render()
 
                 glBindTexture(GL_TEXTURE_2D, g_ogl.surface_tex_ids[tex_index]);
 
-                if (g_ogl.adjust_alignment)
-                    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+                DWORD row_len = g_ddraw->primary->l_pitch ? g_ddraw->primary->l_pitch / g_ddraw->primary->lx_pitch : 0;
+
+                if (row_len != g_ddraw->primary->width)
+                    glPixelStorei(GL_UNPACK_ROW_LENGTH, row_len);
 
                 glTexSubImage2D(
                     GL_TEXTURE_2D,
@@ -658,8 +660,8 @@ static void ogl_render()
                     g_ogl.surface_type,
                     g_ddraw->primary->surface);
 
-                if (g_ogl.adjust_alignment)
-                    glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
+                if (row_len != g_ddraw->primary->width)
+                    glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
             }
 
             static int error_check_count = 0;

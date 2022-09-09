@@ -32,7 +32,6 @@ typedef struct OGLRENDERER
     GLuint scale_vbos[3];
     GLuint scale_vao;
     BOOL use_opengl;
-    BOOL adjust_alignment;
     BOOL filter_bilinear;
 } OGLRENDERER;
 
