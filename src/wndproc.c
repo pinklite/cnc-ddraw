@@ -16,6 +16,7 @@
 
 LRESULT CALLBACK fake_WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
+#ifdef _DEBUG_X
     if (uMsg != WM_MOUSEMOVE && uMsg != WM_NCMOUSEMOVE && uMsg != WM_NCHITTEST && uMsg != WM_SETCURSOR &&
         uMsg != WM_KEYUP && uMsg != WM_KEYDOWN && uMsg != WM_CHAR && uMsg != WM_DEADCHAR && uMsg != WM_INPUT &&
         uMsg != WM_UNICHAR && uMsg != WM_IME_CHAR && uMsg != WM_IME_KEYDOWN && uMsg != WM_IME_KEYUP)
@@ -29,6 +30,7 @@ LRESULT CALLBACK fake_WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam
             lParam,
             lParam);
     }
+#endif
 
     static BOOL in_size_move = FALSE;
     static int redraw_count = 0;
