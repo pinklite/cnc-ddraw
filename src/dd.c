@@ -128,16 +128,16 @@ HRESULT dd_EnumDisplayModes(
 
                 memset(&s, 0, sizeof(s));
 
-                s.dwSize = sizeof(DDSURFACEDESC);
-                s.dwFlags = DDSD_HEIGHT | DDSD_REFRESHRATE | DDSD_WIDTH | DDSD_PITCH | DDSD_PIXELFORMAT;
-                s.dwHeight = m.dmPelsHeight;
-                s.dwWidth = m.dmPelsWidth;
-                s.lPitch = s.dwWidth;
-                s.dwRefreshRate = 60;
-                s.ddpfPixelFormat.dwSize = sizeof(DDPIXELFORMAT);
-
                 s.ddpfPixelFormat.dwFlags = DDPF_PALETTEINDEXED8 | DDPF_RGB;
                 s.ddpfPixelFormat.dwRGBBitCount = 8;
+
+                s.dwSize = sizeof(DDSURFACEDESC);
+                s.dwFlags = DDSD_HEIGHT | DDSD_REFRESHRATE | DDSD_WIDTH | DDSD_PITCH | DDSD_PIXELFORMAT;
+                s.dwRefreshRate = 60;
+                s.dwHeight = m.dmPelsHeight;
+                s.dwWidth = m.dmPelsWidth; 
+                s.lPitch = ((s.dwWidth * s.ddpfPixelFormat.dwRGBBitCount + 31) & ~31) >> 3;
+                s.ddpfPixelFormat.dwSize = sizeof(DDPIXELFORMAT);
 
                 if (g_ddraw->bpp == 8 || g_ddraw->resolutions == RESLIST_FULL)
                 {
@@ -148,12 +148,12 @@ HRESULT dd_EnumDisplayModes(
                     }
                 }
 
-                s.lPitch = s.dwWidth * 2;
                 s.ddpfPixelFormat.dwFlags = DDPF_RGB;
                 s.ddpfPixelFormat.dwRGBBitCount = 16;
                 s.ddpfPixelFormat.dwRBitMask = 0xF800;
                 s.ddpfPixelFormat.dwGBitMask = 0x07E0;
                 s.ddpfPixelFormat.dwBBitMask = 0x001F;
+                s.lPitch = ((s.dwWidth * s.ddpfPixelFormat.dwRGBBitCount + 31) & ~31) >> 3;
 
                 if (g_ddraw->bpp == 16 || g_ddraw->resolutions == RESLIST_FULL)
                 {
@@ -164,12 +164,12 @@ HRESULT dd_EnumDisplayModes(
                     }
                 }
 
-                s.lPitch = s.dwWidth * 4;
                 s.ddpfPixelFormat.dwFlags = DDPF_RGB;
                 s.ddpfPixelFormat.dwRGBBitCount = 32;
                 s.ddpfPixelFormat.dwRBitMask = 0xFF0000;
                 s.ddpfPixelFormat.dwGBitMask = 0x00FF00;
                 s.ddpfPixelFormat.dwBBitMask = 0x0000FF;
+                s.lPitch = ((s.dwWidth * s.ddpfPixelFormat.dwRGBBitCount + 31) & ~31) >> 3;
 
                 if (g_ddraw->bpp == 32 || g_ddraw->resolutions == RESLIST_FULL)
                 {
@@ -219,15 +219,16 @@ HRESULT dd_EnumDisplayModes(
 
             memset(&s, 0, sizeof(s));
 
-            s.dwSize = sizeof(DDSURFACEDESC);
-            s.dwFlags = DDSD_HEIGHT | DDSD_REFRESHRATE | DDSD_WIDTH | DDSD_PITCH | DDSD_PIXELFORMAT;
-            s.dwHeight = resolutions[i].cy;
-            s.dwWidth = resolutions[i].cx;
-            s.lPitch = s.dwWidth;
-            s.dwRefreshRate = 60;
             s.ddpfPixelFormat.dwSize = sizeof(DDPIXELFORMAT);
             s.ddpfPixelFormat.dwFlags = DDPF_PALETTEINDEXED8 | DDPF_RGB;
             s.ddpfPixelFormat.dwRGBBitCount = 8;
+
+            s.dwSize = sizeof(DDSURFACEDESC);
+            s.dwFlags = DDSD_HEIGHT | DDSD_REFRESHRATE | DDSD_WIDTH | DDSD_PITCH | DDSD_PIXELFORMAT;
+            s.dwRefreshRate = 60;
+            s.dwHeight = resolutions[i].cy;
+            s.dwWidth = resolutions[i].cx;
+            s.lPitch = ((s.dwWidth * s.ddpfPixelFormat.dwRGBBitCount + 31) & ~31) >> 3;
 
             if (lpEnumModesCallback((LPDDSURFACEDESC)&s, lpContext) == DDENUMRET_CANCEL)
             {
@@ -235,12 +236,12 @@ HRESULT dd_EnumDisplayModes(
                 return DD_OK;
             }
 
-            s.lPitch = s.dwWidth * 2;
             s.ddpfPixelFormat.dwFlags = DDPF_RGB;
             s.ddpfPixelFormat.dwRGBBitCount = 16;
             s.ddpfPixelFormat.dwRBitMask = 0xF800;
             s.ddpfPixelFormat.dwGBitMask = 0x07E0;
             s.ddpfPixelFormat.dwBBitMask = 0x001F;
+            s.lPitch = ((s.dwWidth * s.ddpfPixelFormat.dwRGBBitCount + 31) & ~31) >> 3;
 
             if (lpEnumModesCallback((LPDDSURFACEDESC)&s, lpContext) == DDENUMRET_CANCEL)
             {
@@ -251,12 +252,12 @@ HRESULT dd_EnumDisplayModes(
             if (g_ddraw->resolutions == RESLIST_MINI)
                 continue;
 
-            s.lPitch = s.dwWidth * 4;
             s.ddpfPixelFormat.dwFlags = DDPF_RGB;
             s.ddpfPixelFormat.dwRGBBitCount = 32;
             s.ddpfPixelFormat.dwRBitMask = 0xFF0000;
             s.ddpfPixelFormat.dwGBitMask = 0x00FF00;
             s.ddpfPixelFormat.dwBBitMask = 0x0000FF;
+            s.lPitch = ((s.dwWidth * s.ddpfPixelFormat.dwRGBBitCount + 31) & ~31) >> 3;
 
             if (lpEnumModesCallback((LPDDSURFACEDESC)&s, lpContext) == DDENUMRET_CANCEL)
             {
@@ -322,34 +323,40 @@ HRESULT dd_GetDisplayMode(LPDDSURFACEDESC lpDDSurfaceDesc)
 
         memset(lpDDSurfaceDesc, 0, size);
 
-        lpDDSurfaceDesc->dwSize = size;
-        lpDDSurfaceDesc->dwFlags = DDSD_HEIGHT | DDSD_REFRESHRATE | DDSD_WIDTH | DDSD_PITCH | DDSD_PIXELFORMAT;
-        lpDDSurfaceDesc->dwHeight = g_ddraw->height ? g_ddraw->height : 768;
-        lpDDSurfaceDesc->dwWidth = g_ddraw->width ? g_ddraw->width : 1024;
-        lpDDSurfaceDesc->lPitch = lpDDSurfaceDesc->dwWidth;
-        lpDDSurfaceDesc->dwRefreshRate = 60;
         lpDDSurfaceDesc->ddpfPixelFormat.dwSize = sizeof(DDPIXELFORMAT);
-
         lpDDSurfaceDesc->ddpfPixelFormat.dwFlags = DDPF_PALETTEINDEXED8 | DDPF_RGB;
         lpDDSurfaceDesc->ddpfPixelFormat.dwRGBBitCount = 8;
 
+        lpDDSurfaceDesc->dwSize = size;
+        lpDDSurfaceDesc->dwFlags = DDSD_HEIGHT | DDSD_REFRESHRATE | DDSD_WIDTH | DDSD_PITCH | DDSD_PIXELFORMAT;
+        lpDDSurfaceDesc->dwRefreshRate = 60;
+        lpDDSurfaceDesc->dwHeight = g_ddraw->height ? g_ddraw->height : 768;
+        lpDDSurfaceDesc->dwWidth = g_ddraw->width ? g_ddraw->width : 1024;
+
+        lpDDSurfaceDesc->lPitch = 
+            ((lpDDSurfaceDesc->dwWidth * lpDDSurfaceDesc->ddpfPixelFormat.dwRGBBitCount + 31) & ~31) >> 3;
+
         if (g_ddraw->bpp == 32)
         {
-            lpDDSurfaceDesc->lPitch = lpDDSurfaceDesc->dwWidth * 4;
             lpDDSurfaceDesc->ddpfPixelFormat.dwFlags = DDPF_RGB;
             lpDDSurfaceDesc->ddpfPixelFormat.dwRGBBitCount = 32;
             lpDDSurfaceDesc->ddpfPixelFormat.dwRBitMask = 0xFF0000;
             lpDDSurfaceDesc->ddpfPixelFormat.dwGBitMask = 0x00FF00;
             lpDDSurfaceDesc->ddpfPixelFormat.dwBBitMask = 0x0000FF;
+
+            lpDDSurfaceDesc->lPitch =
+                ((lpDDSurfaceDesc->dwWidth * lpDDSurfaceDesc->ddpfPixelFormat.dwRGBBitCount + 31) & ~31) >> 3;
         }
         else if (g_ddraw->bpp != 8)
         {
-            lpDDSurfaceDesc->lPitch = lpDDSurfaceDesc->dwWidth * 2;
             lpDDSurfaceDesc->ddpfPixelFormat.dwFlags = DDPF_RGB;
             lpDDSurfaceDesc->ddpfPixelFormat.dwRGBBitCount = 16;
             lpDDSurfaceDesc->ddpfPixelFormat.dwRBitMask = 0xF800;
             lpDDSurfaceDesc->ddpfPixelFormat.dwGBitMask = 0x07E0;
             lpDDSurfaceDesc->ddpfPixelFormat.dwBBitMask = 0x001F;
+
+            lpDDSurfaceDesc->lPitch =
+                ((lpDDSurfaceDesc->dwWidth * lpDDSurfaceDesc->ddpfPixelFormat.dwRGBBitCount + 31) & ~31) >> 3;
         }
     }
 
@@ -358,7 +365,9 @@ HRESULT dd_GetDisplayMode(LPDDSURFACEDESC lpDDSurfaceDesc)
 
 HRESULT dd_GetMonitorFrequency(LPDWORD lpdwFreq)
 {
-    *lpdwFreq = 60;
+    if (lpdwFreq)
+        *lpdwFreq = 60;
+
     return DD_OK;
 }
 
