@@ -75,6 +75,30 @@ void blt_colorfill(
     unsigned int color,
     int bpp);
 
+void blt_rgb565_to_rgba8888(
+    unsigned int* dst,
+    int dst_x,
+    int dst_y,
+    int dst_w,
+    int dst_h,
+    int dst_p,
+    unsigned short* src,
+    int src_x,
+    int src_y,
+    int src_p);
+
+void blt_bgra8888_to_rgba8888(
+    unsigned int* dst,
+    int dst_x,
+    int dst_y,
+    int dst_w,
+    int dst_h,
+    int dst_p,
+    unsigned int* src,
+    int src_x,
+    int src_y,
+    int src_p);
+
 void blt_stretch(
     unsigned char* dst_buf,
     int dst_x,

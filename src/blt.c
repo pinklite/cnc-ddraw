@@ -95,8 +95,8 @@ void blt_colorkey(
 {
     int bytes_pp = bpp / 8;
 
-    size_t d_p = (dst_p / bytes_pp) - dst_w;
-    size_t s_p = (src_p / bytes_pp) - dst_w;
+    size_t s_a = (src_p / bytes_pp) - dst_w;
+    size_t d_a = (dst_p / bytes_pp) - dst_w;
 
     src += (src_x * bytes_pp) + (src_p * src_y);
     dst += (dst_x * bytes_pp) + (dst_p * dst_y);
@@ -122,8 +122,8 @@ void blt_colorkey(
                     dst++;
                 }
 
-                src += s_p;
-                dst += d_p;
+                src += s_a;
+                dst += d_a;
             }
         }
         else
@@ -142,8 +142,8 @@ void blt_colorkey(
                     dst++;
                 }
 
-                src += s_p;
-                dst += d_p;
+                src += s_a;
+                dst += d_a;
             }
         }
     }
@@ -171,8 +171,8 @@ void blt_colorkey(
                     d++;
                 }
 
-                s += s_p;
-                d += d_p;
+                s += s_a;
+                d += d_a;
             }
         }
         else
@@ -191,8 +191,8 @@ void blt_colorkey(
                     d++;
                 }
 
-                s += s_p;
-                d += d_p;
+                s += s_a;
+                d += d_a;
             }
         }
     }
@@ -220,8 +220,8 @@ void blt_colorkey(
                     d++;
                 }
 
-                s += s_p;
-                d += d_p;
+                s += s_a;
+                d += d_a;
             }
         }
         else
@@ -240,8 +240,8 @@ void blt_colorkey(
                     d++;
                 }
 
-                s += s_p;
-                d += d_p;
+                s += s_a;
+                d += d_a;
             }
         }
     }
@@ -446,6 +446,78 @@ void blt_colorfill(
                 memcpy(dst, first_row, size);
             }
         }
+    }
+}
+
+void blt_rgb565_to_rgba8888(
+    unsigned int* dst,
+    int dst_x,
+    int dst_y,
+    int dst_w,
+    int dst_h,
+    int dst_p,
+    unsigned short* src,
+    int src_x,
+    int src_y,
+    int src_p)
+{
+    size_t s_a = (src_p / sizeof(unsigned short)) - dst_w;
+    size_t d_a = (dst_p / sizeof(unsigned int))   - dst_w;
+
+    src += (src_x * sizeof(unsigned short)) + (src_p * src_y);
+    dst += (dst_x * sizeof(unsigned int))   + (dst_p * dst_y);
+
+    for (int y = 0; y < dst_h; y++)
+    {
+        for (int x = 0; x < dst_w; x++)
+        {
+            unsigned short pixel = *src++;
+
+            BYTE r = ((pixel & 0xF800) >> 11) << 3;
+            BYTE g = ((pixel & 0x07E0) >> 5) << 2;
+            BYTE b = ((pixel & 0x001F)) << 3;
+
+            *dst++ = (0xFF << 24) | (b << 16) | (g << 8) | r;
+        }
+
+        src += s_a;
+        dst += d_a;
+    }
+}
+
+void blt_bgra8888_to_rgba8888(
+    unsigned int* dst,
+    int dst_x,
+    int dst_y,
+    int dst_w,
+    int dst_h,
+    int dst_p,
+    unsigned int* src,
+    int src_x,
+    int src_y,
+    int src_p)
+{
+    size_t s_a = (src_p / sizeof(unsigned int)) - dst_w;
+    size_t d_a = (dst_p / sizeof(unsigned int)) - dst_w;
+
+    src += (src_x * sizeof(unsigned int)) + (src_p * src_y);
+    dst += (dst_x * sizeof(unsigned int)) + (dst_p * dst_y);
+
+    for (int y = 0; y < dst_h; y++)
+    {
+        for (int x = 0; x < dst_w; x++)
+        {
+            unsigned int pixel = *src++;
+
+            BYTE r = pixel >> 16;
+            BYTE g = pixel >> 8;
+            BYTE b = pixel;
+
+            *dst++ = (0xFF << 24) | (b << 16) | (g << 8) | r;
+        }
+
+        src += s_a;
+        dst += d_a;
     }
 }
 

@@ -6,6 +6,7 @@
 #include "ddpalette.h"
 #include "ddsurface.h"
 #include "lodepng.h"
+#include "blt.h"
 
 
 static BOOL ss_screenshot_8bit(char* filename, IDirectDrawSurfaceImpl* src)
@@ -29,7 +30,15 @@ static BOOL ss_screenshot_8bit(char* filename, IDirectDrawSurfaceImpl* src)
 
     unsigned char* dst_buf = NULL;
     size_t dst_buf_size = 0;
-    unsigned int error = lodepng_encode(&dst_buf, &dst_buf_size, dds_GetBuffer(src), src->width, src->height, &state);
+
+    unsigned int error = 
+        lodepng_encode(
+            &dst_buf, 
+            &dst_buf_size, 
+            dds_GetBuffer(src), 
+            src->l_pitch / src->lx_pitch, /* can't specify pitch so we use bitmap real width */
+            src->height,
+            &state);
 
     if (!error && dst_buf)
         lodepng_save_file(dst_buf, dst_buf_size, filename);
@@ -49,22 +58,17 @@ static BOOL ss_screenshot_16bit(char* filename, IDirectDrawSurfaceImpl* src)
 
     if (buf)
     {
-        unsigned short* src_buf = (unsigned short*)dds_GetBuffer(src);
-        unsigned int* dst_buf = buf;
-
-        for (int y = 0; y < src->height; y++)
-        {
-            for (int x = 0; x < src->width; x++)
-            {
-                unsigned short pixel = *src_buf++;
-
-                BYTE red = ((pixel & 0xF800) >> 11) << 3;
-                BYTE green = ((pixel & 0x07E0) >> 5) << 2;
-                BYTE blue = ((pixel & 0x001F)) << 3;
-
-                *dst_buf++ = (0xFF << 24) | (blue << 16) | (green << 8) | red;
-            }
-        }
+        blt_rgb565_to_rgba8888(
+            buf,
+            0,
+            0,
+            src->width,
+            src->height,
+            src->width * 4,
+            dds_GetBuffer(src),
+            0,
+            0,
+            src->l_pitch);
 
         error = lodepng_encode32_file(filename, (unsigned char*)buf, src->width, src->height);
 
@@ -81,22 +85,17 @@ static BOOL ss_screenshot_32bit(char* filename, IDirectDrawSurfaceImpl* src)
 
     if (buf)
     {
-        unsigned int* src_buf = (unsigned int*)dds_GetBuffer(src);
-        unsigned int* dst_buf = buf;
-
-        for (int y = 0; y < src->height; y++)
-        {
-            for (int x = 0; x < src->width; x++)
-            {
-                unsigned int pixel = *src_buf++;
-
-                BYTE red = (pixel >> 16) & 0xFF;
-                BYTE green = (pixel >> 8) & 0xFF;
-                BYTE blue = pixel & 0xFF;
-
-                *dst_buf++ = (0xFF << 24) | (blue << 16) | (green << 8) | red;
-            }
-        }
+        blt_bgra8888_to_rgba8888(
+            buf,
+            0,
+            0,
+            src->width,
+            src->height,
+            src->width * 4,
+            dds_GetBuffer(src),
+            0,
+            0,
+            src->l_pitch);
 
         error = lodepng_encode32_file(filename, (unsigned char*)buf, src->width, src->height);
 
@@ -108,7 +107,7 @@ static BOOL ss_screenshot_32bit(char* filename, IDirectDrawSurfaceImpl* src)
 
 BOOL ss_take_screenshot(IDirectDrawSurfaceImpl* src)
 {
-    if (!src || !dds_GetBuffer(src))
+    if (!src || !dds_GetBuffer(src) || !src->width || !src->height)
         return FALSE;
 
     char title[128];
