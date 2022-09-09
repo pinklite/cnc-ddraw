@@ -461,11 +461,11 @@ void blt_rgb565_to_rgba8888(
     int src_y,
     int src_p)
 {
-    size_t s_a = (src_p / sizeof(unsigned short)) - dst_w;
-    size_t d_a = (dst_p / sizeof(unsigned int))   - dst_w;
+    size_t s_a = (src_p / sizeof(src[0])) - dst_w;
+    size_t d_a = (dst_p / sizeof(dst[0])) - dst_w;
 
-    src += (src_x * sizeof(unsigned short)) + (src_p * src_y);
-    dst += (dst_x * sizeof(unsigned int))   + (dst_p * dst_y);
+    src += (src_x * sizeof(src[0])) + (src_p * src_y);
+    dst += (dst_x * sizeof(dst[0])) + (dst_p * dst_y);
 
     for (int y = 0; y < dst_h; y++)
     {
@@ -497,11 +497,11 @@ void blt_bgra8888_to_rgba8888(
     int src_y,
     int src_p)
 {
-    size_t s_a = (src_p / sizeof(unsigned int)) - dst_w;
-    size_t d_a = (dst_p / sizeof(unsigned int)) - dst_w;
+    size_t s_a = (src_p / sizeof(src[0])) - dst_w;
+    size_t d_a = (dst_p / sizeof(dst[0])) - dst_w;
 
-    src += (src_x * sizeof(unsigned int)) + (src_p * src_y);
-    dst += (dst_x * sizeof(unsigned int)) + (dst_p * dst_y);
+    src += (src_x * sizeof(src[0])) + (src_p * src_y);
+    dst += (dst_x * sizeof(dst[0])) + (dst_p * dst_y);
 
     for (int y = 0; y < dst_h; y++)
     {
