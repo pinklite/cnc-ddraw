@@ -36,7 +36,7 @@ void cfg_load()
     g_ddraw->accurate_timers = cfg_get_bool("accuratetimers", FALSE);
     g_ddraw->resizable = cfg_get_bool("resizable", TRUE);
     g_ddraw->nonexclusive = cfg_get_bool("nonexclusive", FALSE);
-    g_ddraw->fixpitch = cfg_get_bool("fixpitch", TRUE);
+    g_ddraw->fixpitch = cfg_get_bool("fixpitch", FALSE);
     g_ddraw->fixchilds = cfg_get_int("fixchilds", FIX_CHILDS_DETECT_PAINT);
     g_ddraw->fixwndprochook = cfg_get_bool("fixwndprochook", FALSE);
     g_ddraw->novidmem = cfg_get_bool("novidmem", FALSE);
@@ -332,7 +332,7 @@ static void cfg_create_ini()
             "\n"
             "; Fixes issues where the pitch of a surface is not a multiple of 4\n"
             "; Note: Enable this if some parts of the screen are being displayed diagonally\n"
-            "fixpitch=true\n"
+            "fixpitch=false\n"
             "\n"
             "; Force CPU0 affinity, avoids crashes/freezing, *might* have a performance impact\n"
             "singlecpu=true\n"

@@ -1030,17 +1030,16 @@ HRESULT dd_CreateSurface(
 
     if (dst_surface->width && dst_surface->height)
     {
-        DWORD bmp_width = dst_surface->width;
-        DWORD bmp_height = dst_surface->height;
+        if (dst_surface->width == 71 && dst_surface->height == 24) dst_surface->width = 72; //Commandos
 
         dst_surface->lx_pitch = dst_surface->bpp / 8;
-        dst_surface->l_pitch = bmp_width * dst_surface->lx_pitch;
+        dst_surface->l_pitch = dst_surface->width * dst_surface->lx_pitch;
 
-        if (g_ddraw->fixpitch)
+        if (g_ddraw->fixpitch && !(dst_surface->caps & (DDSCAPS_PRIMARYSURFACE | DDSCAPS_BACKBUFFER)))
         {
             while (dst_surface->l_pitch % 4)
             {
-                dst_surface->l_pitch = ++bmp_width * dst_surface->lx_pitch;
+                dst_surface->l_pitch = ++dst_surface->width * dst_surface->lx_pitch;
             }
         }
 
@@ -1048,8 +1047,8 @@ HRESULT dd_CreateSurface(
             HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, sizeof(BITMAPINFOHEADER) + sizeof(RGBQUAD) * 256);
 
         dst_surface->bmi->bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
-        dst_surface->bmi->bmiHeader.biWidth = bmp_width;
-        dst_surface->bmi->bmiHeader.biHeight = -((int)bmp_height + 200);
+        dst_surface->bmi->bmiHeader.biWidth = dst_surface->width;
+        dst_surface->bmi->bmiHeader.biHeight = -((int)dst_surface->height + 200);
         dst_surface->bmi->bmiHeader.biPlanes = 1;
         dst_surface->bmi->bmiHeader.biBitCount = dst_surface->bpp;
         dst_surface->bmi->bmiHeader.biCompression = dst_surface->bpp == 8 ? BI_RGB : BI_BITFIELDS;
@@ -1062,7 +1061,7 @@ HRESULT dd_CreateSurface(
         }
 
         dst_surface->bmi->bmiHeader.biSizeImage =
-            ((bmp_width * clr_bits + 31) & ~31) / 8 * bmp_height;
+            ((dst_surface->width * clr_bits + 31) & ~31) / 8 * dst_surface->height;
 
         if (dst_surface->bpp == 8)
         {
@@ -1091,7 +1090,7 @@ HRESULT dd_CreateSurface(
         dst_surface->bitmap =
             CreateDIBSection(dst_surface->hdc, dst_surface->bmi, DIB_RGB_COLORS, (void**)&dst_surface->surface, NULL, 0);
 
-        dst_surface->bmi->bmiHeader.biHeight = -((int)bmp_height);
+        dst_surface->bmi->bmiHeader.biHeight = -((int)dst_surface->height);
 
         if (!dst_surface->bitmap)
         {
@@ -1099,7 +1098,7 @@ HRESULT dd_CreateSurface(
                 HeapAlloc(
                     GetProcessHeap(),
                     HEAP_ZERO_MEMORY,
-                    dst_surface->l_pitch * (bmp_height + 200) * dst_surface->lx_pitch);
+                    dst_surface->l_pitch * (dst_surface->height + 200) * dst_surface->lx_pitch);
         }
 
         if (dst_surface->caps & DDSCAPS_PRIMARYSURFACE)
