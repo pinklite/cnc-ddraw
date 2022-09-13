@@ -12,6 +12,7 @@
 #include "fps_limiter.h"
 #include "debug.h"
 #include "utils.h"
+#include "blt.h"
 
 
 CNCDDRAW* g_ddraw = NULL;

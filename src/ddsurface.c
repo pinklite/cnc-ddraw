@@ -1036,19 +1036,11 @@ HRESULT dd_CreateSurface(
 
     if (dst_surface->width && dst_surface->height)
     {
-        DWORD bmp_width = dst_surface->width;
-        DWORD bmp_height = dst_surface->height;
-
         dst_surface->lx_pitch = dst_surface->bpp / 8;
-        dst_surface->l_pitch = bmp_width * dst_surface->lx_pitch;
+        dst_surface->l_pitch = ((dst_surface->width * dst_surface->bpp + 31) & ~31) >> 3;
 
-        if (g_ddraw->fixpitch)
-        {
-            while (dst_surface->l_pitch % 4)
-            {
-                dst_surface->l_pitch = ++bmp_width * dst_surface->lx_pitch;
-            }
-        }
+        DWORD bmp_width = dst_surface->l_pitch / dst_surface->lx_pitch;
+        DWORD bmp_height = dst_surface->height;
 
         dst_surface->bmi =
             HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, sizeof(BITMAPINFOHEADER) + sizeof(RGBQUAD) * 256);
