@@ -385,7 +385,13 @@ void blt_colorfill(
 
     dst += (dst_x * bytes_pp) + (dst_p * dst_y);
 
-    if (bpp == 8)
+    if (bpp == 8 ||
+        (bpp == 16 && 
+            (color & 0xFF) == ((color >> 8) & 0xFF)) ||
+        (bpp == 32 &&
+            (color & 0xFF) == ((color >> 8) & 0xFF) &&
+            (color & 0xFF) == ((color >> 16) & 0xFF) &&
+            (color & 0xFF) == ((color >> 24) & 0xFF)))
     {
         if (size == dst_p)
         {
@@ -402,70 +408,32 @@ void blt_colorfill(
     }
     else if (bpp == 16)
     {
-        if ((color & 0xFF) == ((color >> 8) & 0xFF))
+        unsigned short* first_row = (unsigned short*)dst;
+
+        for (int x = 0; x < dst_w; x++)
         {
-            if (size == dst_p)
-            {
-                memset(dst, color, dst_p * dst_h);
-            }
-            else
-            {
-                for (int i = 0; i < dst_h; i++)
-                {
-                    memset(dst, color, size);
-                    dst += dst_p;
-                }
-            }
+            first_row[x] = (unsigned short)color;
         }
-        else
+
+        for (int i = 1; i < dst_h; i++)
         {
-            unsigned short* first_row = (unsigned short*)dst;
-
-            for (int x = 0; x < dst_w; x++)
-            {
-                first_row[x] = (unsigned short)color;
-            }
-
-            for (int i = 1; i < dst_h; i++)
-            {
-                dst += dst_p;
-                memcpy(dst, first_row, size);
-            }
+            dst += dst_p;
+            memcpy(dst, first_row, size);
         }
     }
     else if (bpp == 32)
     {
-        if ((color & 0xFF) == ((color >> 8) & 0xFF) &&
-            (color & 0xFF) == ((color >> 16) & 0xFF) &&
-            (color & 0xFF) == ((color >> 24) & 0xFF))
+        unsigned int* first_row = (unsigned int*)dst;
+
+        for (int x = 0; x < dst_w; x++)
         {
-            if (size == dst_p)
-            {
-                memset(dst, color, dst_p * dst_h);
-            }
-            else
-            {
-                for (int i = 0; i < dst_h; i++)
-                {
-                    memset(dst, color, size);
-                    dst += dst_p;
-                }
-            }
+            first_row[x] = color;
         }
-        else
+
+        for (int i = 1; i < dst_h; i++)
         {
-            unsigned int* first_row = (unsigned int*)dst;
-
-            for (int x = 0; x < dst_w; x++)
-            {
-                first_row[x] = color;
-            }
-
-            for (int i = 1; i < dst_h; i++)
-            {
-                dst += dst_p;
-                memcpy(dst, first_row, size);
-            }
+            dst += dst_p;
+            memcpy(dst, first_row, size);
         }
     }
 }
