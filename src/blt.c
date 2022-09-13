@@ -296,8 +296,8 @@ void blt_colorkey_mirror_stretch(
             if (mirror_up_down)
                 scaled_y = src_h - 1 - scaled_y;
 
-            int src_row = src_surf_w * (scaled_y + src_y);
-            int dst_row = dst_surf_w * (y + dst_y);
+            int src_row = src_x + src_surf_w * (scaled_y + src_y);
+            int dst_row = dst_x + dst_surf_w * (y + dst_y);
 
             for (int x = 0; x < dst_w; x++)
             {
@@ -306,11 +306,11 @@ void blt_colorkey_mirror_stretch(
                 if (mirror_left_right)
                     scaled_x = src_w - 1 - scaled_x;
 
-                unsigned char c = ((unsigned char*)src)[scaled_x + src_x + src_row];
+                unsigned char c = ((unsigned char*)src)[scaled_x + src_row];
 
                 if (c < key_l || c > key_h)
                 {
-                    ((unsigned char*)dst)[x + dst_x + dst_row] = c;
+                    ((unsigned char*)dst)[x + dst_row] = c;
                 }
             }
         }
@@ -327,8 +327,8 @@ void blt_colorkey_mirror_stretch(
             if (mirror_up_down)
                 scaled_y = src_h - 1 - scaled_y;
 
-            int src_row = src_surf_w * (scaled_y + src_y);
-            int dst_row = dst_surf_w * (y + dst_y);
+            int src_row = src_x + src_surf_w * (scaled_y + src_y);
+            int dst_row = dst_x + dst_surf_w * (y + dst_y);
 
             for (int x = 0; x < dst_w; x++)
             {
@@ -337,11 +337,11 @@ void blt_colorkey_mirror_stretch(
                 if (mirror_left_right)
                     scaled_x = src_w - 1 - scaled_x;
 
-                unsigned short c = ((unsigned short*)src)[scaled_x + src_x + src_row];
+                unsigned short c = ((unsigned short*)src)[scaled_x + src_row];
 
                 if (c < key_l || c > key_h)
                 {
-                    ((unsigned short*)dst)[x + dst_x + dst_row] = c;
+                    ((unsigned short*)dst)[x + dst_row] = c;
                 }
             }
         }
@@ -358,8 +358,8 @@ void blt_colorkey_mirror_stretch(
             if (mirror_up_down)
                 scaled_y = src_h - 1 - scaled_y;
 
-            int src_row = src_surf_w * (scaled_y + src_y);
-            int dst_row = dst_surf_w * (y + dst_y);
+            int src_row = src_x + src_surf_w * (scaled_y + src_y);
+            int dst_row = dst_x + dst_surf_w * (y + dst_y);
 
             for (int x = 0; x < dst_w; x++)
             {
@@ -368,11 +368,11 @@ void blt_colorkey_mirror_stretch(
                 if (mirror_left_right)
                     scaled_x = src_w - 1 - scaled_x;
 
-                unsigned int c = ((unsigned int*)src)[scaled_x + src_x + src_row];
+                unsigned int c = ((unsigned int*)src)[scaled_x + src_row];
 
                 if (c < key_l || c > key_h)
                 {
-                    ((unsigned int*)dst)[x + dst_x + dst_row] = c;
+                    ((unsigned int*)dst)[x + dst_row] = c;
                 }
             }
         }
