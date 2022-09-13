@@ -39,6 +39,7 @@ void cfg_load()
     g_ddraw->fixpitch = cfg_get_bool("fixpitch", TRUE);
     g_ddraw->fixchilds = cfg_get_int("fixchilds", FIX_CHILDS_DETECT_PAINT);
     g_ddraw->fixwndprochook = cfg_get_bool("fixwndprochook", FALSE);
+    g_ddraw->flipclear = cfg_get_bool("flipclear", FALSE);
     g_ddraw->novidmem = cfg_get_bool("novidmem", FALSE);
     g_ddraw->fixnotresponding = cfg_get_bool("fixnotresponding", FALSE);
     g_ddraw->locktopleft = cfg_get_bool("locktopleft", FALSE);
@@ -357,6 +358,7 @@ static void cfg_create_ini()
             "gdilinear=false\n"
             "allow_wmactivate=false\n"
             "dinputhook=false\n"
+            "flipclear=false\n"
             "bpp=0\n"
             "\n"
             "\n"
@@ -491,6 +493,7 @@ static void cfg_create_ini()
             "[CARMA95]\n"
             "renderer=opengl\n"
             "noactivateapp=true\n"
+            "flipclear=true\n"
             "\n"
             "; Carmageddon\n"
             "[CARM95]\n"

@@ -21,6 +21,7 @@ typedef struct IDirectDrawSurfaceImpl
     DWORD width;
     DWORD height;
     DWORD bpp;
+    DWORD size;
     DWORD flags;
     DWORD caps;
 

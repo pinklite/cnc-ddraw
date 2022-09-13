@@ -545,6 +545,12 @@ HRESULT dds_Flip(IDirectDrawSurfaceImpl* This, IDirectDrawSurfaceImpl* lpDDSurfa
         InterlockedExchangePointer(&backbuffer->surface, buf);
         InterlockedExchangePointer(&backbuffer->bitmap, bitmap);
         InterlockedExchangePointer(&backbuffer->hdc, dc);
+
+        if (g_ddraw->flipclear)
+        {
+            memset(buf, 0, backbuffer->size);
+        }
+
         LeaveCriticalSection(&g_ddraw->cs);
 
         if (!lpDDSurfaceTargetOverride && This->backbuffer->backbuffer)
@@ -1092,6 +1098,7 @@ HRESULT dd_CreateSurface(
             CreateDIBSection(dst_surface->hdc, dst_surface->bmi, DIB_RGB_COLORS, (void**)&dst_surface->surface, NULL, 0);
 
         dst_surface->bmi->bmiHeader.biHeight = -((int)bmp_height);
+        dst_surface->size = dst_surface->l_pitch * bmp_height * dst_surface->lx_pitch;
 
         if (!dst_surface->bitmap)
         {
