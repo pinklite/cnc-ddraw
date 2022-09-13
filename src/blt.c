@@ -387,20 +387,34 @@ void blt_colorfill(
 
     if (bpp == 8)
     {
-        for (int i = 0; i < dst_h; i++)
+        if (size == dst_p)
         {
-            memset(dst, color, size);
-            dst += dst_p;
+            memset(dst, color, dst_p * dst_h);
+        }
+        else
+        {
+            for (int i = 0; i < dst_h; i++)
+            {
+                memset(dst, color, size);
+                dst += dst_p;
+            }
         }
     }
     else if (bpp == 16)
     {
         if ((color & 0xFF) == ((color >> 8) & 0xFF))
         {
-            for (int i = 0; i < dst_h; i++)
+            if (size == dst_p)
             {
-                memset(dst, color, size);
-                dst += dst_p;
+                memset(dst, color, dst_p * dst_h);
+            }
+            else
+            {
+                for (int i = 0; i < dst_h; i++)
+                {
+                    memset(dst, color, size);
+                    dst += dst_p;
+                }
             }
         }
         else
@@ -425,10 +439,17 @@ void blt_colorfill(
             (color & 0xFF) == ((color >> 16) & 0xFF) &&
             (color & 0xFF) == ((color >> 24) & 0xFF))
         {
-            for (int i = 0; i < dst_h; i++)
+            if (size == dst_p)
             {
-                memset(dst, color, size);
-                dst += dst_p;
+                memset(dst, color, dst_p * dst_h);
+            }
+            else
+            {
+                for (int i = 0; i < dst_h; i++)
+                {
+                    memset(dst, color, size);
+                    dst += dst_p;
+                }
             }
         }
         else
