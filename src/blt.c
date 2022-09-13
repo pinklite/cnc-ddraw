@@ -550,27 +550,30 @@ void blt_stretch(
 
     if (bpp == 8)
     {
+        unsigned char* d = (unsigned char*)dst;
+        unsigned char* s = (unsigned char*)src;
+
         for (int y = 0; y < dst_h; y++)
         {
             int scaled_y = (int)(y * scale_h);
-            int dst_row = dst_surf_w * (y + dst_y);
+            int dst_row = dst_x + dst_surf_w * (y + dst_y);
 
             if (scaled_y == last_y)
             {
-                memcpy(&dst[dst_x + dst_row], &dst[dst_x + last_row], size);
+                memcpy(&d[dst_row], &d[last_row], size);
                 continue;
             }
 
             last_y = scaled_y;
             last_row = dst_row;
 
-            int src_row = src_surf_w * (scaled_y + src_y);
+            int src_row = src_x + src_surf_w * (scaled_y + src_y);
 
             for (int x = 0; x < dst_w; x++)
             {
                 int scaled_x = (int)(x * scale_w);
 
-                dst[x + dst_x + dst_row] = src[scaled_x + src_x + src_row];
+                d[x + dst_row] = s[scaled_x + src_row];
             }
         }
     }
@@ -582,24 +585,24 @@ void blt_stretch(
         for (int y = 0; y < dst_h; y++)
         {
             int scaled_y = (int)(y * scale_h);
-            int dst_row = dst_surf_w * (y + dst_y);
+            int dst_row = dst_x + dst_surf_w * (y + dst_y);
 
             if (scaled_y == last_y)
             {
-                memcpy(&d[dst_x + dst_row], &d[dst_x + last_row], size);
+                memcpy(&d[dst_row], &d[last_row], size);
                 continue;
             }
 
             last_y = scaled_y;
             last_row = dst_row;
 
-            int src_row = src_surf_w * (scaled_y + src_y);
+            int src_row = src_x + src_surf_w * (scaled_y + src_y);
 
             for (int x = 0; x < dst_w; x++)
             {
                 int scaled_x = (int)(x * scale_w);
 
-                d[x + dst_x + dst_row] = s[scaled_x + src_x + src_row];
+                d[x + dst_row] = s[scaled_x + src_row];
             }
         }
     }
@@ -611,24 +614,24 @@ void blt_stretch(
         for (int y = 0; y < dst_h; y++)
         {
             int scaled_y = (int)(y * scale_h);
-            int dst_row = dst_surf_w * (y + dst_y);
+            int dst_row = dst_x + dst_surf_w * (y + dst_y);
 
             if (scaled_y == last_y)
             {
-                memcpy(&d[dst_x + dst_row], &d[dst_x + last_row], size);
+                memcpy(&d[dst_row], &d[last_row], size);
                 continue;
             }
 
             last_y = scaled_y;
             last_row = dst_row;
 
-            int src_row = src_surf_w * (scaled_y + src_y);
+            int src_row = src_x + src_surf_w * (scaled_y + src_y);
 
             for (int x = 0; x < dst_w; x++)
             {
                 int scaled_x = (int)(x * scale_w);
 
-                d[x + dst_x + dst_row] = s[scaled_x + src_x + src_row];
+                d[x + dst_row] = s[scaled_x + src_row];
             }
         }
     }
