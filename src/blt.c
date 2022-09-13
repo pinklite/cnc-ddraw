@@ -1,6 +1,5 @@
 #include <windows.h>
 #include "debug.h"
-#include "scale_pattern.h"
 #include "blt.h"
 
 
