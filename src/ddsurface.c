@@ -1038,7 +1038,7 @@ HRESULT dd_CreateSurface(
     {
         dst_surface->lx_pitch = dst_surface->bpp / 8;
         dst_surface->l_pitch = ((dst_surface->width * dst_surface->bpp + 31) & ~31) >> 3;
-        dst_surface->size = dst_surface->l_pitch * dst_surface->height * dst_surface->lx_pitch;
+        dst_surface->size = dst_surface->l_pitch * dst_surface->height;
 
         DWORD aligned_width = dst_surface->l_pitch / dst_surface->lx_pitch;
 
@@ -1097,7 +1097,7 @@ HRESULT dd_CreateSurface(
                 HeapAlloc(
                     GetProcessHeap(),
                     HEAP_ZERO_MEMORY,
-                    dst_surface->l_pitch * (dst_surface->height + 200) * dst_surface->lx_pitch);
+                    dst_surface->l_pitch * (dst_surface->height + 200));
         }
 
         if (dst_surface->caps & DDSCAPS_PRIMARYSURFACE)
