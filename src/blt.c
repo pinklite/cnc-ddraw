@@ -24,12 +24,19 @@ void blt_clean(
     src += (src_x * bytes_pp) + (src_p * src_y);
     dst += (dst_x * bytes_pp) + (dst_p * dst_y);
 
-    for (int i = 0; i < dst_h; i++)
+    if (size == dst_p && dst_p == src_p)
     {
-        memcpy(dst, src, size);
+        memcpy(dst, src, dst_p * dst_h);
+    }
+    else
+    {
+        for (int i = 0; i < dst_h; i++)
+        {
+            memcpy(dst, src, size);
 
-        src += src_p;
-        dst += dst_p;
+            src += src_p;
+            dst += dst_p;
+        }
     }
 }
 
@@ -65,6 +72,10 @@ void blt_overlap(
 
             memmove(dst, src, size);
         }
+    }
+    else if (size == dst_p && dst_p == src_p)
+    {
+        memmove(dst, src, dst_p * dst_h);
     }
     else
     {
@@ -108,9 +119,9 @@ void blt_colorkey(
 
         if (key_l == key_h)
         {
-            for (int y = 0; y < dst_h; y++)
+            for (void* h_end = dst + dst_h * (dst_w + d_a); dst < h_end;)
             {
-                for (int x = 0; x < dst_w; x++)
+                for (void* w_end = dst + dst_w; dst < w_end;)
                 {
                     unsigned char c = *src++;
 
@@ -121,16 +132,16 @@ void blt_colorkey(
 
                     dst++;
                 }
-
+                
                 src += s_a;
                 dst += d_a;
             }
         }
         else
         {
-            for (int y = 0; y < dst_h; y++)
+            for (void* h_end = dst + dst_h * (dst_w + d_a); dst < h_end;)
             {
-                for (int x = 0; x < dst_w; x++)
+                for (void* w_end = dst + dst_w; dst < w_end;)
                 {
                     unsigned char c = *src++;
 
@@ -157,9 +168,9 @@ void blt_colorkey(
 
         if (key_l == key_h)
         {
-            for (int y = 0; y < dst_h; y++)
+            for (void* h_end = d + dst_h * (dst_w + d_a); d < h_end;)
             {
-                for (int x = 0; x < dst_w; x++)
+                for (void* w_end = d + dst_w; d < w_end;)
                 {
                     unsigned short c = *s++;
 
@@ -177,9 +188,9 @@ void blt_colorkey(
         }
         else
         {
-            for (int y = 0; y < dst_h; y++)
+            for (void* h_end = d + dst_h * (dst_w + d_a); d < h_end;)
             {
-                for (int x = 0; x < dst_w; x++)
+                for (void* w_end = d + dst_w; d < w_end;)
                 {
                     unsigned short c = *s++;
 
@@ -206,9 +217,9 @@ void blt_colorkey(
 
         if (key_l == key_h)
         {
-            for (int y = 0; y < dst_h; y++)
+            for (void* h_end = d + dst_h * (dst_w + d_a); d < h_end;)
             {
-                for (int x = 0; x < dst_w; x++)
+                for (void* w_end = d + dst_w; d < w_end;)
                 {
                     unsigned int c = *s++;
 
@@ -226,9 +237,9 @@ void blt_colorkey(
         }
         else
         {
-            for (int y = 0; y < dst_h; y++)
+            for (void* h_end = d + dst_h * (dst_w + d_a); d < h_end;)
             {
-                for (int x = 0; x < dst_w; x++)
+                for (void* w_end = d + dst_w; d < w_end;)
                 {
                     unsigned int c = *s++;
 
@@ -456,9 +467,9 @@ void blt_rgb565_to_rgba8888(
     src += (src_x * sizeof(src[0])) + (src_p * src_y);
     dst += (dst_x * sizeof(dst[0])) + (dst_p * dst_y);
 
-    for (int y = 0; y < dst_h; y++)
+    for (void* h_end = dst + dst_h * (dst_w + d_a); dst < h_end;)
     {
-        for (int x = 0; x < dst_w; x++)
+        for (void* w_end = dst + dst_w; dst < w_end;)
         {
             unsigned short pixel = *src++;
 
@@ -492,9 +503,9 @@ void blt_bgra8888_to_rgba8888(
     src += (src_x * sizeof(src[0])) + (src_p * src_y);
     dst += (dst_x * sizeof(dst[0])) + (dst_p * dst_y);
 
-    for (int y = 0; y < dst_h; y++)
+    for (void* h_end = dst + dst_h * (dst_w + d_a); dst < h_end;)
     {
-        for (int x = 0; x < dst_w; x++)
+        for (void* w_end = dst + dst_w; dst < w_end;)
         {
             unsigned int pixel = *src++;
 
