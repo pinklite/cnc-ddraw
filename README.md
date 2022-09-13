@@ -52,8 +52,6 @@ Note: cnc-ddraw does not support Direct3D/Glide, it will only work with games th
 
 - If **videos or other UI elements are invisible** then try to set `nonexclusive=true`.
 
-- If some parts of the screen are **being displayed diagonally** then try to set `fixpitch=true`.
-
 - If the game is **stuttering on a Freesync/G-Sync monitor** then try to set `minfps=-1`.
 
 &nbsp;
