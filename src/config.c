@@ -499,6 +499,7 @@ static void cfg_create_ini()
             "[CARM95]\n"
             "renderer=opengl\n"
             "noactivateapp=true\n"
+            "flipclear=true\n"
             "\n"
             "; Carmageddon 2\n"
             "[Carma2_SW]\n"
