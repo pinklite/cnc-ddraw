@@ -92,7 +92,6 @@
     <ClInclude Include="inc\openglshader.h" />
     <ClInclude Include="inc\render_ogl.h" />
     <ClInclude Include="inc\render_gdi.h" />
-    <ClInclude Include="inc\scale_pattern.h" />
     <ClInclude Include="inc\screenshot.h" />
     <ClInclude Include="inc\config.h" />
     <ClInclude Include="inc\ddsurface.h" />

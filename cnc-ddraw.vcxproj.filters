@@ -176,9 +176,6 @@
     <ClInclude Include="inc\lodepng.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="inc\scale_pattern.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="inc\mouse.h">
       <Filter>Header Files</Filter>
     </ClInclude>

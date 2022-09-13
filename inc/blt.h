@@ -100,13 +100,13 @@ void blt_bgra8888_to_rgba8888(
     int src_p);
 
 void blt_stretch(
-    unsigned char* dst_buf,
+    unsigned char* dst,
     int dst_x,
     int dst_y,
     int dst_w,
     int dst_h,
     int dst_p,
-    unsigned char* src_buf,
+    unsigned char* src,
     int src_x,
     int src_y,
     int src_w,

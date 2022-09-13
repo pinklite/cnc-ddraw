@@ -522,13 +522,13 @@ void blt_bgra8888_to_rgba8888(
 }
 
 void blt_stretch(
-    unsigned char* dst_buf,
+    unsigned char* dst,
     int dst_x,
     int dst_y,
     int dst_w,
     int dst_h,
     int dst_p,
-    unsigned char* src_buf,
+    unsigned char* src,
     int src_x,
     int src_y,
     int src_w,
@@ -536,203 +536,101 @@ void blt_stretch(
     int src_p,
     int bpp)
 {
-    /* Linear scaling using integer math
-    * Since the scaling pattern for x will aways be the same, the pattern itself gets pre-calculated
-    * and stored in an array.
-    * Y scaling pattern gets calculated during the blit loop
-    */
-    unsigned int x_ratio = (unsigned int)((src_w << 16) / dst_w) + 1;
-    unsigned int y_ratio = (unsigned int)((src_h << 16) / dst_h) + 1;
+    int bytes_pp = bpp / 8;
 
-    unsigned int s_src_x, s_src_y;
-    unsigned int dest_base, source_base;
+    size_t size = dst_w * bytes_pp;
 
-    scale_pattern* pattern = malloc((dst_w + 1) * (sizeof(scale_pattern)));
-    int pattern_idx = 0;
-    unsigned int last_src_x = 0;
+    int dst_surf_w = dst_p / bytes_pp;
+    int src_surf_w = src_p / bytes_pp;
 
-    if (pattern != NULL)
+    float scale_w = (float)src_w / dst_w;
+    float scale_h = (float)src_h / dst_h;
+
+    int last_y = -1;
+    int last_row = -1;
+
+    if (bpp == 8)
     {
-        pattern[pattern_idx] = (scale_pattern){ ONCE, 0, 0, 1 };
+        for (int y = 0; y < dst_h; y++)
+        {
+            int scaled_y = (int)(y * scale_h);
+            int dst_row = dst_surf_w * (y + dst_y);
 
-        /* Build the pattern! */
-        int x;
-        for (x = 1; x < dst_w; x++) {
-            s_src_x = (x * x_ratio) >> 16;
-            if (s_src_x == last_src_x)
+            if (scaled_y == last_y)
             {
-                if (pattern[pattern_idx].type == REPEAT || pattern[pattern_idx].type == ONCE)
-                {
-                    pattern[pattern_idx].type = REPEAT;
-                    pattern[pattern_idx].count++;
-                }
-                else if (pattern[pattern_idx].type == SEQUENCE)
-                {
-                    pattern_idx++;
-                    pattern[pattern_idx] = (scale_pattern){ REPEAT, x, s_src_x, 1 };
-                }
+                memcpy(&dst[dst_x + dst_row], &dst[dst_x + last_row], size);
+                continue;
             }
-            else if (s_src_x == last_src_x + 1)
+
+            last_y = scaled_y;
+            last_row = dst_row;
+
+            int src_row = src_surf_w * (scaled_y + src_y);
+
+            for (int x = 0; x < dst_w; x++)
             {
-                if (pattern[pattern_idx].type == SEQUENCE || pattern[pattern_idx].type == ONCE)
-                {
-                    pattern[pattern_idx].type = SEQUENCE;
-                    pattern[pattern_idx].count++;
-                }
-                else if (pattern[pattern_idx].type == REPEAT)
-                {
-                    pattern_idx++;
-                    pattern[pattern_idx] = (scale_pattern){ ONCE, x, s_src_x, 1 };
-                }
-            }
-            else
-            {
-                pattern_idx++;
-                pattern[pattern_idx] = (scale_pattern){ ONCE, x, s_src_x, 1 };
-            }
-            last_src_x = s_src_x;
-        }
-        pattern[pattern_idx + 1] = (scale_pattern){ END, 0, 0, 0 };
+                int scaled_x = (int)(x * scale_w);
 
-
-        /* Do the actual blitting */
-        int bytes_pp = bpp / 8;
-        int dst_surf_w = dst_p / bytes_pp;
-        int src_surf_w = src_p / bytes_pp;
-
-        int count = 0;
-        int y;
-
-        for (y = 0; y < dst_h; y++) {
-
-            dest_base = dst_x + dst_surf_w * (y + dst_y);
-
-            s_src_y = (y * y_ratio) >> 16;
-
-            source_base = src_x + src_surf_w * (s_src_y + src_y);
-
-            pattern_idx = 0;
-            scale_pattern* current = &pattern[pattern_idx];
-
-            if (bpp == 8)
-            {
-                unsigned char* d, * s, v;
-                unsigned char* src = (unsigned char*)src_buf;
-                unsigned char* dst = (unsigned char*)dst_buf;
-
-                do {
-                    switch (current->type)
-                    {
-                    case ONCE:
-                        dst[dest_base + current->dst_index] =
-                            src[source_base + current->src_index];
-                        break;
-
-                    case REPEAT:
-                        d = (dst + dest_base + current->dst_index);
-                        v = src[source_base + current->src_index];
-
-                        count = current->count;
-                        while (count-- > 0)
-                            *d++ = v;
-
-                        break;
-
-                    case SEQUENCE:
-                        d = dst + dest_base + current->dst_index;
-                        s = src + source_base + current->src_index;
-
-                        memcpy((void*)d, (void*)s, current->count);
-                        break;
-
-                    case END:
-                    default:
-                        break;
-                    }
-
-                    current = &pattern[++pattern_idx];
-                } while (current->type != END);
-            }
-            else if (bpp == 16)
-            {
-                unsigned short* d, * s, v;
-                unsigned short* src = (unsigned short*)src_buf;
-                unsigned short* dst = (unsigned short*)dst_buf;
-
-                do {
-                    switch (current->type)
-                    {
-                    case ONCE:
-                        dst[dest_base + current->dst_index] =
-                            src[source_base + current->src_index];
-                        break;
-
-                    case REPEAT:
-                        d = (dst + dest_base + current->dst_index);
-                        v = src[source_base + current->src_index];
-
-                        count = current->count;
-                        while (count-- > 0)
-                            *d++ = v;
-
-                        break;
-
-                    case SEQUENCE:
-                        d = dst + dest_base + current->dst_index;
-                        s = src + source_base + current->src_index;
-
-                        memcpy((void*)d, (void*)s, current->count * bytes_pp);
-                        break;
-
-                    case END:
-                    default:
-                        break;
-                    }
-
-                    current = &pattern[++pattern_idx];
-                } while (current->type != END);
-            }
-            else if (bpp == 32)
-            {
-                unsigned int* d, * s, v;
-                unsigned int* src = (unsigned int*)src_buf;
-                unsigned int* dst = (unsigned int*)dst_buf;
-
-                do {
-                    switch (current->type)
-                    {
-                    case ONCE:
-                        dst[dest_base + current->dst_index] =
-                            src[source_base + current->src_index];
-                        break;
-
-                    case REPEAT:
-                        d = (dst + dest_base + current->dst_index);
-                        v = src[source_base + current->src_index];
-
-                        count = current->count;
-                        while (count-- > 0)
-                            *d++ = v;
-
-                        break;
-
-                    case SEQUENCE:
-                        d = dst + dest_base + current->dst_index;
-                        s = src + source_base + current->src_index;
-
-                        memcpy((void*)d, (void*)s, current->count * bytes_pp);
-                        break;
-
-                    case END:
-                    default:
-                        break;
-                    }
-
-                    current = &pattern[++pattern_idx];
-                } while (current->type != END);
+                dst[x + dst_x + dst_row] = src[scaled_x + src_x + src_row];
             }
         }
-        free(pattern);
     }
+    else if (bpp == 16)
+    {
+        unsigned short* d = (unsigned short*)dst;
+        unsigned short* s = (unsigned short*)src;
 
+        for (int y = 0; y < dst_h; y++)
+        {
+            int scaled_y = (int)(y * scale_h);
+            int dst_row = dst_surf_w * (y + dst_y);
+
+            if (scaled_y == last_y)
+            {
+                memcpy(&d[dst_x + dst_row], &d[dst_x + last_row], size);
+                continue;
+            }
+
+            last_y = scaled_y;
+            last_row = dst_row;
+
+            int src_row = src_surf_w * (scaled_y + src_y);
+
+            for (int x = 0; x < dst_w; x++)
+            {
+                int scaled_x = (int)(x * scale_w);
+
+                d[x + dst_x + dst_row] = s[scaled_x + src_x + src_row];
+            }
+        }
+    }
+    else if (bpp == 32)
+    {
+        unsigned int* d = (unsigned int*)dst;
+        unsigned int* s = (unsigned int*)src;
+
+        for (int y = 0; y < dst_h; y++)
+        {
+            int scaled_y = (int)(y * scale_h);
+            int dst_row = dst_surf_w * (y + dst_y);
+
+            if (scaled_y == last_y)
+            {
+                memcpy(&d[dst_x + dst_row], &d[dst_x + last_row], size);
+                continue;
+            }
+
+            last_y = scaled_y;
+            last_row = dst_row;
+
+            int src_row = src_surf_w * (scaled_y + src_y);
+
+            for (int x = 0; x < dst_w; x++)
+            {
+                int scaled_x = (int)(x * scale_w);
+
+                d[x + dst_x + dst_row] = s[scaled_x + src_x + src_row];
+            }
+        }
+    }
 }
