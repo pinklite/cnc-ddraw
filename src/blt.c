@@ -1,4 +1,5 @@
 #include <windows.h>
+//#include <intrin.h>
 #include "debug.h"
 #include "blt.h"
 
@@ -25,6 +26,7 @@ void blt_clean(
 
     if (size == dst_p && dst_p == src_p)
     {
+        //__movsb(dst, src, dst_p * dst_h);
         memcpy(dst, src, dst_p * dst_h);
     }
     else
@@ -463,8 +465,8 @@ void blt_rgb565_to_rgba8888(
     size_t s_a = (src_p / sizeof(src[0])) - dst_w;
     size_t d_a = (dst_p / sizeof(dst[0])) - dst_w;
 
-    src += (src_x * sizeof(src[0])) + (src_p * src_y);
-    dst += (dst_x * sizeof(dst[0])) + (dst_p * dst_y);
+    src += src_x + ((src_p / sizeof(src[0])) * src_y);
+    dst += dst_x + ((dst_p / sizeof(dst[0])) * dst_y);
 
     for (void* h_end = dst + dst_h * (dst_w + d_a); dst < h_end;)
     {
@@ -499,8 +501,8 @@ void blt_bgra8888_to_rgba8888(
     size_t s_a = (src_p / sizeof(src[0])) - dst_w;
     size_t d_a = (dst_p / sizeof(dst[0])) - dst_w;
 
-    src += (src_x * sizeof(src[0])) + (src_p * src_y);
-    dst += (dst_x * sizeof(dst[0])) + (dst_p * dst_y);
+    src += src_x + ((src_p / sizeof(src[0])) * src_y);
+    dst += dst_x + ((dst_p / sizeof(dst[0])) * dst_y);
 
     for (void* h_end = dst + dst_h * (dst_w + d_a); dst < h_end;)
     {
