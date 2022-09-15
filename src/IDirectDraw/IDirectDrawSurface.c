@@ -85,7 +85,7 @@ ULONG __stdcall IDirectDrawSurface__Release(IDirectDrawSurfaceImpl* This)
         {
             DeleteObject(This->bitmap);
         }
-        else if (This->surface)
+        else if (This->surface && !This->custom_surface)
         {
             HeapFree(GetProcessHeap(), 0, This->surface);
         }

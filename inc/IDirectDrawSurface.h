@@ -30,6 +30,7 @@ typedef struct IDirectDrawSurfaceImpl
     void* surface;
     DWORD l_pitch;
     DWORD lx_pitch;
+    BOOL custom_surface;
 
     PBITMAPINFO bmi;
     HBITMAP bitmap;

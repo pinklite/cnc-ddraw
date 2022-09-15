@@ -596,7 +596,6 @@ HRESULT dds_GetAttachedSurface(IDirectDrawSurfaceImpl* This, LPDDSCAPS lpDdsCaps
             IDirectDrawSurface_AddRef(This);
             *lpDDsurface = This;
         }
-    }
 
     return DD_OK;
 }
@@ -1037,7 +1036,15 @@ HRESULT dd_CreateSurface(
         dst_surface->height = lpDDSurfaceDesc->dwHeight;
     }
 
-    if (dst_surface->width && dst_surface->height)
+    if ((dst_surface->flags & DDSD_LPSURFACE) && (dst_surface->flags & DDSD_PITCH))
+    {
+        dst_surface->surface = lpDDSurfaceDesc->lpSurface;
+        dst_surface->l_pitch = lpDDSurfaceDesc->lPitch;
+        dst_surface->lx_pitch = dst_surface->bpp / 8;
+        dst_surface->size = dst_surface->l_pitch * dst_surface->height;
+        dst_surface->custom_surface = TRUE;
+    }
+    else if (dst_surface->width && dst_surface->height)
     {
         dst_surface->lx_pitch = dst_surface->bpp / 8;
         dst_surface->l_pitch = ((dst_surface->width * dst_surface->bpp + 31) & ~31) >> 3;
