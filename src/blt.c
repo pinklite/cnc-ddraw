@@ -381,6 +381,13 @@ void blt_colorkey_mirror_stretch(
     }
 }
 
+void blt_clear(
+    unsigned char* dst, 
+    size_t size)
+{
+    memset(dst, 0, size);
+}
+
 void blt_colorfill(
     unsigned char* dst,
     int dst_x,

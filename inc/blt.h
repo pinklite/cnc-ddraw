@@ -65,6 +65,10 @@ void blt_colorkey_mirror_stretch(
     BOOL mirror_left_right,
     int bpp);
 
+void blt_clear(
+    unsigned char* dst, 
+    size_t size);
+
 void blt_colorfill(
     unsigned char* dst,
     int dst_x,
