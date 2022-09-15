@@ -584,7 +584,7 @@ HRESULT dds_Flip(IDirectDrawSurfaceImpl* This, IDirectDrawSurfaceImpl* lpDDSurfa
 
 HRESULT dds_GetAttachedSurface(IDirectDrawSurfaceImpl* This, LPDDSCAPS lpDdsCaps, IDirectDrawSurfaceImpl** lpDDsurface)
 {
-    if ((This->caps & DDSCAPS_PRIMARYSURFACE) && (This->caps & DDSCAPS_FLIP) && (lpDdsCaps->dwCaps & DDSCAPS_BACKBUFFER))
+    if (lpDdsCaps->dwCaps & DDSCAPS_BACKBUFFER)
     {
         if (This->backbuffer)
         {
@@ -599,6 +599,9 @@ HRESULT dds_GetAttachedSurface(IDirectDrawSurfaceImpl* This, LPDDSCAPS lpDdsCaps
     }
 
     return DD_OK;
+}
+
+    return DDERR_NOTFOUND;
 }
 
 HRESULT dds_GetCaps(IDirectDrawSurfaceImpl* This, LPDDSCAPS lpDDSCaps)
