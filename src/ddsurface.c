@@ -476,7 +476,7 @@ HRESULT dds_GetSurfaceDesc(IDirectDrawSurfaceImpl* This, LPDDSURFACEDESC lpDDSur
         memset(lpDDSurfaceDesc, 0, size);
 
         lpDDSurfaceDesc->dwSize = size;
-        lpDDSurfaceDesc->dwFlags = DDSD_WIDTH | DDSD_HEIGHT | DDSD_PITCH | DDSD_PIXELFORMAT | DDSD_LPSURFACE;
+        lpDDSurfaceDesc->dwFlags = DDSD_WIDTH | DDSD_HEIGHT | DDSD_PITCH | DDSD_PIXELFORMAT | DDSD_LPSURFACE | DDSD_BACKBUFFERCOUNT;
         lpDDSurfaceDesc->dwWidth = This->width;
         lpDDSurfaceDesc->dwHeight = This->height;
         lpDDSurfaceDesc->lPitch = This->l_pitch;
@@ -485,6 +485,7 @@ HRESULT dds_GetSurfaceDesc(IDirectDrawSurfaceImpl* This, LPDDSURFACEDESC lpDDSur
         lpDDSurfaceDesc->ddpfPixelFormat.dwFlags = DDPF_RGB;
         lpDDSurfaceDesc->ddpfPixelFormat.dwRGBBitCount = This->bpp;
         lpDDSurfaceDesc->ddsCaps.dwCaps = This->caps;
+        lpDDSurfaceDesc->dwBackBufferCount = This->backbuffer_count;
 
         if (!g_ddraw->novidmem || (This->caps & (DDSCAPS_PRIMARYSURFACE | DDSCAPS_BACKBUFFER)))
         {
@@ -597,8 +598,8 @@ HRESULT dds_GetAttachedSurface(IDirectDrawSurfaceImpl* This, LPDDSCAPS lpDdsCaps
             *lpDDsurface = This;
         }
 
-    return DD_OK;
-}
+        return DD_OK;
+    }
 
     return DDERR_NOTFOUND;
 }
@@ -1121,6 +1122,8 @@ HRESULT dd_CreateSurface(
 
     if (dst_surface->flags & DDSD_BACKBUFFERCOUNT)
     {
+        dst_surface->backbuffer_count = lpDDSurfaceDesc->dwBackBufferCount;
+
         TRACE("     dwBackBufferCount=%d\n", lpDDSurfaceDesc->dwBackBufferCount);
 
         DDSURFACEDESC desc;
