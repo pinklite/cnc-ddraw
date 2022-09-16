@@ -433,11 +433,11 @@ void blt_colorfill(
 
             if (s >= 1024 * 200)
             {
-                __stosb(dst, color, dst_p * dst_h);
+                __stosb(dst, color, s);
             }
             else
             {
-                memset(dst, color, dst_p * dst_h);
+                memset(dst, color, s);
             }
         }
         else
