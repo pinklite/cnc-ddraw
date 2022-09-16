@@ -542,10 +542,12 @@ HRESULT dds_Flip(IDirectDrawSurfaceImpl* This, IDirectDrawSurfaceImpl* lpDDSurfa
         void* buf = InterlockedExchangePointer(&This->surface, backbuffer->surface);
         HBITMAP bitmap = (HBITMAP)InterlockedExchangePointer(&This->bitmap, backbuffer->bitmap);
         HDC dc = (HDC)InterlockedExchangePointer(&This->hdc, backbuffer->hdc);
+        HANDLE map = (HANDLE)InterlockedExchangePointer(&This->surface_mapping, backbuffer->surface_mapping);
 
         InterlockedExchangePointer(&backbuffer->surface, buf);
         InterlockedExchangePointer(&backbuffer->bitmap, bitmap);
         InterlockedExchangePointer(&backbuffer->hdc, dc);
+        InterlockedExchangePointer(&backbuffer->surface_mapping, map);
 
         if (g_ddraw->flipclear)
         {
