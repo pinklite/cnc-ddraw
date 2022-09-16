@@ -28,7 +28,7 @@ Wine (Linux/macOS) only: override `ddraw` in [winecfg](https://wiki.winehq.org/W
 
 &nbsp;
 
-Note: If you use cnc-ddraw with a game that got its own windowed mode built in then **make sure you disable the games own windowed mode** first.
+If you use cnc-ddraw with a game that got its own windowed mode built in then **make sure you disable the games own windowed mode** first.
 
 If you want to play in windowed mode then start the game once in fullscreen and then press Alt+Enter to enable the cnc-ddraw windowed mode (Or enable windowed mode in the config program without using Alt+Enter).
 
@@ -38,7 +38,11 @@ If you want to play in windowed mode then start the game once in fullscreen and 
 
 &nbsp;
 
-Note: cnc-ddraw does not support Direct3D/Glide, it will only work with games that use a DirectDraw (Software) renderer. Usually you can tell by the look of the game if it's a 3D game or not, but you can also let cnc-ddraw generate a debug log and search for "IDirect3D" - Link: https://github.com/CnCNet/cnc-ddraw/issues/44
+**cnc-ddraw does not support Direct3D/Glide**, it will only work with games that use a **DirectDraw (Software)** renderer. Usually you can tell by the look of the game if it's a 3D game or not, but you can also let cnc-ddraw generate a debug log and search for "IDirect3D" - Link: https://github.com/CnCNet/cnc-ddraw/issues/44
+
+&nbsp;
+
+Some games may require additional steps before they can be used with cnc-ddraw, please check the [wiki](https://github.com/CnCNet/cnc-ddraw/wiki) for more details.
 
 &nbsp;
 
