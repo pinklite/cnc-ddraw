@@ -393,7 +393,14 @@ void blt_clear(
     unsigned char* dst, 
     size_t size)
 {
-    memset(dst, 0, size);
+    if (size >= 1024 * 200)
+    {
+        __stosb(dst, 0, size);
+    }
+    else
+    {
+        memset(dst, 0, size);
+    }
 }
 
 void blt_colorfill(
@@ -422,7 +429,16 @@ void blt_colorfill(
     {
         if (size == dst_p)
         {
-            memset(dst, color, dst_p * dst_h);
+            size_t s = dst_p * dst_h;
+
+            if (s >= 1024 * 200)
+            {
+                __stosb(dst, color, dst_p * dst_h);
+            }
+            else
+            {
+                memset(dst, color, dst_p * dst_h);
+            }
         }
         else
         {
