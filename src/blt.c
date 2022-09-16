@@ -1,5 +1,5 @@
 #include <windows.h>
-//#include <intrin.h>
+#include <intrin.h>
 #include "debug.h"
 #include "blt.h"
 
@@ -26,8 +26,16 @@ void blt_clean(
 
     if (size == dst_p && dst_p == src_p)
     {
-        //__movsb(dst, src, dst_p * dst_h);
-        memcpy(dst, src, dst_p * dst_h);
+        size_t s = dst_p * dst_h;
+
+        if (s >= 1024 * 100)
+        {
+            __movsb(dst, src, s);
+        }
+        else
+        {
+            memcpy(dst, src, s);
+        }
     }
     else
     {
