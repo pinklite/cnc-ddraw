@@ -1060,17 +1060,29 @@ static void cfg_init()
     }
 
     /* set up settings ini */
-    strncpy(g_config.ini_path, ".\\ddraw.ini", sizeof(g_config.ini_path) - 1);
 
-    if (GetFileAttributes(g_config.ini_path) == INVALID_FILE_ATTRIBUTES)
-        cfg_create_ini();
+    if (strlen(g_config.game_path) > 0)
+    {
+        _snprintf(g_config.ini_path, sizeof(g_config.ini_path) - 1, "%sddraw.ini", g_config.game_path);
+
+        if (GetFileAttributes(g_config.ini_path) == INVALID_FILE_ATTRIBUTES)
+        {
+            cfg_create_ini();
+        }
+
+        if (GetFileAttributes(g_config.ini_path) == INVALID_FILE_ATTRIBUTES)
+        {
+            strncpy(g_config.ini_path, ".\\ddraw.ini", sizeof(g_config.ini_path) - 1);
+        }
+    }
+    else
+    {
+        strncpy(g_config.ini_path, ".\\ddraw.ini", sizeof(g_config.ini_path) - 1);
+    }
 
     if (GetFileAttributes(g_config.ini_path) == INVALID_FILE_ATTRIBUTES)
     {
-        _snprintf(g_config.ini_path, sizeof(g_config.ini_path) - 1, "%sddraw.ini", g_config.game_path);
-        
-        if (GetFileAttributes(g_config.ini_path) == INVALID_FILE_ATTRIBUTES)
-            cfg_create_ini();
+        cfg_create_ini();
     }
 }
 
