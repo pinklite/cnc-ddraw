@@ -651,11 +651,6 @@ HRESULT dds_GetDC(IDirectDrawSurfaceImpl* This, HDC FAR* lpHDC)
         return DDERR_INVALIDPARAMS;
     }
 
-    if ((This->l_pitch % 4))
-    {
-        TRACE("NOT_IMPLEMENTED     GetDC: width=%d height=%d\n", This->width, This->height);
-    }
-
     RGBQUAD* data =
         This->palette ? This->palette->data_rgb :
         g_ddraw->primary && g_ddraw->primary->palette ? g_ddraw->primary->palette->data_rgb :
