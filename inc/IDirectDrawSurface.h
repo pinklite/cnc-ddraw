@@ -29,6 +29,7 @@ typedef struct IDirectDrawSurfaceImpl
     IDirectDrawPaletteImpl* palette;
 
     void* surface;
+    HANDLE surface_mapping;
     DWORD l_pitch;
     DWORD lx_pitch;
     BOOL custom_surface;

@@ -96,6 +96,9 @@ ULONG __stdcall IDirectDrawSurface__Release(IDirectDrawSurfaceImpl* This)
         if (This->bmi)
             HeapFree(GetProcessHeap(), 0, This->bmi);
 
+        if (This->surface_mapping)
+            CloseHandle(This->surface_mapping);
+
         if (This->backbuffer)
             IDirectDrawSurface_Release(This->backbuffer);
 
