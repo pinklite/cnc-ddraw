@@ -25,6 +25,7 @@ typedef struct IDirectDrawSurfaceImpl
     DWORD flags;
     DWORD caps;
     DWORD backbuffer_count;
+    CRITICAL_SECTION cs;
 
     IDirectDrawPaletteImpl* palette;
 

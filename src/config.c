@@ -42,6 +42,7 @@ void cfg_load()
     g_ddraw->novidmem = cfg_get_bool("novidmem", FALSE);
     g_ddraw->fixnotresponding = cfg_get_bool("fixnotresponding", FALSE);
     g_ddraw->locktopleft = cfg_get_bool("locktopleft", FALSE);
+    g_ddraw->lock_surfaces = cfg_get_bool("lock_surfaces", FALSE);
     g_ddraw->releasealt = cfg_get_bool("releasealt", FALSE);
     g_ddraw->d3d9linear = cfg_get_bool("d3d9linear", TRUE);
     g_ddraw->gdilinear = cfg_get_bool("gdilinear", FALSE);
@@ -353,6 +354,7 @@ static void cfg_create_ini()
             "novidmem=false\n"
             "fixnotresponding=false\n"
             "locktopleft=false\n"
+            "lock_surfaces=false\n"
             "releasealt=false\n"
             "gdilinear=false\n"
             "allow_wmactivate=false\n"
@@ -954,6 +956,7 @@ static void cfg_create_ini()
             "\n"
             "; Total Annihilation (Unofficial Beta Patch v3.9.02)\n"
             "[TotalA]\n"
+            "lock_surfaces=true\n"
             "singlecpu=false\n"
             "fixwndprochook=true\n"
             "\n"

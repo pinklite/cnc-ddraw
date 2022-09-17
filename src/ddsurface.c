@@ -728,6 +728,9 @@ HRESULT dds_Lock(
     DWORD dwFlags,
     HANDLE hEvent)
 {
+    if (g_ddraw->lock_surfaces)
+        EnterCriticalSection(&This->cs);
+
     dbg_dump_dds_lock_flags(dwFlags);
 
     if (g_ddraw && g_ddraw->fixnotresponding)
@@ -942,6 +945,9 @@ HRESULT dds_Unlock(IDirectDrawSurfaceImpl* This, LPRECT lpRect)
         }
     }
 
+    if (g_ddraw->lock_surfaces)
+        LeaveCriticalSection(&This->cs);
+
     return DD_OK;
 }
 
@@ -994,6 +1000,8 @@ HRESULT dd_CreateSurface(
     dst_surface->lpVtbl = &g_dds_vtbl;
 
     lpDDSurfaceDesc->dwFlags |= DDSD_CAPS;
+
+    InitializeCriticalSection(&dst_surface->cs);
 
     dst_surface->bpp = g_ddraw->bpp == 0 ? 16 : g_ddraw->bpp;
     dst_surface->flags = lpDDSurfaceDesc->dwFlags;

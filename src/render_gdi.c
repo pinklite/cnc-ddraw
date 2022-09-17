@@ -53,6 +53,9 @@ DWORD WINAPI gdi_render_main(void)
             g_ddraw->primary->height == g_ddraw->height &&
             (g_ddraw->bpp == 16 || g_ddraw->bpp == 32 || g_ddraw->primary->palette))
         {
+            if (g_ddraw->lock_surfaces)
+                EnterCriticalSection(&g_ddraw->primary->cs);
+
             if (warning_end_tick)
             {
                 if (timeGetTime() < warning_end_tick)
@@ -153,6 +156,9 @@ DWORD WINAPI gdi_render_main(void)
                     g_ddraw->primary->bmi,
                     DIB_RGB_COLORS);
             }
+
+            if (g_ddraw->lock_surfaces)
+                LeaveCriticalSection(&g_ddraw->primary->cs);
         }
 
         LeaveCriticalSection(&g_ddraw->cs);

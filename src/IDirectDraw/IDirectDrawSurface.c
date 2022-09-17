@@ -110,6 +110,8 @@ ULONG __stdcall IDirectDrawSurface__Release(IDirectDrawSurfaceImpl* This)
             IDirectDrawPalette_Release(This->palette);
         }
 
+        DeleteCriticalSection(&This->cs);
+
         HeapFree(GetProcessHeap(), 0, This);
     }
 

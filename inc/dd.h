@@ -147,6 +147,7 @@ typedef struct CNCDDRAW
     BOOL fixnotresponding;
     BOOL flipclear;
     BOOL locktopleft;
+    BOOL lock_surfaces;
     BOOL d3d9linear;
     BOOL gdilinear;
     int resolutions;
