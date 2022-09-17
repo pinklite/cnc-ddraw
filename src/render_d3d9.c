@@ -117,7 +117,16 @@ BOOL d3d9_reset()
 
     if (g_d3d9.device && SUCCEEDED(IDirect3DDevice9_Reset(g_d3d9.device, &g_d3d9.params)))
     {
-        return d3d9_set_states();
+        BOOL result = d3d9_set_states();
+
+        if (result)
+        {
+            InterlockedExchange(&g_ddraw->render.palette_updated, TRUE);
+            InterlockedExchange(&g_ddraw->render.surface_updated, TRUE);
+            ReleaseSemaphore(g_ddraw->render.sem, 1, NULL);
+        }
+
+        return result;
     }
 
     return FALSE;
