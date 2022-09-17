@@ -962,7 +962,7 @@ static void cfg_create_ini()
             "\n"
             "; Total Annihilation (Unofficial Beta Patch v3.9.02)\n"
             "[TotalA]\n"
-            "renderer=opengl\n"
+            "singlecpu=false\n"
             "fixwndprochook=true\n"
             "\n"
             "; Three Kingdoms: Fate of the Dragon\n"
