@@ -5,6 +5,11 @@
 #include <windows.h>
 
 
+void blt_copy(
+    unsigned char* dst,
+    unsigned char* src,
+    size_t size);
+
 void blt_clean(
     unsigned char* dst,
     int dst_x,

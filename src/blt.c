@@ -4,6 +4,59 @@
 #include "blt.h"
 
 
+void blt_copy(
+    unsigned char* dst,
+    unsigned char* src,
+    size_t size)
+{
+#ifdef __AVX__
+    if (size >= 1024 * 1536 && !((DWORD)dst % 32) && !((DWORD)src % 32))
+    {
+        while (size >= 256)
+        {
+            __m256i c0 = _mm256_load_si256(((const __m256i*)src) + 0);
+            __m256i c1 = _mm256_load_si256(((const __m256i*)src) + 1);
+            __m256i c2 = _mm256_load_si256(((const __m256i*)src) + 2);
+            __m256i c3 = _mm256_load_si256(((const __m256i*)src) + 3);
+
+            _mm256_stream_si256((((__m256i*)dst) + 0), c0);
+            _mm256_stream_si256((((__m256i*)dst) + 1), c1);
+            _mm256_stream_si256((((__m256i*)dst) + 2), c2);
+            _mm256_stream_si256((((__m256i*)dst) + 3), c3);
+
+            c0 = _mm256_load_si256(((const __m256i*)src) + 4);
+            c1 = _mm256_load_si256(((const __m256i*)src) + 5);
+            c2 = _mm256_load_si256(((const __m256i*)src) + 6);
+            c3 = _mm256_load_si256(((const __m256i*)src) + 7);
+
+            _mm256_stream_si256((((__m256i*)dst) + 4), c0);
+            _mm256_stream_si256((((__m256i*)dst) + 5), c1);
+            _mm256_stream_si256((((__m256i*)dst) + 6), c2);
+            _mm256_stream_si256((((__m256i*)dst) + 7), c3);
+
+            src += 256;
+            dst += 256;
+            size -= 256;
+        }
+
+        if (size > 0)
+        {
+            memcpy(dst, src, size);
+        }
+        return;
+    }
+#endif
+
+    if (size >= 1024 * 100)
+    {
+        __movsb(dst, src, size);
+    }
+    else
+    {
+        memcpy(dst, src, size);
+    }
+}
+
 void blt_clean(
     unsigned char* dst,
     int dst_x,
