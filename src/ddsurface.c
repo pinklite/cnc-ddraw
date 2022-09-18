@@ -1056,15 +1056,16 @@ HRESULT dd_CreateSurface(
         dst_surface->l_pitch = ((dst_surface->width * dst_surface->bpp + 31) & ~31) >> 3;
         dst_surface->size = dst_surface->l_pitch * dst_surface->height;
 
+        int guard_lines = 200;
         DWORD aligned_width = dst_surface->l_pitch / dst_surface->lx_pitch;
 
         DWORD bmi_size = sizeof(BITMAPINFOHEADER) + sizeof(RGBQUAD) * 256;
-        DWORD bmp_size = dst_surface->l_pitch * (dst_surface->height + 200);
+        DWORD bmp_size = dst_surface->l_pitch * (dst_surface->height + guard_lines);
 
         dst_surface->bmi = HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, bmi_size);
         dst_surface->bmi->bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
         dst_surface->bmi->bmiHeader.biWidth = aligned_width;
-        dst_surface->bmi->bmiHeader.biHeight = -((int)dst_surface->height + 200);
+        dst_surface->bmi->bmiHeader.biHeight = -((int)dst_surface->height + guard_lines);
         dst_surface->bmi->bmiHeader.biPlanes = 1;
         dst_surface->bmi->bmiHeader.biBitCount = dst_surface->bpp;
         dst_surface->bmi->bmiHeader.biCompression = dst_surface->bpp == 8 ? BI_RGB : BI_BITFIELDS;
