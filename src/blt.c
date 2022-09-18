@@ -79,16 +79,7 @@ void blt_clean(
 
     if (size == dst_p && dst_p == src_p)
     {
-        size_t s = dst_p * dst_h;
-
-        if (s >= 1024 * 100)
-        {
-            __movsb(dst, src, s);
-        }
-        else
-        {
-            memcpy(dst, src, s);
-        }
+        blt_copy(dst, src, dst_p * dst_h);
     }
     else
     {
