@@ -1117,7 +1117,7 @@ HRESULT dd_CreateSurface(
 
         if (dst_surface->surface_mapping)
         {
-            LPVOID data = MapViewOfFile(dst_surface->surface_mapping, FILE_MAP_READ, 0, 0, 0);
+            LPVOID data = MapViewOfFile(dst_surface->surface_mapping, FILE_MAP_ALL_ACCESS, 0, 0, 0);
             if (data)
             {
                 while (((DWORD)data + map_offset) % 128) map_offset++;
