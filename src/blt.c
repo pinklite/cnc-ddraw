@@ -530,7 +530,7 @@ void blt_colorfill(
         for (int i = 1; i < dst_h; i++)
         {
             dst += dst_p;
-            blt_copy(dst, first_row, size);
+            blt_copy(dst, (void*)first_row, size);
         }
     }
     else if (bpp == 32)
@@ -545,7 +545,7 @@ void blt_colorfill(
         for (int i = 1; i < dst_h; i++)
         {
             dst += dst_p;
-            blt_copy(dst, first_row, size);
+            blt_copy(dst, (void*)first_row, size);
         }
     }
 }
@@ -691,7 +691,7 @@ void blt_stretch(
 
             if (scaled_y == last_y)
             {
-                blt_copy(&d[dst_row], &d[last_row], size);
+                blt_copy((void*)&d[dst_row], (void*)&d[last_row], size);
                 continue;
             }
 
@@ -720,7 +720,7 @@ void blt_stretch(
 
             if (scaled_y == last_y)
             {
-                blt_copy(&d[dst_row], &d[last_row], size);
+                blt_copy((void*)&d[dst_row], (void*)&d[last_row], size);
                 continue;
             }
 
