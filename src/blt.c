@@ -43,6 +43,9 @@ void blt_copy(
             size -= 256;
         }
 
+        _mm_sfence();
+        _mm256_zeroupper();
+
         if (size > 0)
         {
             memcpy(dst, src, size);
