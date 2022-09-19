@@ -66,6 +66,8 @@ void blt_copy(
                 dst += 128;
                 size -= 128;
             }
+
+            _mm256_zeroupper();
         }
 
         /* memcpy below handles the remainder */
