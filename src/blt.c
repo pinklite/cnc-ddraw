@@ -11,7 +11,7 @@ void blt_copy(
     unsigned char* src,
     size_t size)
 {
-#ifdef __AVX__
+#ifdef _MSC_VER
     if (g_blt_use_avx && !((DWORD)dst % 32) && !((DWORD)src % 32))
     {
         if (size >= 1024 * 4096)
@@ -110,7 +110,7 @@ void blt_clean(
     {
         for (int i = 0; i < dst_h; i++)
         {
-            memcpy(dst, src, size);
+            blt_copy(dst, src, size);
 
             src += src_p;
             dst += dst_p;
@@ -530,7 +530,7 @@ void blt_colorfill(
         for (int i = 1; i < dst_h; i++)
         {
             dst += dst_p;
-            memcpy(dst, first_row, size);
+            blt_copy(dst, first_row, size);
         }
     }
     else if (bpp == 32)
@@ -545,7 +545,7 @@ void blt_colorfill(
         for (int i = 1; i < dst_h; i++)
         {
             dst += dst_p;
-            memcpy(dst, first_row, size);
+            blt_copy(dst, first_row, size);
         }
     }
 }
@@ -662,7 +662,7 @@ void blt_stretch(
 
             if (scaled_y == last_y)
             {
-                memcpy(&d[dst_row], &d[last_row], size);
+                blt_copy(&d[dst_row], &d[last_row], size);
                 continue;
             }
 
@@ -691,7 +691,7 @@ void blt_stretch(
 
             if (scaled_y == last_y)
             {
-                memcpy(&d[dst_row], &d[last_row], size);
+                blt_copy(&d[dst_row], &d[last_row], size);
                 continue;
             }
 
@@ -720,7 +720,7 @@ void blt_stretch(
 
             if (scaled_y == last_y)
             {
-                memcpy(&d[dst_row], &d[last_row], size);
+                blt_copy(&d[dst_row], &d[last_row], size);
                 continue;
             }
 
