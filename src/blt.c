@@ -12,47 +12,65 @@ void blt_copy(
     size_t size)
 {
 #ifdef __AVX__
-    if (size >= 1024 * 4096 && g_blt_use_avx && !((DWORD)dst % 32) && !((DWORD)src % 32))
+    if (g_blt_use_avx && !((DWORD)dst % 32) && !((DWORD)src % 32))
     {
-        _mm_prefetch((const char*)(src), _MM_HINT_NTA);
-
-        while (size >= 256)
+        if (size >= 1024 * 4096)
         {
-            __m256i c0 = _mm256_load_si256(((const __m256i*)src) + 0);
-            __m256i c1 = _mm256_load_si256(((const __m256i*)src) + 1);
-            __m256i c2 = _mm256_load_si256(((const __m256i*)src) + 2);
-            __m256i c3 = _mm256_load_si256(((const __m256i*)src) + 3);
-            __m256i c4 = _mm256_load_si256(((const __m256i*)src) + 4);
-            __m256i c5 = _mm256_load_si256(((const __m256i*)src) + 5);
-            __m256i c6 = _mm256_load_si256(((const __m256i*)src) + 6);
-            __m256i c7 = _mm256_load_si256(((const __m256i*)src) + 7);
+            _mm_prefetch((const char*)(src), _MM_HINT_NTA);
 
-            _mm_prefetch((const char*)(src + 512), _MM_HINT_NTA);
+            while (size >= 256)
+            {
+                __m256i c0 = _mm256_load_si256(((const __m256i*)src) + 0);
+                __m256i c1 = _mm256_load_si256(((const __m256i*)src) + 1);
+                __m256i c2 = _mm256_load_si256(((const __m256i*)src) + 2);
+                __m256i c3 = _mm256_load_si256(((const __m256i*)src) + 3);
+                __m256i c4 = _mm256_load_si256(((const __m256i*)src) + 4);
+                __m256i c5 = _mm256_load_si256(((const __m256i*)src) + 5);
+                __m256i c6 = _mm256_load_si256(((const __m256i*)src) + 6);
+                __m256i c7 = _mm256_load_si256(((const __m256i*)src) + 7);
 
-            _mm256_stream_si256((((__m256i*)dst) + 0), c0);
-            _mm256_stream_si256((((__m256i*)dst) + 1), c1);
-            _mm256_stream_si256((((__m256i*)dst) + 2), c2);
-            _mm256_stream_si256((((__m256i*)dst) + 3), c3);
-            _mm256_stream_si256((((__m256i*)dst) + 4), c4);
-            _mm256_stream_si256((((__m256i*)dst) + 5), c5);
-            _mm256_stream_si256((((__m256i*)dst) + 6), c6);
-            _mm256_stream_si256((((__m256i*)dst) + 7), c7);
+                _mm_prefetch((const char*)(src + 512), _MM_HINT_NTA);
 
-            src += 256;
-            dst += 256;
-            size -= 256;
+                _mm256_stream_si256((((__m256i*)dst) + 0), c0);
+                _mm256_stream_si256((((__m256i*)dst) + 1), c1);
+                _mm256_stream_si256((((__m256i*)dst) + 2), c2);
+                _mm256_stream_si256((((__m256i*)dst) + 3), c3);
+                _mm256_stream_si256((((__m256i*)dst) + 4), c4);
+                _mm256_stream_si256((((__m256i*)dst) + 5), c5);
+                _mm256_stream_si256((((__m256i*)dst) + 6), c6);
+                _mm256_stream_si256((((__m256i*)dst) + 7), c7);
+
+                src += 256;
+                dst += 256;
+                size -= 256;
+            }
+
+            _mm_sfence();
+            _mm256_zeroupper();
+        }
+        else if (size < 1024 * 100)
+        {
+            while (size >= 128)
+            {
+                __m256i c0 = _mm256_load_si256(((const __m256i*)src) + 0);
+                __m256i c1 = _mm256_load_si256(((const __m256i*)src) + 1);
+                __m256i c2 = _mm256_load_si256(((const __m256i*)src) + 2);
+                __m256i c3 = _mm256_load_si256(((const __m256i*)src) + 3);
+
+                _mm256_store_si256((((__m256i*)dst) + 0), c0);
+                _mm256_store_si256((((__m256i*)dst) + 1), c1);
+                _mm256_store_si256((((__m256i*)dst) + 2), c2);
+                _mm256_store_si256((((__m256i*)dst) + 3), c3);
+
+                src += 128;
+                dst += 128;
+                size -= 128;
+            }
         }
 
-        _mm_sfence();
-        _mm256_zeroupper();
-
-        if (size > 0)
-        {
-            memcpy(dst, src, size);
-        }
-        return;
+        /* memcpy below handles the remainder */
     }
-#endif // __AVX__
+#endif
 
     if (size >= 1024 * 100)
     {
