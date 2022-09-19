@@ -4,13 +4,15 @@
 #include "blt.h"
 
 
+BOOL g_blt_use_avx;
+
 void blt_copy(
     unsigned char* dst,
     unsigned char* src,
     size_t size)
 {
 #ifdef __AVX__
-    if (size >= 1024 * 1536 && !((DWORD)dst % 32) && !((DWORD)src % 32))
+    if (size >= 1024 * 4096 && g_blt_use_avx && !((DWORD)dst % 32) && !((DWORD)src % 32))
     {
         while (size >= 256)
         {
@@ -45,7 +47,7 @@ void blt_copy(
         }
         return;
     }
-#endif
+#endif // __AVX__
 
     if (size >= 1024 * 100)
     {

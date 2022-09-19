@@ -1,4 +1,5 @@
 #include <windows.h>
+#include <intrin.h>
 #include "ddraw.h"
 #include "debug.h"
 #include "dd.h"
@@ -9,6 +10,22 @@
 #include "utils.h"
 #include "config.h"
 
+
+BOOL util_is_avx_supported()
+{
+    unsigned int xcr0 = 0;
+
+#if defined(_MSC_VER)
+    xcr0 = (unsigned int)_xgetbv(_XCR_XFEATURE_ENABLED_MASK);
+#else
+    __asm__("xgetbv" : "=a" (xcr0) : "c" (0) : "%edx");
+#endif
+
+    int info[4] = { 0 };
+    __cpuid(info, 1);
+
+    return (info[2] & (1 << 27)) && (info[2] & (1 << 28)) && (xcr0 & 6);
+}
 
 void util_limit_game_ticks()
 {

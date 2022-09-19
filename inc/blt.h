@@ -5,6 +5,8 @@
 #include <windows.h>
 
 
+extern BOOL g_blt_use_avx;
+
 void blt_copy(
     unsigned char* dst,
     unsigned char* src,
