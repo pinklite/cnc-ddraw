@@ -23,7 +23,7 @@ BOOL WINAPI fake_GetCursorPos(LPPOINT lpPoint)
     realpt.x = pt.x;
     realpt.y = pt.y;
 
-    if (g_ddraw->locked && (!g_ddraw->windowed || real_ScreenToClient(g_ddraw->hwnd, &pt)))
+    if (g_mouse_locked && (!g_ddraw->windowed || real_ScreenToClient(g_ddraw->hwnd, &pt)))
     {
         /* fallback solution for possible ClipCursor failure */
         int diffx = 0, diffy = 0;
@@ -152,7 +152,7 @@ BOOL WINAPI fake_ClipCursor(const RECT* lpRect)
 
         CopyRect(&g_ddraw->mouse.rc, &dst_rc);
 
-        if (g_ddraw->locked)
+        if (g_mouse_locked)
         {
             real_MapWindowPoints(g_ddraw->hwnd, HWND_DESKTOP, (LPPOINT)&dst_rc, 2);
 
@@ -167,7 +167,7 @@ int WINAPI fake_ShowCursor(BOOL bShow)
 {
     if (g_ddraw)
     {
-        if (g_ddraw->locked || g_ddraw->devmode)
+        if (g_mouse_locked || g_ddraw->devmode)
         {
             int count = real_ShowCursor(bShow);
             InterlockedExchange((LONG*)&g_ddraw->show_cursor_count, count);
@@ -190,7 +190,7 @@ HCURSOR WINAPI fake_SetCursor(HCURSOR hCursor)
     {
         HCURSOR cursor = (HCURSOR)InterlockedExchange((LONG*)&g_ddraw->old_cursor, (LONG)hCursor);
 
-        if (!g_ddraw->locked && !g_ddraw->devmode)
+        if (!g_mouse_locked && !g_ddraw->devmode)
             return cursor;
     }
 
@@ -265,7 +265,7 @@ BOOL WINAPI fake_ScreenToClient(HWND hWnd, LPPOINT lpPoint)
 
 BOOL WINAPI fake_SetCursorPos(int X, int Y)
 {
-    if (g_ddraw && !g_ddraw->locked && !g_ddraw->devmode)
+    if (g_ddraw && !g_mouse_locked && !g_ddraw->devmode)
         return TRUE;
 
     POINT pt = { X, Y };

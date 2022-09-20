@@ -105,7 +105,7 @@ LRESULT CALLBACK fake_WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam
                 case HTTOPRIGHT:
                     return DefWindowProc(hWnd, uMsg, wParam, lParam);
                 case HTCLIENT:
-                    if (!g_ddraw->locked && !g_ddraw->devmode)
+                    if (!g_mouse_locked && !g_ddraw->devmode)
                     {
                         real_SetCursor(LoadCursor(NULL, IDC_ARROW));
                         return TRUE;
@@ -476,7 +476,7 @@ LRESULT CALLBACK fake_WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam
     case WM_WINDOWPOSCHANGING:
     {
         /* workaround for a bug where sometimes a background window steals the focus */
-        if (g_ddraw->locked)
+        if (g_mouse_locked)
         {
             WINDOWPOS* pos = (WINDOWPOS*)lParam;
 
@@ -486,8 +486,8 @@ LRESULT CALLBACK fake_WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 
                 if (GetForegroundWindow() == g_ddraw->hwnd)
                     mouse_lock();
+                }
             }
-        }
         break;
     }
     case WM_MOUSELEAVE:
@@ -523,14 +523,14 @@ LRESULT CALLBACK fake_WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam
                     mouse_lock();
                 }
             }
-            else if (g_ddraw->fullscreen)
+            else if (g_ddraw->fullscreen && GetForegroundWindow() == g_ddraw->hwnd)
             {
                 mouse_lock();
             }
         }
         else
         {
-            if (!g_ddraw->windowed && !g_ddraw->locked && g_ddraw->noactivateapp && !g_ddraw->devmode)
+            if (!g_ddraw->windowed && !g_mouse_locked && g_ddraw->noactivateapp && !g_ddraw->devmode)
                 return 0;
 
             mouse_unlock();
@@ -677,7 +677,7 @@ LRESULT CALLBACK fake_WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam
     case WM_RBUTTONUP:
     case WM_MBUTTONUP:
     {
-        if (!g_ddraw->devmode && !g_ddraw->locked)
+        if (!g_ddraw->devmode && !g_mouse_locked)
         {
             int x = GET_X_LPARAM(lParam);
             int y = GET_Y_LPARAM(lParam);
@@ -718,7 +718,7 @@ LRESULT CALLBACK fake_WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam
     case WM_MBUTTONDOWN:
     case WM_MOUSEMOVE:
     {
-        if (!g_ddraw->devmode && !g_ddraw->locked)
+        if (!g_ddraw->devmode && !g_mouse_locked)
         {
             return 0;
         }
@@ -765,7 +765,7 @@ LRESULT CALLBACK fake_WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam
         case WM_RBUTTONDOWN:
         case WM_XBUTTONDOWN:
         {
-            if (!g_ddraw->devmode && !g_ddraw->locked)
+            if (!g_ddraw->devmode && !g_mouse_locked)
             {
                 int x = (DWORD)((GET_X_LPARAM(lParam) - g_ddraw->render.viewport.x) * g_ddraw->render.unscale_w);
                 int y = (DWORD)((GET_Y_LPARAM(lParam) - g_ddraw->render.viewport.y) * g_ddraw->render.unscale_h);

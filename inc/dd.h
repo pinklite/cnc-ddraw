@@ -117,7 +117,6 @@ typedef struct CNCDDRAW
     HWND hwnd;
     WNDPROC wndproc;
     struct { DWORD x; DWORD y; } cursor;
-    BOOL locked;
     BOOL adjmouse;
     BOOL devmode;
     BOOL vsync;
