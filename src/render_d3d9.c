@@ -58,10 +58,15 @@ BOOL d3d9_create()
         args.Enable9On12 = TRUE;
 
         IDirect3D9* (WINAPI * d3d_create9on12)(INT, D3D9ON12_ARGS*, UINT) = NULL;
+        IDirect3D9* (WINAPI * d3d_create9)(UINT) = NULL;
 
         if (g_ddraw->d3d9on12)
         {
             d3d_create9on12 = (void*)GetProcAddress(g_d3d9.hmodule, "Direct3DCreate9On12");
+        }
+        else
+        {
+            d3d_create9 = (void*)GetProcAddress(g_d3d9.hmodule, "Direct3DCreate9");
         }
 
         IDirect3D9* (WINAPI * d3d_create9)(UINT) = (void*)GetProcAddress(g_d3d9.hmodule, "Direct3DCreate9");
