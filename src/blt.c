@@ -461,16 +461,39 @@ void blt_colorkey_mirror_stretch(
 }
 
 void blt_clear(
-    unsigned char* dst, 
+    unsigned char* dst,
+    char color,
     size_t size)
 {
-    if (size >= 1024 * 200)
+#ifdef _MSC_VER
+    if (size < 1024 * 100 && g_blt_use_avx && !((DWORD)dst % 32))
     {
-        __stosb(dst, 0, size);
+        while (size >= 128)
+        {
+            __m256i c0 = _mm256_set1_epi8(color);
+
+            _mm256_store_si256((((__m256i*)dst) + 0), c0);
+            _mm256_store_si256((((__m256i*)dst) + 1), c0);
+            _mm256_store_si256((((__m256i*)dst) + 2), c0);
+            _mm256_store_si256((((__m256i*)dst) + 3), c0);
+
+            dst += 128;
+            size -= 128;
+        }
+
+        _mm256_zeroupper();
+
+        /* memset below handles the remainder */
+    }
+#endif
+
+    if (size >= 1024 * 100)
+    {
+        __stosb(dst, color, size);
     }
     else
     {
-        memset(dst, 0, size);
+        memset(dst, color, size);
     }
 }
 
@@ -500,22 +523,13 @@ void blt_colorfill(
     {
         if (size == dst_p)
         {
-            size_t s = dst_p * dst_h;
-
-            if (s >= 1024 * 200)
-            {
-                __stosb(dst, color, s);
-            }
-            else
-            {
-                memset(dst, color, s);
-            }
+            blt_clear(dst, color, dst_p * dst_h);
         }
         else
         {
             for (int i = 0; i < dst_h; i++)
             {
-                memset(dst, color, size);
+                blt_clear(dst, color, size);
                 dst += dst_p;
             }
         }

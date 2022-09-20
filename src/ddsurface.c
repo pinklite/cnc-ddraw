@@ -551,7 +551,7 @@ HRESULT dds_Flip(IDirectDrawSurfaceImpl* This, IDirectDrawSurfaceImpl* lpDDSurfa
 
         if (g_ddraw->flipclear)
         {
-            blt_clear(buf, backbuffer->size);
+            blt_clear(buf, 0, backbuffer->size);
         }
 
         LeaveCriticalSection(&g_ddraw->cs);

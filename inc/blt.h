@@ -74,6 +74,7 @@ void blt_colorkey_mirror_stretch(
 
 void blt_clear(
     unsigned char* dst, 
+    char color,
     size_t size);
 
 void blt_colorfill(
