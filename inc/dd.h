@@ -149,6 +149,7 @@ typedef struct CNCDDRAW
     BOOL lock_surfaces;
     BOOL d3d9linear;
     BOOL gdilinear;
+    BOOL d3d9on12;
     int resolutions;
     BOOL armadahack;
     BOOL tshack;

@@ -53,10 +53,21 @@ BOOL d3d9_create()
                 d3d9_enable_shim(TRUE);
         }
 
-        IDirect3D9* (WINAPI * d3d_create9)(UINT) =
-            (IDirect3D9 * (WINAPI*)(UINT))GetProcAddress(g_d3d9.hmodule, "Direct3DCreate9");
+        D3D9ON12_ARGS args;
+        memset(&args, 0, sizeof(args));
+        args.Enable9On12 = TRUE;
 
-        if (d3d_create9 && (g_d3d9.instance = d3d_create9(D3D_SDK_VERSION)))
+        IDirect3D9* (WINAPI * d3d_create9on12)(INT, D3D9ON12_ARGS*, UINT) = NULL;
+
+        if (g_ddraw->d3d9on12)
+        {
+            d3d_create9on12 = (void*)GetProcAddress(g_d3d9.hmodule, "Direct3DCreate9On12");
+        }
+
+        IDirect3D9* (WINAPI * d3d_create9)(UINT) = (void*)GetProcAddress(g_d3d9.hmodule, "Direct3DCreate9");
+        
+        if ((d3d_create9on12 && (g_d3d9.instance = d3d_create9on12(D3D_SDK_VERSION, &args, 1))) ||
+            (d3d_create9 && (g_d3d9.instance = d3d_create9(D3D_SDK_VERSION))))
         {
             g_d3d9.bits_per_pixel = g_ddraw->render.bpp ? g_ddraw->render.bpp : g_ddraw->mode.dmBitsPerPel;
 

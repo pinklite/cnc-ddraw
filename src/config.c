@@ -46,6 +46,7 @@ void cfg_load()
     g_ddraw->releasealt = cfg_get_bool("releasealt", FALSE);
     g_ddraw->d3d9linear = cfg_get_bool("d3d9linear", TRUE);
     g_ddraw->gdilinear = cfg_get_bool("gdilinear", FALSE);
+    g_ddraw->d3d9on12 = cfg_get_bool("d3d9on12", FALSE);
     g_ddraw->resolutions = cfg_get_int("resolutions", RESLIST_NORMAL);
     g_ddraw->fpupreserve = cfg_get_bool("fpupreserve", FALSE);
     g_ddraw->allow_wmactivate = cfg_get_bool("allow_wmactivate", FALSE);
@@ -154,7 +155,7 @@ void cfg_load()
     {
         g_ddraw->renderer = gdi_render_main;
     }
-    else if (tolower(tmp[0]) == 'd') /* direct3d9 */
+    else if (tolower(tmp[0]) == 'd' || g_ddraw->d3d9on12) /* direct3d9 */
     {
         g_ddraw->renderer = d3d9_render_main;
     }
@@ -347,7 +348,8 @@ static void cfg_create_ini()
             "fpupreserve=false\n"
             "\n"
             "\n"
-            "; Undocumented compatibility settings\n"
+            "; Undocumented settings\n"
+            "d3d9on12=false\n"
             "accuratetimers=false\n"
             "fixpitch=true\n"
             "fixwndprochook=false\n"
