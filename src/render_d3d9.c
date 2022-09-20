@@ -69,8 +69,6 @@ BOOL d3d9_create()
             d3d_create9 = (void*)GetProcAddress(g_d3d9.hmodule, "Direct3DCreate9");
         }
 
-        IDirect3D9* (WINAPI * d3d_create9)(UINT) = (void*)GetProcAddress(g_d3d9.hmodule, "Direct3DCreate9");
-        
         if ((d3d_create9on12 && (g_d3d9.instance = d3d_create9on12(D3D_SDK_VERSION, &args, 1))) ||
             (d3d_create9 && (g_d3d9.instance = d3d_create9(D3D_SDK_VERSION))))
         {
