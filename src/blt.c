@@ -468,10 +468,10 @@ void blt_clear(
 #ifdef _MSC_VER
     if (size < 1024 * 100 && g_blt_use_avx && !((DWORD)dst % 32))
     {
+        __m256i c0 = _mm256_set1_epi8(color);
+
         while (size >= 128)
         {
-            __m256i c0 = _mm256_set1_epi8(color);
-
             _mm256_store_si256((((__m256i*)dst) + 0), c0);
             _mm256_store_si256((((__m256i*)dst) + 1), c0);
             _mm256_store_si256((((__m256i*)dst) + 2), c0);
