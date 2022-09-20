@@ -486,8 +486,8 @@ LRESULT CALLBACK fake_WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 
                 if (GetForegroundWindow() == g_ddraw->hwnd)
                     mouse_lock();
-                }
             }
+        }
         break;
     }
     case WM_MOUSELEAVE:
