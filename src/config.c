@@ -58,7 +58,7 @@ void cfg_load()
     g_ddraw->armadahack = cfg_get_bool("armadahack", FALSE);
     g_ddraw->tshack = cfg_get_bool("tshack", FALSE);
 
-    if ((g_ddraw->infantryhack = cfg_get_bool("infantryhack", FALSE)))
+    if (cfg_get_bool("game_handles_close", FALSE) || (g_ddraw->infantryhack = cfg_get_bool("infantryhack", FALSE)))
     {
         GameHandlesClose = TRUE;
     }
@@ -350,6 +350,7 @@ static void cfg_create_ini()
             "\n"
             "; Undocumented settings\n"
             "d3d9on12=false\n"
+            "game_handles_close=false\n"
             "accuratetimers=false\n"
             "fixpitch=true\n"
             "fixwndprochook=false\n"
