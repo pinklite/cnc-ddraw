@@ -962,6 +962,79 @@ HRESULT dds_GetDDInterface(IDirectDrawSurfaceImpl* This, LPVOID* lplpDD)
     return DD_OK;
 }
 
+HRESULT dds__SetSurfaceDesc(IDirectDrawSurfaceImpl* This, LPDDSURFACEDESC2 lpDDSD, DWORD dwFlags)
+{
+    dbg_dump_dds_flags(lpDDSD->dwFlags);
+    dbg_dump_dds_caps(lpDDSD->ddsCaps.dwCaps);
+
+    DWORD req_flags = DDSD_LPSURFACE | DDSD_PITCH | DDSD_HEIGHT | DDSD_WIDTH | DDSD_PIXELFORMAT;
+
+    if ((lpDDSD->dwFlags & req_flags) != req_flags)
+        return DDERR_UNSUPPORTED;
+
+
+    if (This->bitmap)
+    {
+        DeleteObject(This->bitmap);
+        This->bitmap = NULL;
+    }
+    else if (This->surface && !This->custom_surface)
+    {
+        HeapFree(GetProcessHeap(), 0, This->surface);
+        This->surface = NULL;
+    }
+
+    if (This->hdc)
+    {
+        DeleteDC(This->hdc);
+        This->hdc = NULL;
+    }
+
+    if (This->bmi)
+    {
+        HeapFree(GetProcessHeap(), 0, This->bmi);
+        This->bmi = NULL;
+    }
+
+    if (This->surface_mapping)
+    {
+        CloseHandle(This->surface_mapping);
+        This->surface_mapping = NULL;
+    }
+
+
+    switch (lpDDSD->ddpfPixelFormat.dwRGBBitCount)
+    {
+    case 8:
+        This->bpp = 8;
+        break;
+    case 15:
+        TRACE("     NOT_IMPLEMENTED bpp=%u\n", lpDDSD->ddpfPixelFormat.dwRGBBitCount);
+    case 16:
+        This->bpp = 16;
+        break;
+    case 24:
+        TRACE("     NOT_IMPLEMENTED bpp=%u\n", lpDDSD->ddpfPixelFormat.dwRGBBitCount);
+    case 32:
+        This->bpp = 32;
+        break;
+    default:
+        This->bpp = 8;
+        TRACE("     NOT_IMPLEMENTED bpp=%u\n", lpDDSD->ddpfPixelFormat.dwRGBBitCount);
+        break;
+    }
+
+    This->width = lpDDSD->dwWidth;
+    This->height = lpDDSD->dwHeight;
+    This->surface = lpDDSD->lpSurface;
+    This->l_pitch = lpDDSD->lPitch;
+    This->lx_pitch = This->bpp / 8;
+    This->size = This->l_pitch * This->height;
+    This->custom_surface = TRUE;
+
+    return DD_OK;
+}
+
 void* dds_GetBuffer(IDirectDrawSurfaceImpl* This)
 {
     if (!This)
