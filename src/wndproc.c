@@ -259,9 +259,9 @@ LRESULT CALLBACK fake_WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam
                     CopyRect(&clientrc, windowrc) &&
                     util_unadjust_window_rect(
                         &clientrc, 
-                        GetWindowLong(hWnd, GWL_STYLE), 
+                        real_GetWindowLongA(hWnd, GWL_STYLE),
                         GetMenu(hWnd) != NULL,
-                        GetWindowLong(hWnd, GWL_EXSTYLE)) &&
+                        real_GetWindowLongA(hWnd, GWL_EXSTYLE)) &&
                     SetRect(&clientrc, 0, 0, clientrc.right - clientrc.left, clientrc.bottom - clientrc.top))
                 {
                     float scaleH = (float)g_ddraw->height / g_ddraw->width;
@@ -296,9 +296,9 @@ LRESULT CALLBACK fake_WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam
                 if (CopyRect(&clientrc, windowrc) &&
                     util_unadjust_window_rect(
                         &clientrc, 
-                        GetWindowLong(hWnd, GWL_STYLE), 
+                        real_GetWindowLongA(hWnd, GWL_STYLE),
                         GetMenu(hWnd) != NULL,
-                        GetWindowLong(hWnd, GWL_EXSTYLE)) &&
+                        real_GetWindowLongA(hWnd, GWL_EXSTYLE)) &&
                     SetRect(&clientrc, 0, 0, clientrc.right - clientrc.left, clientrc.bottom - clientrc.top))
                 {
                     if (clientrc.right < g_ddraw->width)
@@ -352,9 +352,9 @@ LRESULT CALLBACK fake_WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam
                 if (CopyRect(&clientrc, windowrc) &&
                     util_unadjust_window_rect(
                         &clientrc, 
-                        GetWindowLong(hWnd, GWL_STYLE), 
+                        real_GetWindowLongA(hWnd, GWL_STYLE),
                         GetMenu(hWnd) != NULL,
-                        GetWindowLong(hWnd, GWL_EXSTYLE)))
+                        real_GetWindowLongA(hWnd, GWL_EXSTYLE)))
                 {
                     g_config.window_rect.left = clientrc.left;
                     g_config.window_rect.top = clientrc.top;
@@ -429,7 +429,7 @@ LRESULT CALLBACK fake_WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam
     {
         if (!g_ddraw->wine) /* hack: disable aero snap */
         {
-            LONG style = GetWindowLong(g_ddraw->hwnd, GWL_STYLE);
+            LONG style = real_GetWindowLongA(g_ddraw->hwnd, GWL_STYLE);
 
             if (!(style & WS_MAXIMIZEBOX))
             {
@@ -442,7 +442,7 @@ LRESULT CALLBACK fake_WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam
     {
         if ((wParam & ~0x0F) == SC_MOVE && !g_ddraw->wine) /* hack: disable aero snap */
         {
-            LONG style = GetWindowLong(g_ddraw->hwnd, GWL_STYLE);
+            LONG style = real_GetWindowLongA(g_ddraw->hwnd, GWL_STYLE);
 
             if ((style & WS_MAXIMIZEBOX))
             {

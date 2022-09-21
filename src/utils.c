@@ -214,8 +214,8 @@ void util_toggle_maximize()
     RECT client_rc;
     RECT dst_rc;
 
-    LONG style = GetWindowLong(g_ddraw->hwnd, GWL_STYLE);
-    LONG exstyle = GetWindowLong(g_ddraw->hwnd, GWL_EXSTYLE);
+    LONG style = real_GetWindowLongA(g_ddraw->hwnd, GWL_STYLE);
+    LONG exstyle = real_GetWindowLongA(g_ddraw->hwnd, GWL_EXSTYLE);
     BOOL got_menu = GetMenu(g_ddraw->hwnd) != NULL;
 
     if (real_GetClientRect(g_ddraw->hwnd, &client_rc) && SystemParametersInfo(SPI_GETWORKAREA, 0, &dst_rc, 0))
@@ -302,7 +302,7 @@ void util_toggle_fullscreen()
         mouse_unlock();
 
         g_config.window_state = g_ddraw->windowed = FALSE;
-        LONG style = GetWindowLong(g_ddraw->hwnd, GWL_STYLE);
+        LONG style = real_GetWindowLongA(g_ddraw->hwnd, GWL_STYLE);
 
         real_SetWindowLongA(
             g_ddraw->hwnd,
@@ -402,7 +402,7 @@ BOOL CALLBACK util_enum_child_proc(HWND hwnd, LPARAM lparam)
 
         if (g_ddraw->fixchilds == FIX_CHILDS_DETECT_HIDE)
         {
-            LONG style = GetWindowLong(hwnd, GWL_EXSTYLE);
+            LONG style = real_GetWindowLongA(hwnd, GWL_EXSTYLE);
 
             if (!(style & WS_EX_TRANSPARENT))
             {

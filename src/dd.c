@@ -678,15 +678,16 @@ HRESULT dd_SetDisplayMode(DWORD dwWidth, DWORD dwHeight, DWORD dwBPP, DWORD dwFl
             real_SetWindowLongA(
                 g_ddraw->hwnd,
                 GWL_STYLE,
-                GetWindowLong(
-                    g_ddraw->hwnd, GWL_STYLE) & ~(WS_CAPTION | WS_THICKFRAME | WS_MINIMIZE | WS_MAXIMIZE | WS_SYSMENU));
+                real_GetWindowLongA(
+                    g_ddraw->hwnd, 
+                    GWL_STYLE) & ~(WS_CAPTION | WS_THICKFRAME | WS_MINIMIZE | WS_MAXIMIZE | WS_SYSMENU));
         }
         else
         {
             real_SetWindowLongA(
                 g_ddraw->hwnd,
                 GWL_STYLE,
-                (GetWindowLong(g_ddraw->hwnd, GWL_STYLE) | WS_OVERLAPPEDWINDOW) & ~WS_MAXIMIZE);
+                (real_GetWindowLongA(g_ddraw->hwnd, GWL_STYLE) | WS_OVERLAPPEDWINDOW) & ~WS_MAXIMIZE);
         }
 
         if (g_ddraw->wine)
@@ -694,7 +695,7 @@ HRESULT dd_SetDisplayMode(DWORD dwWidth, DWORD dwHeight, DWORD dwBPP, DWORD dwFl
             real_SetWindowLongA(
                 g_ddraw->hwnd,
                 GWL_STYLE,
-                (GetWindowLong(g_ddraw->hwnd, GWL_STYLE) | WS_MINIMIZEBOX) & ~(WS_MAXIMIZEBOX | WS_THICKFRAME));
+                (real_GetWindowLongA(g_ddraw->hwnd, GWL_STYLE) | WS_MINIMIZEBOX) & ~(WS_MAXIMIZEBOX | WS_THICKFRAME));
         }
 
         /* center the window with correct dimensions */
@@ -705,8 +706,8 @@ HRESULT dd_SetDisplayMode(DWORD dwWidth, DWORD dwHeight, DWORD dwBPP, DWORD dwFl
 
         RECT dst = { x, y, g_ddraw->render.width + x, g_ddraw->render.height + y };
 
-        LONG style = GetWindowLong(g_ddraw->hwnd, GWL_STYLE);
-        LONG exstyle = GetWindowLong(g_ddraw->hwnd, GWL_EXSTYLE);
+        LONG style = real_GetWindowLongA(g_ddraw->hwnd, GWL_STYLE);
+        LONG exstyle = real_GetWindowLongA(g_ddraw->hwnd, GWL_EXSTYLE);
         
         AdjustWindowRectEx(&dst, style, GetMenu(g_ddraw->hwnd) != NULL, exstyle);
         
@@ -736,7 +737,7 @@ HRESULT dd_SetDisplayMode(DWORD dwWidth, DWORD dwHeight, DWORD dwBPP, DWORD dwFl
     }
     else
     {
-        LONG style = GetWindowLong(g_ddraw->hwnd, GWL_STYLE);
+        LONG style = real_GetWindowLongA(g_ddraw->hwnd, GWL_STYLE);
 
         if ((style & WS_CAPTION))
         {
@@ -769,7 +770,10 @@ HRESULT dd_SetDisplayMode(DWORD dwWidth, DWORD dwHeight, DWORD dwBPP, DWORD dwFl
 
         if (g_ddraw->wine)
         {
-            real_SetWindowLongA(g_ddraw->hwnd, GWL_STYLE, GetWindowLong(g_ddraw->hwnd, GWL_STYLE) | WS_MINIMIZEBOX);
+            real_SetWindowLongA(
+                g_ddraw->hwnd, 
+                GWL_STYLE, 
+                real_GetWindowLongA(g_ddraw->hwnd, GWL_STYLE) | WS_MINIMIZEBOX);
         }
 
         real_SetWindowPos(
