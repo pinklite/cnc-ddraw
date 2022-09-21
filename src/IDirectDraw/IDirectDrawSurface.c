@@ -502,7 +502,7 @@ HRESULT __stdcall IDirectDrawSurface__PageUnlock(IDirectDrawSurfaceImpl* This, D
 HRESULT __stdcall IDirectDrawSurface__SetSurfaceDesc(IDirectDrawSurfaceImpl* This, LPDDSURFACEDESC2 lpDDSD, DWORD dwFlags)
 {
     TRACE("-> %s(This=%p, lpDDSD=%p, dwFlags=%08X)\n", __FUNCTION__, This, lpDDSD, dwFlags);
-    HRESULT ret = dds__SetSurfaceDesc(This, lpDDSD, dwFlags);
+    HRESULT ret = dds_SetSurfaceDesc(This, lpDDSD, dwFlags);
     TRACE("<- %s\n", __FUNCTION__);
     return ret;
 }

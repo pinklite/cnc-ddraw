@@ -962,7 +962,7 @@ HRESULT dds_GetDDInterface(IDirectDrawSurfaceImpl* This, LPVOID* lplpDD)
     return DD_OK;
 }
 
-HRESULT dds__SetSurfaceDesc(IDirectDrawSurfaceImpl* This, LPDDSURFACEDESC2 lpDDSD, DWORD dwFlags)
+HRESULT dds_SetSurfaceDesc(IDirectDrawSurfaceImpl* This, LPDDSURFACEDESC2 lpDDSD, DWORD dwFlags)
 {
     dbg_dump_dds_flags(lpDDSD->dwFlags);
     dbg_dump_dds_caps(lpDDSD->ddsCaps.dwCaps);
