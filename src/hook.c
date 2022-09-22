@@ -565,6 +565,7 @@ void hook_early_init()
     hook_patch_iat(GetModuleHandle(NULL), FALSE, "dinput.dll", "DirectInputCreateEx", (PROC)fake_DirectInputCreateEx);
     hook_patch_iat(GetModuleHandle(NULL), FALSE, "dinput8.dll", "DirectInput8Create", (PROC)fake_DirectInput8Create);
     hook_patch_iat(GetModuleHandle(NULL), FALSE, "user32.dll", "GetClientRect", (PROC)fake_GetClientRect); //anno 1602
+    hook_patch_iat(GetModuleHandle(NULL), FALSE, "user32.dll", "ClipCursor", (PROC)fake_ClipCursor); //NexusTK
     hook_patch_iat(GetModuleHandle("AcGenral"), FALSE, "user32.dll", "SetWindowsHookExA", (PROC)fake_SetWindowsHookExA);
     hook_patch_iat(GetModuleHandle(NULL), FALSE, "user32.dll", "SetWindowsHookExA", (PROC)fake_SetWindowsHookExA);
 }
@@ -621,6 +622,7 @@ void hook_exit()
     hook_patch_iat(GetModuleHandle(NULL), TRUE, "dinput.dll", "DirectInputCreateEx", (PROC)fake_DirectInputCreateEx);
     hook_patch_iat(GetModuleHandle(NULL), TRUE, "dinput8.dll", "DirectInput8Create", (PROC)fake_DirectInput8Create);
     hook_patch_iat(GetModuleHandle(NULL), TRUE, "user32.dll", "GetClientRect", (PROC)fake_GetClientRect); //anno 1602
+    hook_patch_iat(GetModuleHandle(NULL), TRUE, "user32.dll", "ClipCursor", (PROC)fake_ClipCursor); //NexusTK
     hook_patch_iat(GetModuleHandle("AcGenral"), TRUE, "user32.dll", "SetWindowsHookExA", (PROC)fake_SetWindowsHookExA);
     hook_patch_iat(GetModuleHandle(NULL), TRUE, "user32.dll", "SetWindowsHookExA", (PROC)fake_SetWindowsHookExA);
 }
