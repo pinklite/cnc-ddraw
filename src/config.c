@@ -430,7 +430,7 @@ static void cfg_create_ini()
             "nonexclusive=true\n"
             "adjmouse=true\n"
             "\n"
-            "; American Conquest\n"
+            "; American Conquest / Cossacks\n"
             "[DMCR]\n"
             "resolutions=2\n"
             "minfps=-2\n"
