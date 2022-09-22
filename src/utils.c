@@ -13,18 +13,51 @@
 
 BOOL util_is_avx_supported()
 {
-    unsigned int xcr0 = 0;
+    const DWORD XMM_STATE_BIT = 1 << 1;
+    const DWORD YMM_STATE_BIT = 1 << 2;
+    const DWORD OS_AVX_BITS = XMM_STATE_BIT | YMM_STATE_BIT;
 
-#if defined(_MSC_VER)
-    xcr0 = (unsigned int)_xgetbv(_XCR_XFEATURE_ENABLED_MASK);
-#else
-    __asm__("xgetbv" : "=a" (xcr0) : "c" (0) : "%edx");
+    const DWORD AVX_BIT = 1 << 28;
+    const DWORD OSXSAVE_BIT = 1 << 27;
+    const DWORD XSAVE_BIT = 1 << 26;
+    const DWORD CPU_AVX_BITS = AVX_BIT | OSXSAVE_BIT | XSAVE_BIT;
+
+    BOOL result = FALSE;
+
+#ifdef _MSC_VER
+    __try
+    {
 #endif
 
     int info[4] = { 0 };
-    __cpuid(info, 1);
+    __cpuid(info, 0);
 
-    return (info[2] & (1 << 27)) && (info[2] & (1 << 28)) && (xcr0 & 6);
+    if (info[0] >= 1) 
+    {
+        __cpuid(info, 1);
+
+        if ((info[2] & CPU_AVX_BITS) == CPU_AVX_BITS)
+        {
+            unsigned int xcr0 = 0;
+
+#if defined(_MSC_VER)
+            xcr0 = (unsigned int)_xgetbv(_XCR_XFEATURE_ENABLED_MASK);
+#else
+            __asm__("xgetbv" : "=a" (xcr0) : "c" (0) : "%edx");
+#endif
+
+            result = (xcr0 & OS_AVX_BITS) == OS_AVX_BITS;
+        }
+    }
+
+#ifdef _MSC_VER
+    }
+    __except (EXCEPTION_EXECUTE_HANDLER)
+    {
+    }
+#endif
+
+    return result;
 }
 
 void util_limit_game_ticks()
