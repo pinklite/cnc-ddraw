@@ -40,9 +40,9 @@ BOOL util_is_avx_supported()
         {
             unsigned int xcr0 = 0;
 
-#if defined(_MSC_VER)
+#ifdef _MSC_VER
             xcr0 = (unsigned int)_xgetbv(_XCR_XFEATURE_ENABLED_MASK);
-#else
+#elif __AVX__
             __asm__("xgetbv" : "=a" (xcr0) : "c" (0) : "%edx");
 #endif
 

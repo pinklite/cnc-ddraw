@@ -11,7 +11,7 @@ void blt_copy(
     unsigned char* src,
     size_t size)
 {
-#ifdef _MSC_VER
+#if defined(_MSC_VER) || defined(__AVX__)
     if (g_blt_use_avx && !((DWORD)dst % 32) && !((DWORD)src % 32))
     {
         if (size >= 1024 * 4096)
@@ -465,7 +465,7 @@ void blt_clear(
     char color,
     size_t size)
 {
-#ifdef _MSC_VER
+#if defined(_MSC_VER) || defined(__AVX__)
     if (size < 1024 * 100 && g_blt_use_avx && !((DWORD)dst % 32))
     {
         __m256i c0 = _mm256_set1_epi8(color);
