@@ -432,6 +432,7 @@ static void cfg_create_ini()
             "\n"
             "; American Conquest\n"
             "[DMCR]\n"
+            "resolutions=2\n"
             "minfps=-2\n"
             "\n"
             "; Age of Wonders\n"
