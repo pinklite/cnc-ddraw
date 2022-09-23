@@ -40,7 +40,7 @@ BOOL d3d9_create()
     {
         d3d9_release();
     }
-    else if (d3d9_release_resources() && d3d9_create_resources() && d3d9_reset(g_ddraw->windowed))
+    else if (d3d9_create_resources() && d3d9_reset(g_ddraw->windowed))
     {
         return TRUE;
     }
@@ -218,6 +218,8 @@ static BOOL d3d9_create_resources()
 {
     if (!g_d3d9.device)
         return FALSE;
+
+    d3d9_release_resources();
 
     BOOL err = FALSE;
 
