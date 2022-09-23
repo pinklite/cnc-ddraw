@@ -395,7 +395,8 @@ HRESULT dd_RestoreDisplayMode()
 
         if (g_ddraw->renderer == d3d9_render_main)
         {
-            d3d9_reset(TRUE);
+            if (!d3d9_reset(TRUE))
+                d3d9_release();
         }
     }
 
@@ -1008,7 +1009,8 @@ ULONG dd_Release()
 
             if (g_ddraw->renderer == d3d9_render_main)
             {
-                d3d9_release();
+                if (!d3d9_reset(TRUE))
+                    d3d9_release();
             }
             else if (!g_ddraw->windowed)
             {

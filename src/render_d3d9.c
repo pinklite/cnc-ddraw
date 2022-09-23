@@ -12,7 +12,7 @@
 #include "debug.h"
 
 
-static BOOL d3d9_create_resouces();
+static BOOL d3d9_create_resources();
 static BOOL d3d9_set_states();
 static BOOL d3d9_update_vertices(BOOL upscale_hack, BOOL stretch);
 
@@ -40,7 +40,7 @@ BOOL d3d9_create()
     {
         d3d9_release();
     }
-    else if (d3d9_release_resources() && d3d9_create_resouces() && d3d9_reset(g_ddraw->windowed))
+    else if (d3d9_release_resources() && d3d9_create_resources() && d3d9_reset(g_ddraw->windowed))
     {
         return TRUE;
     }
@@ -115,7 +115,7 @@ BOOL d3d9_create()
                         behavior_flags[i] | (g_ddraw->fpupreserve ? D3DCREATE_FPU_PRESERVE : 0),
                         &g_d3d9.params,
                         &g_d3d9.device)))
-                    return g_d3d9.device && d3d9_create_resouces() && d3d9_set_states();
+                    return g_d3d9.device && d3d9_create_resources() && d3d9_set_states();
             }
         }
     }
@@ -214,7 +214,7 @@ BOOL d3d9_release()
     return TRUE;
 }
 
-static BOOL d3d9_create_resouces()
+static BOOL d3d9_create_resources()
 {
     if (!g_d3d9.device)
         return FALSE;
