@@ -354,7 +354,7 @@ void util_toggle_fullscreen()
 
         if (g_ddraw->renderer == d3d9_render_main)
         {
-            d3d9_reset();
+            d3d9_reset(g_ddraw->windowed);
         }
         else
         {

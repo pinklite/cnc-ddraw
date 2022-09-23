@@ -36,8 +36,18 @@ BOOL d3d9_is_available()
 
 BOOL d3d9_create()
 {
-    if (!d3d9_release())
-        return FALSE;
+    if (g_d3d9.hwnd != g_ddraw->hwnd)
+    {
+        d3d9_release();
+    }
+    else if (d3d9_release_resources() && d3d9_create_resouces() && d3d9_reset(g_ddraw->windowed))
+    {
+        return TRUE;
+    }
+    else
+    {
+        d3d9_release();
+    }
 
     if (!g_d3d9.hmodule)
         g_d3d9.hmodule = LoadLibrary("d3d9.dll");
@@ -73,6 +83,7 @@ BOOL d3d9_create()
             (d3d_create9 && (g_d3d9.instance = d3d_create9(D3D_SDK_VERSION))))
         {
             g_d3d9.bits_per_pixel = g_ddraw->render.bpp ? g_ddraw->render.bpp : g_ddraw->mode.dmBitsPerPel;
+            g_d3d9.hwnd = g_ddraw->hwnd;
 
             memset(&g_d3d9.params, 0, sizeof(g_d3d9.params));
 
@@ -116,17 +127,17 @@ BOOL d3d9_on_device_lost()
 {
     if (g_d3d9.device && IDirect3DDevice9_TestCooperativeLevel(g_d3d9.device) == D3DERR_DEVICENOTRESET)
     {
-        return d3d9_reset();
+        return d3d9_reset(g_ddraw->windowed);
     }
 
     return FALSE;
 }
 
-BOOL d3d9_reset()
+BOOL d3d9_reset(BOOL windowed)
 {
-    g_d3d9.params.Windowed = g_ddraw->windowed;
-    g_d3d9.params.BackBufferWidth = g_d3d9.params.Windowed ? 0 : g_ddraw->render.width;
-    g_d3d9.params.BackBufferHeight = g_d3d9.params.Windowed ? 0 : g_ddraw->render.height;
+    g_d3d9.params.Windowed = windowed;
+    g_d3d9.params.BackBufferWidth = windowed ? 0 : g_ddraw->render.width;
+    g_d3d9.params.BackBufferHeight = windowed ? 0 : g_ddraw->render.height;
     g_d3d9.params.BackBufferFormat = g_d3d9.bits_per_pixel == 16 ? D3DFMT_R5G6B5 : D3DFMT_X8R8G8B8;
 
     if (g_d3d9.device && SUCCEEDED(IDirect3DDevice9_Reset(g_d3d9.device, &g_d3d9.params)))
@@ -146,7 +157,7 @@ BOOL d3d9_reset()
     return FALSE;
 }
 
-BOOL d3d9_release()
+BOOL d3d9_release_resources()
 {
     if (g_d3d9.pixel_shader)
     {
@@ -181,6 +192,13 @@ BOOL d3d9_release()
         g_d3d9.vertex_buf = NULL;
     }
 
+    return TRUE;
+}
+
+BOOL d3d9_release()
+{
+    d3d9_release_resources();
+
     if (g_d3d9.device)
     {
         while (IDirect3DDevice9_Release(g_d3d9.device));
@@ -198,6 +216,9 @@ BOOL d3d9_release()
 
 static BOOL d3d9_create_resouces()
 {
+    if (!g_d3d9.device)
+        return FALSE;
+
     BOOL err = FALSE;
 
     int width = g_ddraw->width;

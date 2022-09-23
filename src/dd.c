@@ -395,7 +395,7 @@ HRESULT dd_RestoreDisplayMode()
 
         if (g_ddraw->renderer == d3d9_render_main)
         {
-            d3d9_release();
+            d3d9_reset(TRUE);
         }
     }
 
