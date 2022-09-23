@@ -392,17 +392,16 @@ HRESULT dd_RestoreDisplayMode()
             WaitForSingleObject(g_ddraw->render.thread, INFINITE);
             g_ddraw->render.thread = NULL;
         }
+    }
 
+    if (!g_ddraw->windowed)
+    {
         if (g_ddraw->renderer == d3d9_render_main)
         {
             if (!d3d9_reset(TRUE))
                 d3d9_release();
         }
-    }
-
-    if (!g_ddraw->windowed)
-    {
-        if (g_ddraw->renderer != d3d9_render_main)
+        else
         {
             ChangeDisplaySettings(NULL, 0);
         }
@@ -1007,14 +1006,17 @@ ULONG dd_Release()
                 g_ddraw->render.thread = NULL;
             }
 
-            if (g_ddraw->renderer == d3d9_render_main)
+            if (!g_ddraw->windowed)
             {
-                if (!d3d9_reset(TRUE))
-                    d3d9_release();
-            }
-            else if (!g_ddraw->windowed)
-            {
-                ChangeDisplaySettings(NULL, 0);
+                if (g_ddraw->renderer == d3d9_render_main)
+                {
+                    if (!d3d9_reset(TRUE))
+                        d3d9_release();
+                }
+                else
+                {
+                    ChangeDisplaySettings(NULL, 0);
+                }
             }
         }
 
