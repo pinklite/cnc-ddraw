@@ -94,6 +94,16 @@ static HGLRC ogl_create_core_context(HDC hdc)
     {
         xwglDeleteContext(g_ogl.context);
         oglu_init();
+
+#if _DEBUG 
+        TRACE("+--OpenGL Core-----------------------------------\n");
+        TRACE("| GL_VERSION:                  %s\n", glGetString(GL_VERSION));
+        TRACE("| GL_VENDOR:                   %s\n", glGetString(GL_VENDOR));
+        TRACE("| GL_RENDERER:                 %s\n", glGetString(GL_RENDERER));
+        TRACE("| GL_SHADING_LANGUAGE_VERSION: %s\n", glGetString(GL_SHADING_LANGUAGE_VERSION));
+        TRACE("+------------------------------------------------\n");
+#endif
+
         return context;
     }
     else if (context)
