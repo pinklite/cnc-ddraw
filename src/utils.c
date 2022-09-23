@@ -335,13 +335,6 @@ void util_toggle_fullscreen()
         mouse_unlock();
 
         g_config.window_state = g_ddraw->windowed = FALSE;
-        LONG style = real_GetWindowLongA(g_ddraw->hwnd, GWL_STYLE);
-
-        real_SetWindowLongA(
-            g_ddraw->hwnd,
-            GWL_STYLE,
-            style & ~(WS_CAPTION | WS_THICKFRAME | WS_MINIMIZE | WS_MAXIMIZE | WS_SYSMENU));
-
         dd_SetDisplayMode(g_ddraw->width, g_ddraw->height, g_ddraw->bpp, SDM_LEAVE_WINDOWED);
         util_update_bnet_pos(0, 0);
 
