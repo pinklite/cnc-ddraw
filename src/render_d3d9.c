@@ -76,6 +76,27 @@ BOOL d3d9_create()
         if ((d3d_create9on12 && (g_d3d9.instance = d3d_create9on12(D3D_SDK_VERSION, &args, 1))) ||
             (d3d_create9 && (g_d3d9.instance = d3d_create9(D3D_SDK_VERSION))))
         {
+#if _DEBUG 
+            D3DADAPTER_IDENTIFIER9 ai = {0};
+            const HRESULT hr = IDirect3D9_GetAdapterIdentifier(g_d3d9.instance, 0, 0, &ai);
+
+            if (SUCCEEDED(hr)) 
+            {
+                TRACE("+--Direct 3D 9-----------------------------------\n");
+                TRACE("| VendorId:    0x%x\n", ai.VendorId);
+                TRACE("| DeviceId:    0x%x\n", ai.DeviceId);
+                TRACE("| Revision:    0x%x\n", ai.Revision);
+                TRACE("| SubSysId:    0x%x\n", ai.SubSysId);
+                TRACE("| Product:     %hu\n", HIWORD(ai.DriverVersion.HighPart));
+                TRACE("| Version:     %hu\n", LOWORD(ai.DriverVersion.HighPart));
+                TRACE("| Sub version: %hu\n", HIWORD(ai.DriverVersion.LowPart));
+                TRACE("| Build:       %hu\n", LOWORD(ai.DriverVersion.LowPart));
+                TRACE("| Driver:      %s\n", ai.Driver);
+                TRACE("| Description: %s\n", ai.Description);
+                TRACE("+------------------------------------------------\n");
+            }
+#endif
+
             g_d3d9.bits_per_pixel = g_ddraw->render.bpp ? g_ddraw->render.bpp : g_ddraw->mode.dmBitsPerPel;
             g_d3d9.hwnd = g_ddraw->hwnd;
 
