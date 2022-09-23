@@ -36,18 +36,12 @@ BOOL d3d9_is_available()
 
 BOOL d3d9_create()
 {
-    if (g_d3d9.hwnd != g_ddraw->hwnd)
-    {
-        d3d9_release();
-    }
-    else if (d3d9_create_resources() && d3d9_reset(g_ddraw->windowed))
+    if (g_d3d9.hwnd == g_ddraw->hwnd && d3d9_create_resources() && d3d9_reset(g_ddraw->windowed))
     {
         return TRUE;
     }
-    else
-    {
-        d3d9_release();
-    }
+    
+    d3d9_release();
 
     if (!g_d3d9.hmodule)
         g_d3d9.hmodule = LoadLibrary("d3d9.dll");
