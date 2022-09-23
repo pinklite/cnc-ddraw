@@ -138,6 +138,7 @@ typedef struct CNCDDRAW
     BOOL novidmem;
     BOOL fpupreserve;
     BOOL allow_wmactivate;
+    int d3d9_adapter;
     BOOL accurate_timers;
     BOOL resizable;
     BOOL nonexclusive;

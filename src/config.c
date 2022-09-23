@@ -50,6 +50,7 @@ void cfg_load()
     g_ddraw->resolutions = cfg_get_int("resolutions", RESLIST_NORMAL);
     g_ddraw->fpupreserve = cfg_get_bool("fpupreserve", FALSE);
     g_ddraw->allow_wmactivate = cfg_get_bool("allow_wmactivate", FALSE);
+    g_ddraw->d3d9_adapter = cfg_get_int("d3d9_adapter", 0);
     cfg_get_string("screenshotdir", ".\\Screenshots\\", g_ddraw->screenshot_dir, sizeof(g_ddraw->screenshot_dir));
 
     if (g_ddraw->locktopleft)
@@ -350,6 +351,7 @@ static void cfg_create_ini()
             "\n"
             "\n"
             "; Undocumented settings\n"
+            "d3d9_adapter=0\n"
             "d3d9on12=false\n"
             "game_handles_close=false\n"
             "accuratetimers=false\n"

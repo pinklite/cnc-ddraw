@@ -78,7 +78,7 @@ BOOL d3d9_create()
         {
 #if _DEBUG 
             D3DADAPTER_IDENTIFIER9 ai = {0};
-            const HRESULT hr = IDirect3D9_GetAdapterIdentifier(g_d3d9.instance, 0, 0, &ai);
+            const HRESULT hr = IDirect3D9_GetAdapterIdentifier(g_d3d9.instance, g_ddraw->d3d9_adapter, 0, &ai);
 
             if (SUCCEEDED(hr)) 
             {
@@ -124,7 +124,7 @@ BOOL d3d9_create()
                 if (SUCCEEDED(
                     IDirect3D9_CreateDevice(
                         g_d3d9.instance,
-                        D3DADAPTER_DEFAULT,
+                        g_ddraw->d3d9_adapter,
                         D3DDEVTYPE_HAL,
                         g_ddraw->hwnd,
                         behavior_flags[i] | (g_ddraw->fpupreserve ? D3DCREATE_FPU_PRESERVE : 0),
