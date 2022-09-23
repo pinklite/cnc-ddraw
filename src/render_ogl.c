@@ -35,6 +35,15 @@ DWORD WINAPI ogl_render_main(void)
     {
         oglu_init();
 
+#if _DEBUG 
+        TRACE("+--OpenGL-----------------------------------------\n");
+        TRACE("| GL_VERSION:                  %s\n", glGetString(GL_VERSION));
+        TRACE("| GL_VENDOR:                   %s\n", glGetString(GL_VENDOR));
+        TRACE("| GL_RENDERER:                 %s\n", glGetString(GL_RENDERER));
+        TRACE("| GL_SHADING_LANGUAGE_VERSION: %s\n", glGetString(GL_SHADING_LANGUAGE_VERSION));
+        TRACE("+------------------------------------------------\n");
+#endif
+
         g_ogl.context = ogl_create_core_context(g_ddraw->render.hdc);
 
         if (oglu_ext_exists("WGL_EXT_swap_control", g_ddraw->render.hdc) && wglSwapIntervalEXT)
