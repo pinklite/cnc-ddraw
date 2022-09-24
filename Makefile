@@ -2,7 +2,7 @@
 
 WINDRES  ?= windres
 LDFLAGS   = -Iinc -Wall -Wl,--enable-stdcall-fixup -s
-CFLAGS    = -std=c99 -O3 -march=pentium4
+CFLAGS    = -std=c99 -O3 -march=pentium2
 LIBS      = -lgdi32 -lwinmm -lpsapi -ldbghelp -lole32
 
 FILES = src/IDirect3D/IDirect3D.c \
