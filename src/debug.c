@@ -46,10 +46,13 @@ int dbg_exception_handler(EXCEPTION_POINTERS* exception)
         CloseHandle(dmp);
     }
 
-    dbg_printf(
-        "Exception at %p (%08X)\n",
-        exception->ExceptionRecord->ExceptionAddress,
-        exception->ExceptionRecord->ExceptionCode);
+    if (exception && ExceptionRecord)
+    {
+        dbg_printf(
+            "Exception at %p (%08X)\n",
+            exception->ExceptionRecord->ExceptionAddress,
+            exception->ExceptionRecord->ExceptionCode);
+    }
 
     return EXCEPTION_EXECUTE_HANDLER;
 }
