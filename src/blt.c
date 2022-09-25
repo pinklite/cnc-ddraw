@@ -12,7 +12,7 @@ void blt_copy(
     size_t size)
 {
 #if defined(_MSC_VER) || defined(__AVX__)
-    if (!((DWORD)dst % 32) && !((DWORD)src % 32))
+    if (!((DWORD)dst % 64) && !((DWORD)src % 64))
     {
         if (size >= 1024 * 4096 && g_blt_use_avx)
         {
