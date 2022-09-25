@@ -12,9 +12,9 @@ void blt_copy(
     size_t size)
 {
 #if defined(_MSC_VER) || defined(__AVX__)
-    if (g_blt_use_avx && !((DWORD)dst % 32) && !((DWORD)src % 32))
+    if (!((DWORD)dst % 32) && !((DWORD)src % 32))
     {
-        if (size >= 1024 * 4096)
+        if (size >= 1024 * 4096 && g_blt_use_avx)
         {
             _mm_prefetch((const char*)(src), _MM_HINT_NTA);
 
@@ -48,7 +48,7 @@ void blt_copy(
             _mm_sfence();
             _mm256_zeroupper();
         }
-        else if (size < 1024 * 100)
+        else if (size < 1024 * 100 && g_blt_use_avx)
         {
             while (size >= 128)
             {
@@ -69,16 +69,18 @@ void blt_copy(
 
             _mm256_zeroupper();
         }
+        else if (size >= 1024 * 100)
+        {
+            __movsb(dst, src, size);
+
+            size = 0;
+        }
 
         /* memcpy below handles the remainder */
     }
 #endif
-
-    if (size >= 1024 * 100)
-    {
-        __movsb(dst, src, size);
-    }
-    else
+    
+    if (size > 0)
     {
         memcpy(dst, src, size);
     }
