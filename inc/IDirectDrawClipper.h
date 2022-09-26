@@ -14,6 +14,7 @@ typedef struct IDirectDrawClipperImpl
     struct IDirectDrawClipperImplVtbl* lpVtbl;
 
     ULONG ref;
+    HWND hwnd;
 
 } IDirectDrawClipperImpl;
 

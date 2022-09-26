@@ -5,6 +5,23 @@
 #include "debug.h"
 
 
+HRESULT ddc_GetHWnd(IDirectDrawClipperImpl* This, HWND FAR* lphWnd)
+{
+    if (!lphWnd)
+        return DDERR_INVALIDPARAMS;
+
+    *lphWnd = This->hwnd;
+
+    return DD_OK;
+}
+
+HRESULT ddc_SetHWnd(IDirectDrawClipperImpl* This, DWORD dwFlags, HWND hWnd)
+{
+    This->hwnd = hWnd;
+
+    return DD_OK;
+}
+
 HRESULT dd_CreateClipper(DWORD dwFlags, IDirectDrawClipperImpl** lplpDDClipper, IUnknown FAR* pUnkOuter)
 {
     if (!lplpDDClipper)
