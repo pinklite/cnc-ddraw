@@ -89,9 +89,9 @@ HRESULT __stdcall IDirectDrawClipper__SetClipList(IDirectDrawClipperImpl* This, 
 
 HRESULT __stdcall IDirectDrawClipper__SetHWnd(IDirectDrawClipperImpl* This, DWORD dwFlags, HWND hWnd)
 {
-    TRACE("-> %s(This=%p, dwFlags=%08X, hWnd=%p)\n", __FUNCTION__, This, dwFlags, hWnd);
+    TRACE("NOT_IMPLEMENTED -> %s(This=%p, dwFlags=%08X, hWnd=%p)\n", __FUNCTION__, This, dwFlags, hWnd);
     HRESULT ret = ddc_SetHWnd(This, dwFlags, hWnd);
-    TRACE("<- %s\n", __FUNCTION__);
+    TRACE("NOT_IMPLEMENTED <- %s\n", __FUNCTION__);
     return ret;
 }
 
