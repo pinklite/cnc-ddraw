@@ -154,13 +154,13 @@ void cfg_load()
     cfg_get_string("renderer", "auto", tmp, sizeof(tmp));
     TRACE("     Using %s renderer\n", tmp);
 
-    if (tolower(tmp[0]) == 's' || tolower(tmp[0]) == 'g') /* gdi */
-    {
-        g_ddraw->renderer = gdi_render_main;
-    }
-    else if (tolower(tmp[0]) == 'd' || g_ddraw->d3d9on12) /* direct3d9 */
+    if (tolower(tmp[0]) == 'd' || g_ddraw->d3d9on12) /* direct3d9 */
     {
         g_ddraw->renderer = d3d9_render_main;
+    }
+    else if (tolower(tmp[0]) == 's' || tolower(tmp[0]) == 'g') /* gdi */
+    {
+        g_ddraw->renderer = gdi_render_main;
     }
     else if (tolower(tmp[0]) == 'o') /* opengl */
     {
