@@ -1005,18 +1005,18 @@ ULONG dd_Release()
                 WaitForSingleObject(g_ddraw->render.thread, INFINITE);
                 g_ddraw->render.thread = NULL;
             }
+        }
 
-            if (!g_ddraw->windowed)
+        if (!g_ddraw->windowed)
+        {
+            if (g_ddraw->renderer == d3d9_render_main)
             {
-                if (g_ddraw->renderer == d3d9_render_main)
-                {
-                    if (!d3d9_reset(TRUE))
-                        d3d9_release();
-                }
-                else
-                {
-                    ChangeDisplaySettings(NULL, 0);
-                }
+                if (!d3d9_reset(TRUE))
+                    d3d9_release();
+            }
+            else
+            {
+                ChangeDisplaySettings(NULL, 0);
             }
         }
 
