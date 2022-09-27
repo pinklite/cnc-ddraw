@@ -20,8 +20,8 @@ HRESULT dds_AddAttachedSurface(IDirectDrawSurfaceImpl* This, IDirectDrawSurfaceI
 
         if (!This->backbuffer)
         {
-lpDDSurface->caps |= DDSCAPS_BACKBUFFER;
-This->backbuffer = lpDDSurface;
+            lpDDSurface->caps |= DDSCAPS_BACKBUFFER;
+            This->backbuffer = lpDDSurface;
         }
     }
 
@@ -124,13 +124,13 @@ HRESULT dds_Blt(
     if (dst_buf && (dwFlags & DDBLT_COLORFILL) && lpDDBltFx && dst_w > 0 && dst_h > 0)
     {
         blt_colorfill(
-            dst_buf, 
-            dst_x, 
-            dst_y, 
-            dst_w, 
-            dst_h, 
-            This->l_pitch, 
-            lpDDBltFx->dwFillColor, 
+            dst_buf,
+            dst_x,
+            dst_y,
+            dst_w,
+            dst_h,
+            This->l_pitch,
+            lpDDBltFx->dwFillColor,
             This->bpp);
     }
 
