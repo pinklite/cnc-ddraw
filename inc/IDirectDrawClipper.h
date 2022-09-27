@@ -15,6 +15,7 @@ typedef struct IDirectDrawClipperImpl
 
     ULONG ref;
     HWND hwnd;
+    HRGN region;
 
 } IDirectDrawClipperImpl;
 
