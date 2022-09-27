@@ -64,10 +64,53 @@ HRESULT dds_Blt(
     if (lpDestRect)
         memcpy(&dst_rect, lpDestRect, sizeof(dst_rect));
 
+    int src_w = src_rect.right - src_rect.left;
+    int src_h = src_rect.bottom - src_rect.top;
+
+    int dst_w = dst_rect.right - dst_rect.left;
+    int dst_h = dst_rect.bottom - dst_rect.top;
+
     /* stretch or clip? */
-    BOOL is_stretch_blt =
-        ((src_rect.right - src_rect.left) != (dst_rect.right - dst_rect.left)) ||
-        ((src_rect.bottom - src_rect.top) != (dst_rect.bottom - dst_rect.top));
+    BOOL is_stretch_blt = src_w != dst_w || src_h != dst_h;
+
+    /* keep this commented out until tested and confirmed working
+    if (This->clipper && src_surface && !(dwFlags & DDBLT_NO_CLIP) && src_w > 0 && src_h > 0 && dst_w > 0 && dst_h > 0)
+    {
+        DWORD size = 0;
+
+        if (SUCCEEDED(IDirectDrawClipper_GetClipList(This->clipper, &dst_rect, NULL, &size)) && size > 0)
+        {
+            RGNDATA* list = (RGNDATA*)HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, size);
+
+            if (list)
+            {
+                if (SUCCEEDED(IDirectDrawClipper_GetClipList(This->clipper, &dst_rect, list, &size)))
+                {
+                    float scale_w = (float)src_w / dst_w;
+                    float scale_h = (float)src_h / dst_h;
+
+                    RECT* dst_c_rect = (RECT*)list->Buffer;
+
+                    for (int i = 0; i < list->rdh.nCount; ++i)
+                    {
+                        RECT src_c_rect = src_rect;
+
+                        src_c_rect.left += (LONG)((dst_c_rect[i].left - dst_rect.left) * scale_w);
+                        src_c_rect.top += (LONG)((dst_c_rect[i].top - dst_rect.top) * scale_h);
+                        src_c_rect.right -= (LONG)((dst_rect.right - dst_c_rect[i].right) * scale_w);
+                        src_c_rect.bottom -= (LONG)((dst_rect.bottom - dst_c_rect[i].bottom) * scale_h);
+
+                        dds_Blt(This, &dst_c_rect[i], src_surface, &src_c_rect, dwFlags | DDBLT_NO_CLIP, lpDDBltFx);
+                    }
+                }
+
+                HeapFree(GetProcessHeap(), 0, list);
+
+                return DD_OK;
+            }
+        }
+    }
+    */
 
     if (src_surface)
     {
@@ -122,13 +165,15 @@ HRESULT dds_Blt(
     if (dst_rect.top > dst_rect.bottom)
         dst_rect.top = dst_rect.bottom;
 
-    int src_w = src_rect.right - src_rect.left;
-    int src_h = src_rect.bottom - src_rect.top;
+    src_w = src_rect.right - src_rect.left;
+    src_h = src_rect.bottom - src_rect.top;
+
     int src_x = src_rect.left;
     int src_y = src_rect.top;
 
-    int dst_w = dst_rect.right - dst_rect.left;
-    int dst_h = dst_rect.bottom - dst_rect.top;
+    dst_w = dst_rect.right - dst_rect.left;
+    dst_h = dst_rect.bottom - dst_rect.top;
+
     int dst_x = dst_rect.left;
     int dst_y = dst_rect.top;
 
@@ -153,45 +198,6 @@ HRESULT dds_Blt(
         BOOL got_fx = (dwFlags & DDBLT_DDFX) && lpDDBltFx;
         BOOL mirror_left_right = got_fx && (lpDDBltFx->dwDDFX & DDBLTFX_MIRRORLEFTRIGHT);
         BOOL mirror_up_down = got_fx && (lpDDBltFx->dwDDFX & DDBLTFX_MIRRORUPDOWN);
-
-        /* keep this commented out until tested and confirmed working
-        if (This->clipper && !(dwFlags & DDBLT_NO_CLIP))
-        {
-            DWORD size = 0;
-
-            if (SUCCEEDED(IDirectDrawClipper_GetClipList(This->clipper, &dst_rect, NULL, &size)) && size > 0)
-            {
-                RGNDATA* list = (RGNDATA*)HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, size);
-
-                if (list)
-                {
-                    if (SUCCEEDED(IDirectDrawClipper_GetClipList(This->clipper, &dst_rect, list, &size)))
-                    {
-                        float scale_w = (float)src_w / dst_w;
-                        float scale_h = (float)src_h / dst_h;
-
-                        RECT* dst_c_rect = (RECT*)list->Buffer;
-
-                        for (int i = 0; i < list->rdh.nCount; ++i)
-                        {
-                            RECT src_c_rect = src_rect;
-
-                            src_c_rect.left += (LONG)((dst_c_rect[i].left - dst_rect.left) * scale_w);
-                            src_c_rect.top += (LONG)((dst_c_rect[i].top - dst_rect.top) * scale_h);
-                            src_c_rect.right -= (LONG)((dst_rect.right - dst_c_rect[i].right) * scale_w);
-                            src_c_rect.bottom -= (LONG)((dst_rect.bottom - dst_c_rect[i].bottom) * scale_h);
-
-                            dds_Blt(This, &dst_c_rect[i], src_surface, &src_c_rect, dwFlags | DDBLT_NO_CLIP, lpDDBltFx);
-                        }
-                    }
-
-                    HeapFree(GetProcessHeap(), 0, list);
-
-                    return DD_OK;
-                }
-            }
-        }
-        */
 
         if (This->bpp != src_surface->bpp)
         {
