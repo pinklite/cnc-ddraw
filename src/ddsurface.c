@@ -210,6 +210,20 @@ HRESULT dds_Blt(
             dds_GetDC(src_surface, &src_dc);
 
             StretchBlt(dst_dc, dst_x, dst_y, dst_w, dst_h, src_dc, src_x, src_y, src_w, src_h, SRCCOPY);
+            /*
+            StretchBlt(
+                dst_dc, 
+                lpDestRect->left, 
+                lpDestRect->top, 
+                lpDestRect->right - lpDestRect->left, 
+                lpDestRect->bottom - lpDestRect->top, 
+                src_dc, 
+                lpSrcRect->left, 
+                lpSrcRect->top, 
+                lpSrcRect->right - lpSrcRect->left, 
+                lpSrcRect->bottom - lpSrcRect->top, 
+                SRCCOPY);
+                */
         }
         else if (
             (dwFlags & DDBLT_KEYSRC) ||
@@ -447,6 +461,18 @@ HRESULT dds_BltFast(
             dds_GetDC(src_surface, &src_dc);
 
             BitBlt(dst_dc, dst_x, dst_y, dst_w, dst_h, src_dc, src_x, src_y, SRCCOPY);
+            /*
+            BitBlt(
+                dst_dc, 
+                dwX, 
+                dwY, 
+                lpSrcRect->right - lpSrcRect->left, 
+                lpSrcRect->bottom - lpSrcRect->top, 
+                src_dc, 
+                lpSrcRect->left, 
+                lpSrcRect->top, 
+                SRCCOPY);
+                */
         }
         else if (dwFlags & DDBLTFAST_SRCCOLORKEY)
         {
