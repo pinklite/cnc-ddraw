@@ -91,10 +91,24 @@ HRESULT dds_Blt(
     }
 
     if (dst_rect.left < 0)
+    {
+        src_rect.left += abs(dst_rect.left);
+
+        if (src_rect.left > src_rect.right)
+            src_rect.left = src_rect.right;
+
         dst_rect.left = 0;
+    }
 
     if (dst_rect.top < 0)
+    {
+        src_rect.top += abs(dst_rect.top);
+
+        if (src_rect.top > src_rect.bottom)
+            src_rect.top = src_rect.bottom;
+
         dst_rect.top = 0;
+    }
 
     if (dst_rect.right > This->width)
         dst_rect.right = This->width;
@@ -213,14 +227,14 @@ HRESULT dds_Blt(
                     color_key.dwColorSpaceHighValue = color_key.dwColorSpaceLowValue;
             }
 
-            if (src_w == dst_w && src_h == dst_h && !mirror_left_right && !mirror_up_down)
+            if (!is_stretch_blt && !mirror_left_right && !mirror_up_down)
             {
                 blt_colorkey(
                     dst_buf,
                     dst_x,
                     dst_y,
-                    dst_w,
-                    dst_h,
+                    min(dst_w, src_w),
+                    min(dst_h, src_h),
                     This->l_pitch,
                     src_buf,
                     src_x,
@@ -252,7 +266,7 @@ HRESULT dds_Blt(
                     This->bpp);
             }
         }
-        else if (is_stretch_blt)
+        else if (is_stretch_blt && (src_w != dst_w || src_h != dst_h))
         {
             blt_stretch(
                 dst_buf,
