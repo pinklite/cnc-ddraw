@@ -28,6 +28,9 @@ ULONG __stdcall IDirectDrawClipper__Release(IDirectDrawClipperImpl* This)
     {
         TRACE("     Released (%p)\n", This);
 
+        if (This->region)
+            DeleteObject(This->region);
+
         HeapFree(GetProcessHeap(), 0, This);
     }
 
