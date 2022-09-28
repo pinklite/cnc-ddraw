@@ -1215,7 +1215,7 @@ HRESULT dd_CreateSurface(
         dst_surface->l_pitch = ((dst_surface->width * dst_surface->bpp + 31) & ~31) >> 3;
         dst_surface->size = dst_surface->l_pitch * dst_surface->height;
 
-        int guard_lines = 200;
+        int guard_lines = g_ddraw->no_guard_lines ? 0 : 200;
         DWORD aligned_width = dst_surface->l_pitch / dst_surface->lx_pitch;
 
         DWORD bmi_size = sizeof(BITMAPINFOHEADER) + sizeof(RGBQUAD) * 256;

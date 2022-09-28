@@ -152,6 +152,7 @@ typedef struct CNCDDRAW
     BOOL d3d9linear;
     BOOL gdilinear;
     BOOL d3d9on12;
+    BOOL no_guard_lines;
     int resolutions;
     BOOL armadahack;
     BOOL tshack;
