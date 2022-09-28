@@ -442,6 +442,7 @@ HRESULT dds_BltFast(
 
     dst_x = dst_rect.left;
     dst_y = dst_rect.top;
+
     int dst_w = dst_rect.right - dst_rect.left;
     int dst_h = dst_rect.bottom - dst_rect.top;
 
