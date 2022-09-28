@@ -1224,7 +1224,7 @@ HRESULT dd_CreateSurface(
         dst_surface->bmi = HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, bmi_size);
         dst_surface->bmi->bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
         dst_surface->bmi->bmiHeader.biWidth = aligned_width;
-        dst_surface->bmi->bmiHeader.biHeight = -((int)dst_surface->height);
+        dst_surface->bmi->bmiHeader.biHeight = -((int)dst_surface->height + guard_lines);
         dst_surface->bmi->bmiHeader.biPlanes = 1;
         dst_surface->bmi->bmiHeader.biBitCount = dst_surface->bpp;
         dst_surface->bmi->bmiHeader.biCompression = dst_surface->bpp == 8 ? BI_RGB : BI_BITFIELDS;
@@ -1290,11 +1290,6 @@ HRESULT dd_CreateSurface(
                 CloseHandle(dst_surface->surface_mapping);
                 dst_surface->surface_mapping = NULL;
             }
-        }
-
-        if (!dst_surface->surface_mapping)
-        {
-            dst_surface->bmi->bmiHeader.biHeight = -((int)dst_surface->height + guard_lines);
         }
 
         dst_surface->bitmap =
