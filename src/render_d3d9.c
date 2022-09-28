@@ -58,6 +58,7 @@ BOOL d3d9_create()
                 d3d9_enable_shim(TRUE);
         }
 
+        LPDIRECT3D9 d3d9on12 = NULL;
         D3D9ON12_ARGS args;
         memset(&args, 0, sizeof(args));
         args.Enable9On12 = TRUE;
@@ -74,7 +75,7 @@ BOOL d3d9_create()
             d3d_create9 = (void*)GetProcAddress(g_d3d9.hmodule, "Direct3DCreate9");
         }
 
-        if ((d3d_create9on12 && (g_d3d9.instance = d3d_create9on12(D3D_SDK_VERSION, &args, 1))) ||
+        if ((d3d_create9on12 && (d3d9on12 = g_d3d9.instance = d3d_create9on12(D3D_SDK_VERSION, &args, 1))) ||
             (d3d_create9 && (g_d3d9.instance = d3d_create9(D3D_SDK_VERSION))))
         {
 #if _DEBUG 
@@ -86,6 +87,7 @@ BOOL d3d9_create()
             if (SUCCEEDED(hr)) 
             {
                 TRACE("+--Direct3D9-------------------------------------\n");
+                TRACE("| D3D9On12:            %s\n", d3d9on12 != NULL ? "True" : "False");
                 TRACE("| VendorId:            0x%x\n", ai.VendorId);
                 TRACE("| DeviceId:            0x%x\n", ai.DeviceId);
                 TRACE("| Revision:            0x%x\n", ai.Revision);

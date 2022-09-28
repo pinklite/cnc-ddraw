@@ -16,6 +16,8 @@ DWORD WINAPI gdi_render_main(void)
 
     if (g_ddraw->show_driver_warning)
     {
+        TRACE("     Switched to GDI renderer\n");
+
         g_ddraw->show_driver_warning = FALSE;
 
         warning_end_tick = timeGetTime() + (15 * 1000);
