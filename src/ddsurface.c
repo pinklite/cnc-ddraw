@@ -209,7 +209,48 @@ HRESULT dds_Blt(
             HDC src_dc;
             dds_GetDC(src_surface, &src_dc);
 
-            StretchBlt(dst_dc, dst_x, dst_y, dst_w, dst_h, src_dc, src_x, src_y, src_w, src_h, SRCCOPY);
+            if ((dwFlags & DDBLT_KEYSRC) || (dwFlags & DDBLT_KEYSRCOVERRIDE))
+            {
+                UINT color = 
+                    (dwFlags & DDBLT_KEYSRCOVERRIDE) ?
+                    lpDDBltFx->ddckSrcColorkey.dwColorSpaceLowValue : src_surface->color_key.dwColorSpaceLowValue;
+
+                if (src_surface->bpp == 32)
+                {
+                    color = color & 0xFFFFFF;
+                }
+                else if (src_surface->bpp == 16)
+                {
+                    unsigned short c = (unsigned short)color;
+
+                    BYTE r = ((c & 0xF800) >> 11) << 3;
+                    BYTE g = ((c & 0x07E0) >> 5) << 2;
+                    BYTE b = ((c & 0x001F)) << 3;
+
+                    color = RGB(r, g, b);
+                }
+                else if (src_surface->bpp == 8)
+                {
+                    RGBQUAD* quad =
+                        src_surface->palette ? src_surface->palette->data_rgb :
+                        g_ddraw->primary && g_ddraw->primary->palette ? g_ddraw->primary->palette->data_rgb :
+                        NULL;
+
+                    if (quad)
+                    {
+                        unsigned char i = (unsigned char)color;
+
+                        color = RGB(quad[i].rgbRed, quad[i].rgbGreen, quad[i].rgbBlue);
+                    }                   
+                }
+
+                GdiTransparentBlt(dst_dc, dst_x, dst_y, dst_w, dst_h, src_dc, src_x, src_y, src_w, src_h, color);
+            }
+            else
+            {
+                StretchBlt(dst_dc, dst_x, dst_y, dst_w, dst_h, src_dc, src_x, src_y, src_w, src_h, SRCCOPY);
+            }
+
             /*
             StretchBlt(
                 dst_dc, 
@@ -461,7 +502,46 @@ HRESULT dds_BltFast(
             HDC src_dc;
             dds_GetDC(src_surface, &src_dc);
 
-            BitBlt(dst_dc, dst_x, dst_y, dst_w, dst_h, src_dc, src_x, src_y, SRCCOPY);
+            if (dwFlags & DDBLTFAST_SRCCOLORKEY)
+            {
+                UINT color = src_surface->color_key.dwColorSpaceLowValue;
+
+                if (src_surface->bpp == 32)
+                {
+                    color = color & 0xFFFFFF;
+                }
+                else if (src_surface->bpp == 16)
+                {
+                    unsigned short c = (unsigned short)color;
+
+                    BYTE r = ((c & 0xF800) >> 11) << 3;
+                    BYTE g = ((c & 0x07E0) >> 5) << 2;
+                    BYTE b = ((c & 0x001F)) << 3;
+
+                    color = RGB(r, g, b);
+                }
+                else if (src_surface->bpp == 8)
+                {
+                    RGBQUAD* quad =
+                        src_surface->palette ? src_surface->palette->data_rgb :
+                        g_ddraw->primary && g_ddraw->primary->palette ? g_ddraw->primary->palette->data_rgb :
+                        NULL;
+
+                    if (quad)
+                    {
+                        unsigned char i = (unsigned char)color;
+
+                        color = RGB(quad[i].rgbRed, quad[i].rgbGreen, quad[i].rgbBlue);
+                    }
+                }
+
+                GdiTransparentBlt(dst_dc, dst_x, dst_y, dst_w, dst_h, src_dc, src_x, src_y, dst_w, dst_h, color);
+            }
+            else
+            {
+                BitBlt(dst_dc, dst_x, dst_y, dst_w, dst_h, src_dc, src_x, src_y, SRCCOPY);
+            }
+
             /*
             BitBlt(
                 dst_dc, 
