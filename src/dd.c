@@ -739,8 +739,12 @@ HRESULT dd_SetDisplayMode(DWORD dwWidth, DWORD dwHeight, DWORD dwBPP, DWORD dwFl
     {
         LONG style = real_GetWindowLongA(g_ddraw->hwnd, GWL_STYLE);
 
+        DWORD swp_flags = SWP_SHOWWINDOW;
+
         if ((style & WS_CAPTION))
         {
+            swp_flags |= SWP_FRAMECHANGED;
+
             real_SetWindowLongA(
                 g_ddraw->hwnd,
                 GWL_STYLE,
@@ -783,7 +787,7 @@ HRESULT dd_SetDisplayMode(DWORD dwWidth, DWORD dwHeight, DWORD dwBPP, DWORD dwFl
             0,
             g_ddraw->render.width,
             g_ddraw->render.height,
-            SWP_SHOWWINDOW | SWP_FRAMECHANGED);
+            swp_flags);
 
         g_ddraw->last_set_window_pos_tick = timeGetTime();
 
