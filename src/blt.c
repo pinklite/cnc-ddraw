@@ -291,8 +291,8 @@ void blt_colorkey(
     }
     else if (bpp == 32)
     {
-        unsigned int key_l = (unsigned int)key_low;
-        unsigned int key_h = (unsigned int)key_high;
+        unsigned int key_l = key_low & 0xFFFFFF;
+        unsigned int key_h = key_high & 0xFFFFFF;
 
         unsigned int* d = (unsigned int*)dst;
         unsigned int* s = (unsigned int*)src;
@@ -305,7 +305,7 @@ void blt_colorkey(
                 {
                     unsigned int c = *s++;
 
-                    if (c != key_l)
+                    if ((c & 0xFFFFFF) != key_l)
                     {
                         *d = c;
                     }
@@ -325,7 +325,7 @@ void blt_colorkey(
                 {
                     unsigned int c = *s++;
 
-                    if (c < key_l || c > key_h)
+                    if ((c & 0xFFFFFF) < key_l || (c & 0xFFFFFF) > key_h)
                     {
                         *d = c;
                     }
@@ -431,8 +431,8 @@ void blt_colorkey_mirror_stretch(
     }
     else if (bpp == 32)
     {
-        unsigned int key_l = (unsigned int)key_low;
-        unsigned int key_h = (unsigned int)key_high;
+        unsigned int key_l = key_low & 0xFFFFFF;
+        unsigned int key_h = key_high & 0xFFFFFF;
 
         for (int y = 0; y < dst_h; y++)
         {
@@ -453,7 +453,7 @@ void blt_colorkey_mirror_stretch(
 
                 unsigned int c = ((unsigned int*)src)[scaled_x + src_row];
 
-                if (c < key_l || c > key_h)
+                if ((c & 0xFFFFFF) < key_l || (c & 0xFFFFFF) > key_h)
                 {
                     ((unsigned int*)dst)[x + dst_row] = c;
                 }
