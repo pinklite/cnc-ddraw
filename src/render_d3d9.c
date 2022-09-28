@@ -10,6 +10,7 @@
 #include "wndproc.h"
 #include "blt.h"
 #include "debug.h"
+#include "D3d9types.h"
 
 
 static BOOL d3d9_create_resources();
@@ -78,21 +79,39 @@ BOOL d3d9_create()
         {
 #if _DEBUG 
             D3DADAPTER_IDENTIFIER9 ai = {0};
-            const HRESULT hr = IDirect3D9_GetAdapterIdentifier(g_d3d9.instance, g_ddraw->d3d9_adapter, 0, &ai);
+            D3DCAPS9 caps = { 0 };
+            HRESULT hr = IDirect3D9_GetAdapterIdentifier(g_d3d9.instance, g_ddraw->d3d9_adapter, 0, &ai);
+            HRESULT hr2 = IDirect3D9_GetDeviceCaps(g_d3d9.instance, g_ddraw->d3d9_adapter, D3DDEVTYPE_HAL, &caps);
 
             if (SUCCEEDED(hr)) 
             {
-                TRACE("+--Direct 3D 9-----------------------------------\n");
-                TRACE("| VendorId:    0x%x\n", ai.VendorId);
-                TRACE("| DeviceId:    0x%x\n", ai.DeviceId);
-                TRACE("| Revision:    0x%x\n", ai.Revision);
-                TRACE("| SubSysId:    0x%x\n", ai.SubSysId);
-                TRACE("| Product:     %hu\n", HIWORD(ai.DriverVersion.HighPart));
-                TRACE("| Version:     %hu\n", LOWORD(ai.DriverVersion.HighPart));
-                TRACE("| Sub version: %hu\n", HIWORD(ai.DriverVersion.LowPart));
-                TRACE("| Build:       %hu\n", LOWORD(ai.DriverVersion.LowPart));
-                TRACE("| Driver:      %s\n", ai.Driver);
-                TRACE("| Description: %s\n", ai.Description);
+                TRACE("+--Direct3D9-------------------------------------\n");
+                TRACE("| VendorId:            0x%x\n", ai.VendorId);
+                TRACE("| DeviceId:            0x%x\n", ai.DeviceId);
+                TRACE("| Revision:            0x%x\n", ai.Revision);
+                TRACE("| SubSysId:            0x%x\n", ai.SubSysId);
+                TRACE("| Version:             %hu.%hu.%hu.%hu\n", 
+                    HIWORD(ai.DriverVersion.HighPart), 
+                    LOWORD(ai.DriverVersion.HighPart), 
+                    HIWORD(ai.DriverVersion.LowPart), 
+                    LOWORD(ai.DriverVersion.LowPart));
+
+                TRACE("| Driver:              %s\n", ai.Driver);
+                TRACE("| Description:         %s\n", ai.Description);
+
+                if (SUCCEEDED(hr2))
+                {
+                    TRACE("| MaxTextureWidth:     %d\n", caps.MaxTextureWidth);
+                    TRACE("| MaxTextureHeight:    %d\n", caps.MaxTextureHeight);
+
+                    TRACE("| VertexShaderVersion: %d.%d\n",
+                        (caps.VertexShaderVersion >> 8) & 0xFF,
+                        caps.VertexShaderVersion & 0xFF);
+
+                    TRACE("| PixelShaderVersion:  %d.%d\n",
+                        (caps.PixelShaderVersion >> 8) & 0xFF,
+                        caps.PixelShaderVersion & 0xFF);
+                }
                 TRACE("+------------------------------------------------\n");
             }
 #endif
