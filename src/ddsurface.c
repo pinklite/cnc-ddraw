@@ -177,6 +177,12 @@ HRESULT dds_Blt(
     int dst_x = dst_rect.left;
     int dst_y = dst_rect.top;
 
+    if (!is_stretch_blt)
+    {
+        src_w = dst_w = min(src_w, dst_w);
+        src_h = dst_h = min(src_h, dst_h);
+    }
+
     void* dst_buf = dds_GetBuffer(This);
     void* src_buf = dds_GetBuffer(src_surface);
 
@@ -294,8 +300,8 @@ HRESULT dds_Blt(
                     dst_buf,
                     dst_x,
                     dst_y,
-                    min(dst_w, src_w),
-                    min(dst_h, src_h),
+                    dst_w,
+                    dst_h,
                     This->l_pitch,
                     src_buf,
                     src_x,
@@ -350,8 +356,8 @@ HRESULT dds_Blt(
                 dst_buf,
                 dst_x,
                 dst_y,
-                min(dst_w, src_w),
-                min(dst_h, src_h),
+                dst_w,
+                dst_h,
                 This->l_pitch,
                 src_buf,
                 src_x,
@@ -365,8 +371,8 @@ HRESULT dds_Blt(
                 dst_buf,
                 dst_x,
                 dst_y,
-                min(dst_w, src_w),
-                min(dst_h, src_h),
+                dst_w,
+                dst_h,
                 This->l_pitch,
                 src_buf,
                 src_x,
