@@ -116,24 +116,30 @@ HRESULT dds_Blt(
 
     if (dst_rect.left < 0)
     {
-        src_rect.left += abs(dst_rect.left);
+        src_rect.left += (LONG)(abs(dst_rect.left) * scale_w);
         dst_rect.left = 0;
     }
 
     if (dst_rect.top < 0)
     {
-        src_rect.top += abs(dst_rect.top);
+        src_rect.top += (LONG)(abs(dst_rect.top) * scale_h);
         dst_rect.top = 0;
     }
 
     if (dst_rect.right > This->width)
+    {
+        src_rect.right -= (LONG)((dst_rect.right - This->width) * scale_w);
         dst_rect.right = This->width;
+    }
 
     if (dst_rect.left > dst_rect.right)
         dst_rect.left = dst_rect.right;
 
     if (dst_rect.bottom > This->height)
+    {
+        src_rect.bottom -= (LONG)((dst_rect.bottom - This->height) * scale_h);
         dst_rect.bottom = This->height;
+    }
 
     if (dst_rect.top > dst_rect.bottom)
         dst_rect.top = dst_rect.bottom;
