@@ -419,9 +419,25 @@ HRESULT dds_BltFast(
     RECT src_rect = { 0, 0, src_surface ? src_surface->width : 0, src_surface ? src_surface->height : 0 };
 
     if (lpSrcRect && src_surface)
-    {
         memcpy(&src_rect, lpSrcRect, sizeof(src_rect));
 
+    int dst_x = dwX;
+    int dst_y = dwY;
+
+    if (dst_x < 0)
+    {
+        src_rect.left += abs(dst_x);
+        dst_x = 0;
+    }
+
+    if (dst_y < 0)
+    {
+        src_rect.top += abs(dst_y);
+        dst_y = 0;
+    }
+
+    if (src_surface)
+    {
         if (src_rect.left < 0)
             src_rect.left = 0;
 
@@ -439,29 +455,6 @@ HRESULT dds_BltFast(
 
         if (src_rect.top > src_rect.bottom)
             src_rect.top = src_rect.bottom;
-    }
-
-    int dst_x = dwX;
-    int dst_y = dwY;
-
-    if (dst_x < 0)
-    {
-        src_rect.left += abs(dst_x);
-
-        if (src_rect.left > src_rect.right)
-            src_rect.left = src_rect.right;
-
-        dst_x = 0;
-    }
-
-    if (dst_y < 0)
-    {
-        src_rect.top += abs(dst_y);
-
-        if (src_rect.top > src_rect.bottom)
-            src_rect.top = src_rect.bottom;
-
-        dst_y = 0;
     }
 
     int src_x = src_rect.left;
