@@ -75,6 +75,7 @@ HRESULT dds_Blt(
 
     BOOL is_stretch_blt = src_w != dst_w || src_h != dst_h;
 
+    /* Disable this for now (needs more testing)
     if (This->clipper && !(dwFlags & DDBLT_NO_CLIP) && dst_w > 0 && dst_h > 0)
     {
         DWORD size = 0;
@@ -111,6 +112,7 @@ HRESULT dds_Blt(
             }
         }
     }
+    */
 
     if (dst_rect.left < 0)
     {
