@@ -79,7 +79,7 @@ HRESULT dds_Blt(
     {
         DWORD size = 0;
 
-        if (SUCCEEDED(IDirectDrawClipper_GetClipList(This->clipper, &dst_rect, NULL, &size)) && size > 0)
+        if (SUCCEEDED(IDirectDrawClipper_GetClipList(This->clipper, &dst_rect, NULL, &size)))
         {
             RGNDATA* list = (RGNDATA*)HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, size);
 

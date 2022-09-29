@@ -38,6 +38,9 @@ HRESULT ddc_GetClipList(IDirectDrawClipperImpl* This, LPRECT lpRect, LPRGNDATA l
     if (lpRect)
         DeleteObject(region);
 
+    if (*lpdwSiz == 0)
+        return DDERR_REGIONTOOSMALL;
+
     return DD_OK;
 }
 
