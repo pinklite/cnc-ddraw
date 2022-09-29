@@ -73,7 +73,7 @@ HRESULT dds_Blt(
     /* stretch or clip? */
     BOOL is_stretch_blt = src_w != dst_w || src_h != dst_h;
 
-    /* keep this commented out until tested and confirmed working
+    /* keep this commented out until tested and confirmed working 
     if (This->clipper && src_surface && !(dwFlags & DDBLT_NO_CLIP) && src_w > 0 && src_h > 0 && dst_w > 0 && dst_h > 0)
     {
         DWORD size = 0;
@@ -99,6 +99,11 @@ HRESULT dds_Blt(
                         src_c_rect.top += (LONG)((dst_c_rect[i].top - dst_rect.top) * scale_h);
                         src_c_rect.right -= (LONG)((dst_rect.right - dst_c_rect[i].right) * scale_w);
                         src_c_rect.bottom -= (LONG)((dst_rect.bottom - dst_c_rect[i].bottom) * scale_h);
+
+                        dbg_print_rect("src_rect     ", &src_rect);
+                        dbg_print_rect("src_c_rect   ", &src_c_rect);
+                        dbg_print_rect("dst_rect     ", &dst_rect);
+                        dbg_print_rect("dst_c_rect[i]", &dst_c_rect[i]);
 
                         dds_Blt(This, &dst_c_rect[i], src_surface, &src_c_rect, dwFlags | DDBLT_NO_CLIP, lpDDBltFx);
                     }

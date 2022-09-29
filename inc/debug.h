@@ -8,6 +8,7 @@ int dbg_exception_handler(EXCEPTION_POINTERS* exception);
 void dbg_counter_start();
 double dbg_counter_stop();
 void dbg_debug_string(const char* format, ...);
+void dbg_print_rect(char* info, LPRECT rect);
 void dbg_draw_frame_info_start();
 void dbg_draw_frame_info_end();
 int dbg_printf(const char* fmt, ...);

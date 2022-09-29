@@ -48,7 +48,7 @@ int dbg_exception_handler(EXCEPTION_POINTERS* exception)
 
     if (exception && exception->ExceptionRecord)
     {
-        dbg_printf(
+        TRACE(
             "Exception at %p (%08X)\n",
             exception->ExceptionRecord->ExceptionAddress,
             exception->ExceptionRecord->ExceptionCode);
@@ -83,13 +83,13 @@ void dbg_init()
             DWORD build_size = sizeof(build);
             RegQueryValueExA(hkey, "BuildLab", NULL, NULL, (PVOID)&build, &build_size);
 
-            dbg_printf("%s (%s)\n", name, build);
+            TRACE("%s (%s)\n", name, build);
 
             const char* (CDECL * wine_get_version)() =
                 (void*)GetProcAddress(GetModuleHandleA("ntdll.dll"), "wine_get_version");
 
             if (wine_get_version)
-                dbg_printf("Wine version = %s\n", wine_get_version());
+                TRACE("Wine version = %s\n", wine_get_version());
         }
     }
 }
@@ -156,6 +156,24 @@ int dbg_printf(const char* fmt, ...)
     LeaveCriticalSection(&cs);
 
     return ret;
+}
+
+void dbg_print_rect(char* info, LPRECT rect)
+{
+#ifdef _DEBUG_X
+    if (rect)
+    {
+        TRACE(
+            "     %s: l=%d, t=%d, r=%d, b=%d (%dx%d)\n", 
+            info, 
+            rect->left, 
+            rect->top, 
+            rect->right, 
+            rect->bottom, 
+            rect->right - rect->left, 
+            rect->bottom - rect->top);
+    }
+#endif
 }
 
 void dbg_draw_frame_info_start()
