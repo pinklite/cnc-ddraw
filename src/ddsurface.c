@@ -772,7 +772,11 @@ HRESULT dds_GetAttachedSurface(IDirectDrawSurfaceImpl* This, LPDDSCAPS lpDdsCaps
 
 HRESULT dds_GetCaps(IDirectDrawSurfaceImpl* This, LPDDSCAPS lpDDSCaps)
 {
+    if (!lpDDSCaps)
+        return DDERR_INVALIDPARAMS;
+
     lpDDSCaps->dwCaps = This->caps;
+
     return DD_OK;
 }
 
@@ -796,6 +800,11 @@ HRESULT dds_GetClipper(IDirectDrawSurfaceImpl* This, IDirectDrawClipperImpl** lp
 
 HRESULT dds_GetColorKey(IDirectDrawSurfaceImpl* This, DWORD dwFlags, LPDDCOLORKEY lpColorKey)
 {
+    if (dwFlags != DDCKEY_SRCBLT)
+    {
+        TRACE_EXT("     NOT_IMPLEMENTED dwFlags=%08X\n", dwFlags);
+    }
+
     if (lpColorKey)
     {
         lpColorKey->dwColorSpaceHighValue = This->color_key.dwColorSpaceHighValue;
@@ -957,11 +966,13 @@ HRESULT dds_SetClipper(IDirectDrawSurfaceImpl* This, IDirectDrawClipperImpl* lpC
 
 HRESULT dds_SetColorKey(IDirectDrawSurfaceImpl* This, DWORD dwFlags, LPDDCOLORKEY lpColorKey)
 {
+    if (dwFlags != DDCKEY_SRCBLT || !lpColorKey)
+    {
+        TRACE_EXT("     NOT_IMPLEMENTED dwFlags=%08X, lpColorKey=%p\n", dwFlags, lpColorKey);
+    }
+
     if (lpColorKey)
     {
-        TRACE_EXT("     dwColorSpaceHighValue=%d\n", lpColorKey->dwColorSpaceHighValue);
-        TRACE_EXT("     dwColorSpaceLowValue=%d\n", lpColorKey->dwColorSpaceLowValue);
-
         This->color_key.dwColorSpaceHighValue = lpColorKey->dwColorSpaceHighValue;
         This->color_key.dwColorSpaceLowValue = lpColorKey->dwColorSpaceLowValue;
     }
