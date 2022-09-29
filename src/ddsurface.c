@@ -70,11 +70,12 @@ HRESULT dds_Blt(
     int dst_w = dst_rect.right - dst_rect.left;
     int dst_h = dst_rect.bottom - dst_rect.top;
 
-    /* stretch or clip? */
+    float scale_w = (src_w > 0 && dst_w > 0) ? (float)src_w / dst_w : 1.0f;
+    float scale_h = (src_h > 0 && dst_h > 0) ? (float)src_h / dst_h : 1.0f;
+
     BOOL is_stretch_blt = src_w != dst_w || src_h != dst_h;
 
-    /* keep this commented out until tested and confirmed working 
-    if (This->clipper && src_surface && !(dwFlags & DDBLT_NO_CLIP) && src_w > 0 && src_h > 0 && dst_w > 0 && dst_h > 0)
+    if (This->clipper && !(dwFlags & DDBLT_NO_CLIP) && dst_w > 0 && dst_h > 0)
     {
         DWORD size = 0;
 
@@ -86,24 +87,19 @@ HRESULT dds_Blt(
             {
                 if (SUCCEEDED(IDirectDrawClipper_GetClipList(This->clipper, &dst_rect, list, &size)))
                 {
-                    float scale_w = (float)src_w / dst_w;
-                    float scale_h = (float)src_h / dst_h;
-
                     RECT* dst_c_rect = (RECT*)list->Buffer;
 
                     for (int i = 0; i < list->rdh.nCount; ++i)
                     {
                         RECT src_c_rect = src_rect;
 
-                        src_c_rect.left += (LONG)((dst_c_rect[i].left - dst_rect.left) * scale_w);
-                        src_c_rect.top += (LONG)((dst_c_rect[i].top - dst_rect.top) * scale_h);
-                        src_c_rect.right -= (LONG)((dst_rect.right - dst_c_rect[i].right) * scale_w);
-                        src_c_rect.bottom -= (LONG)((dst_rect.bottom - dst_c_rect[i].bottom) * scale_h);
-
-                        dbg_print_rect("src_rect     ", &src_rect);
-                        dbg_print_rect("src_c_rect   ", &src_c_rect);
-                        dbg_print_rect("dst_rect     ", &dst_rect);
-                        dbg_print_rect("dst_c_rect[i]", &dst_c_rect[i]);
+                        if (src_surface)
+                        {
+                            src_c_rect.left += (LONG)((dst_c_rect[i].left - dst_rect.left) * scale_w);
+                            src_c_rect.top += (LONG)((dst_c_rect[i].top - dst_rect.top) * scale_h);
+                            src_c_rect.right -= (LONG)((dst_rect.right - dst_c_rect[i].right) * scale_w);
+                            src_c_rect.bottom -= (LONG)((dst_rect.bottom - dst_c_rect[i].bottom) * scale_h);
+                        }
 
                         dds_Blt(This, &dst_c_rect[i], src_surface, &src_c_rect, dwFlags | DDBLT_NO_CLIP, lpDDBltFx);
                     }
@@ -115,7 +111,30 @@ HRESULT dds_Blt(
             }
         }
     }
-    */
+
+    if (dst_rect.left < 0)
+    {
+        src_rect.left += abs(dst_rect.left);
+        dst_rect.left = 0;
+    }
+
+    if (dst_rect.top < 0)
+    {
+        src_rect.top += abs(dst_rect.top);
+        dst_rect.top = 0;
+    }
+
+    if (dst_rect.right > This->width)
+        dst_rect.right = This->width;
+
+    if (dst_rect.left > dst_rect.right)
+        dst_rect.left = dst_rect.right;
+
+    if (dst_rect.bottom > This->height)
+        dst_rect.bottom = This->height;
+
+    if (dst_rect.top > dst_rect.bottom)
+        dst_rect.top = dst_rect.bottom;
 
     if (src_surface)
     {
@@ -138,38 +157,6 @@ HRESULT dds_Blt(
             src_rect.top = src_rect.bottom;
     }
 
-    if (dst_rect.left < 0)
-    {
-        src_rect.left += abs(dst_rect.left);
-
-        if (src_rect.left > src_rect.right)
-            src_rect.left = src_rect.right;
-
-        dst_rect.left = 0;
-    }
-
-    if (dst_rect.top < 0)
-    {
-        src_rect.top += abs(dst_rect.top);
-
-        if (src_rect.top > src_rect.bottom)
-            src_rect.top = src_rect.bottom;
-
-        dst_rect.top = 0;
-    }
-
-    if (dst_rect.right > This->width)
-        dst_rect.right = This->width;
-
-    if (dst_rect.left > dst_rect.right)
-        dst_rect.left = dst_rect.right;
-
-    if (dst_rect.bottom > This->height)
-        dst_rect.bottom = This->height;
-
-    if (dst_rect.top > dst_rect.bottom)
-        dst_rect.top = dst_rect.bottom;
-
     src_w = src_rect.right - src_rect.left;
     src_h = src_rect.bottom - src_rect.top;
 
@@ -181,12 +168,6 @@ HRESULT dds_Blt(
 
     int dst_x = dst_rect.left;
     int dst_y = dst_rect.top;
-
-    if (!is_stretch_blt)
-    {
-        src_w = dst_w = min(src_w, dst_w);
-        src_h = dst_h = min(src_h, dst_h);
-    }
 
     void* dst_buf = dds_GetBuffer(This);
     void* src_buf = dds_GetBuffer(src_surface);
@@ -206,6 +187,12 @@ HRESULT dds_Blt(
 
     if (src_surface && src_w > 0 && src_h > 0 && dst_w > 0 && dst_h > 0)
     {
+        if (!is_stretch_blt)
+        {
+            src_w = dst_w = min(src_w, dst_w);
+            src_h = dst_h = min(src_h, dst_h);
+        }
+
         BOOL got_fx = (dwFlags & DDBLT_DDFX) && lpDDBltFx;
         BOOL mirror_left_right = got_fx && (lpDDBltFx->dwDDFX & DDBLTFX_MIRRORLEFTRIGHT);
         BOOL mirror_up_down = got_fx && (lpDDBltFx->dwDDFX & DDBLTFX_MIRRORUPDOWN);

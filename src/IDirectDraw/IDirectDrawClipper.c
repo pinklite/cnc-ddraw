@@ -45,7 +45,7 @@ HRESULT __stdcall IDirectDrawClipper__GetClipList(
     LPDWORD lpdwSiz)
 {
     TRACE(
-        "NOT_IMPLEMENTED -> %s(This=%p, lpRect=%p, lpClipList=%p, lpdwSiz=%p)\n", 
+        "-> %s(This=%p, lpRect=%p, lpClipList=%p, lpdwSiz=%p)\n", 
         __FUNCTION__, 
         This, 
         lpRect, 
@@ -54,7 +54,7 @@ HRESULT __stdcall IDirectDrawClipper__GetClipList(
 
     HRESULT ret = ddc_GetClipList(This, lpRect, lpClipList, lpdwSiz);
 
-    TRACE("NOT_IMPLEMENTED <- %s\n", __FUNCTION__);
+    TRACE("<- %s\n", __FUNCTION__);
     return ret;
 }
 
@@ -84,9 +84,9 @@ HRESULT __stdcall IDirectDrawClipper__IsClipListChanged(IDirectDrawClipperImpl* 
 
 HRESULT __stdcall IDirectDrawClipper__SetClipList(IDirectDrawClipperImpl* This, LPRGNDATA lpClipList, DWORD dwFlags)
 {
-    TRACE("NOT_IMPLEMENTED -> %s(This=%p, lpClipList=%p, dwFlags=%08X)\n", __FUNCTION__, This, lpClipList, dwFlags);
+    TRACE("-> %s(This=%p, lpClipList=%p, dwFlags=%08X)\n", __FUNCTION__, This, lpClipList, dwFlags);
     HRESULT ret = ddc_SetClipList(This, lpClipList, dwFlags);
-    TRACE("NOT_IMPLEMENTED <- %s\n", __FUNCTION__);
+    TRACE("<- %s\n", __FUNCTION__);
     return ret;
 }
 

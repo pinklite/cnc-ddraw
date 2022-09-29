@@ -76,6 +76,7 @@ HRESULT ddc_SetClipList(IDirectDrawClipperImpl* This, LPRGNDATA lpClipList, DWOR
 
 HRESULT ddc_SetHWnd(IDirectDrawClipperImpl* This, DWORD dwFlags, HWND hWnd)
 {
+    /* FIXME: need to set up This->region here (from hwnd region) */
     This->hwnd = hWnd;
 
     return DD_OK;
