@@ -89,7 +89,9 @@ void dbg_init()
                 (void*)GetProcAddress(GetModuleHandleA("ntdll.dll"), "wine_get_version");
 
             if (wine_get_version)
+            {
                 TRACE("Wine version = %s\n", wine_get_version());
+            }
         }
     }
 }
