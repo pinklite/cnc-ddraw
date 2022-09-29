@@ -51,7 +51,7 @@ void cfg_load()
     g_ddraw->fpupreserve = cfg_get_bool("fpupreserve", FALSE);
     g_ddraw->allow_wmactivate = cfg_get_bool("allow_wmactivate", FALSE);
     g_ddraw->d3d9_adapter = cfg_get_int("d3d9_adapter", 0);
-    g_ddraw->no_guard_lines = cfg_get_bool("no_guard_lines", FALSE);
+    g_ddraw->guard_lines = cfg_get_int("guard_lines", 200);
     g_ddraw->opengl_core = cfg_get_bool("opengl_core", FALSE);
     cfg_get_string("screenshotdir", ".\\Screenshots\\", g_ddraw->screenshot_dir, sizeof(g_ddraw->screenshot_dir));
 
@@ -356,7 +356,7 @@ static void cfg_create_ini()
             "d3d9_adapter=0\n"
             "opengl_core=false\n"
             "d3d9on12=false\n"
-            "no_guard_lines=false\n"
+            "guard_lines=200\n"
             "game_handles_close=false\n"
             "accuratetimers=false\n"
             "fixpitch=true\n"
@@ -739,7 +739,7 @@ static void cfg_create_ini()
             "\n"
             "; Fairy Tale About Father Frost, Ivan and Nastya\n"
             "[mrazik]\n"
-            "no_guard_lines=true\n"
+            "guard_lines=0\n"
             "\n"
             "; Future Cop - L.A.P.D.\n"
             "[FCopLAPD]\n"
