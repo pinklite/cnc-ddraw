@@ -218,6 +218,45 @@ void dbg_draw_frame_info_end()
         g_dbg_frame_time = dbg_counter_stop();
 }
 
+void dbg_dump_ddp_flags(DWORD flags)
+{
+#ifdef _DEBUG
+    if (flags & DDPCAPS_4BIT) {
+        TRACE("     DDPCAPS_4BIT\n");
+    }
+    if (flags & DDPCAPS_8BITENTRIES) {
+        TRACE("     DDPCAPS_8BITENTRIES\n");
+    }
+    if (flags & DDPCAPS_8BIT) {
+        TRACE("     DDPCAPS_8BIT\n");
+    }
+    if (flags & DDPCAPS_INITIALIZE) {
+        TRACE("     DDPCAPS_INITIALIZE\n");
+    }
+    if (flags & DDPCAPS_PRIMARYSURFACE) {
+        TRACE("     DDPCAPS_PRIMARYSURFACE\n");
+    }
+    if (flags & DDPCAPS_PRIMARYSURFACELEFT) {
+        TRACE("     DDPCAPS_PRIMARYSURFACELEFT\n");
+    }
+    if (flags & DDPCAPS_ALLOW256) {
+        TRACE("     DDPCAPS_ALLOW256\n");
+    }
+    if (flags & DDPCAPS_VSYNC) {
+        TRACE("     DDPCAPS_VSYNC\n");
+    }
+    if (flags & DDPCAPS_1BIT) {
+        TRACE("     DDPCAPS_1BIT\n");
+    }
+    if (flags & DDPCAPS_2BIT) {
+        TRACE("     DDPCAPS_2BIT\n");
+    }
+    if (flags & DDPCAPS_ALPHA) {
+        TRACE("     DDPCAPS_ALPHA\n");
+    }
+#endif
+}
+
 void dbg_dump_scl_flags(DWORD flags)
 {
 #ifdef _DEBUG

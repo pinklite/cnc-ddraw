@@ -72,6 +72,8 @@ HRESULT dd_CreatePalette(
     IDirectDrawPaletteImpl** lpDDPalette,
     IUnknown FAR* unkOuter)
 {
+    dbg_dump_ddp_flags(dwFlags);
+
     if (!lpDDPalette || !lpDDColorArray)
         return DDERR_INVALIDPARAMS;
 
