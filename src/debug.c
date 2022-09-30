@@ -220,7 +220,7 @@ void dbg_draw_frame_info_end()
 
 void dbg_dump_scl_flags(DWORD flags)
 {
-#ifdef _DEBUG_X
+#ifdef _DEBUG
     if (flags & DDSCL_FULLSCREEN) {
         TRACE("     DDSCL_FULLSCREEN\n");
     }
@@ -262,7 +262,7 @@ void dbg_dump_scl_flags(DWORD flags)
 
 void dbg_dump_edm_flags(DWORD flags)
 {
-#ifdef _DEBUG_X
+#ifdef _DEBUG
     if (flags & DDEDM_REFRESHRATES) {
         TRACE("     DDEDM_REFRESHRATES\n");
     }
