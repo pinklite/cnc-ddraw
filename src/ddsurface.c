@@ -699,6 +699,8 @@ HRESULT dds_EnumAttachedSurfaces(
 
 HRESULT dds_Flip(IDirectDrawSurfaceImpl* This, IDirectDrawSurfaceImpl* lpDDSurfaceTargetOverride, DWORD dwFlags)
 {
+    dbg_dump_dds_flip_flags(dwFlags);
+
     if (This->backbuffer)
     {
         EnterCriticalSection(&g_ddraw->cs);

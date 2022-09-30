@@ -218,6 +218,93 @@ void dbg_draw_frame_info_end()
         g_dbg_frame_time = dbg_counter_stop();
 }
 
+void dbg_dump_scl_flags(DWORD flags)
+{
+#ifdef _DEBUG_X
+    if (flags & DDSCL_FULLSCREEN) {
+        TRACE("     DDSCL_FULLSCREEN\n");
+    }
+    if (flags & DDSCL_ALLOWREBOOT) {
+        TRACE("     DDSCL_ALLOWREBOOT\n");
+    }
+    if (flags & DDSCL_NOWINDOWCHANGES) {
+        TRACE("     DDSCL_NOWINDOWCHANGES\n");
+    }
+    if (flags & DDSCL_NORMAL) {
+        TRACE("     DDSCL_NORMAL\n");
+    }
+    if (flags & DDSCL_EXCLUSIVE) {
+        TRACE("     DDSCL_EXCLUSIVE\n");
+    }
+    if (flags & DDSCL_ALLOWMODEX) {
+        TRACE("     DDSCL_ALLOWMODEX\n");
+    }
+    if (flags & DDSCL_SETFOCUSWINDOW) {
+        TRACE("     DDSCL_SETFOCUSWINDOW\n");
+    }
+    if (flags & DDSCL_SETDEVICEWINDOW) {
+        TRACE("     DDSCL_SETDEVICEWINDOW\n");
+    }
+    if (flags & DDSCL_CREATEDEVICEWINDOW) {
+        TRACE("     DDSCL_CREATEDEVICEWINDOW\n");
+    }
+    if (flags & DDSCL_MULTITHREADED) {
+        TRACE("     DDSCL_MULTITHREADED\n");
+    }
+    if (flags & DDSCL_FPUSETUP) {
+        TRACE("     DDSCL_FPUSETUP\n");
+    }
+    if (flags & DDSCL_FPUPRESERVE) {
+        TRACE("     DDSCL_FPUPRESERVE\n");
+    }
+#endif
+}
+
+void dbg_dump_edm_flags(DWORD flags)
+{
+#ifdef _DEBUG_X
+    if (flags & DDEDM_REFRESHRATES) {
+        TRACE("     DDEDM_REFRESHRATES\n");
+    }
+    if (flags & DDEDM_STANDARDVGAMODES) {
+        TRACE("     DDEDM_STANDARDVGAMODES\n");
+    }
+#endif
+}
+
+void dbg_dump_dds_flip_flags(DWORD flags)
+{
+#ifdef _DEBUG_X
+    if (flags & DDFLIP_WAIT) {
+        TRACE("     DDFLIP_WAIT\n");
+    }
+    if (flags & DDFLIP_EVEN) {
+        TRACE("     DDFLIP_EVEN\n");
+    }
+    if (flags & DDFLIP_ODD) {
+        TRACE("     DDFLIP_ODD\n");
+    }
+    if (flags & DDFLIP_NOVSYNC) {
+        TRACE("     DDFLIP_NOVSYNC\n");
+    }
+    if (flags & DDFLIP_INTERVAL2) {
+        TRACE("     DDFLIP_INTERVAL2\n");
+    }
+    if (flags & DDFLIP_INTERVAL3) {
+        TRACE("     DDFLIP_INTERVAL3\n");
+    }
+    if (flags & DDFLIP_INTERVAL4) {
+        TRACE("     DDFLIP_INTERVAL4\n");
+    }
+    if (flags & DDFLIP_STEREO) {
+        TRACE("     DDFLIP_STEREO\n");
+    }
+    if (flags & DDFLIP_DONOTWAIT) {
+        TRACE("     DDFLIP_DONOTWAIT\n");
+    }
+#endif
+}
+
 void dbg_dump_dds_blt_flags(DWORD flags)
 {
 #ifdef _DEBUG_X

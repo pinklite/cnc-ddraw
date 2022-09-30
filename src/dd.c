@@ -23,6 +23,8 @@ HRESULT dd_EnumDisplayModes(
     LPVOID lpContext,
     LPDDENUMMODESCALLBACK lpEnumModesCallback)
 {
+    dbg_dump_edm_flags(dwFlags);
+
     DWORD i = 0;
     DDSURFACEDESC2 s;
 
@@ -821,7 +823,7 @@ HRESULT dd_SetDisplayMode(DWORD dwWidth, DWORD dwHeight, DWORD dwBPP, DWORD dwFl
 
 HRESULT dd_SetCooperativeLevel(HWND hwnd, DWORD dwFlags)
 {
-    PIXELFORMATDESCRIPTOR pfd;
+    dbg_dump_scl_flags(dwFlags);
 
     if (hwnd == NULL)
     {
@@ -843,9 +845,10 @@ HRESULT dd_SetCooperativeLevel(HWND hwnd, DWORD dwFlags)
         {
             g_ddraw->render.hdc = GetDC(g_ddraw->hwnd);
 
+            PIXELFORMATDESCRIPTOR pfd;
             memset(&pfd, 0, sizeof(PIXELFORMATDESCRIPTOR));
-
             pfd.nSize = sizeof(PIXELFORMATDESCRIPTOR);
+
             pfd.nVersion = 1;
             pfd.dwFlags =
                 PFD_DRAW_TO_WINDOW | PFD_DOUBLEBUFFER | (g_ddraw->renderer == ogl_render_main ? PFD_SUPPORT_OPENGL : 0);
