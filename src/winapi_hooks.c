@@ -11,6 +11,7 @@
 #include "mouse.h"
 #include "wndproc.h"
 #include "render_gdi.h"
+#include "ddsurface.h"
 
 
 BOOL WINAPI fake_GetCursorPos(LPPOINT lpPoint)
@@ -543,6 +544,37 @@ int WINAPI fake_GetDeviceCaps(HDC hdc, int index)
     }
 
     return real_GetDeviceCaps(hdc, index);
+}
+
+BOOL WINAPI fake_StretchBlt(
+    HDC hdcDest,
+    int xDest,
+    int yDest,
+    int wDest,
+    int hDest,
+    HDC hdcSrc,
+    int xSrc,
+    int ySrc,
+    int wSrc,
+    int hSrc,
+    DWORD rop)
+{
+    if (g_ddraw && g_ddraw->primary && WindowFromDC(hdcDest) == g_ddraw->hwnd)
+    {
+        HDC primary_dc;
+        dds_GetDC(g_ddraw->primary, &primary_dc);
+
+        if (primary_dc)
+        {
+            BOOL result = real_StretchBlt(primary_dc, xDest, yDest, wDest, hDest, hdcSrc, xSrc, ySrc, wSrc, hSrc, rop);
+
+            dds_ReleaseDC(g_ddraw->primary, primary_dc);
+
+            return result;
+        }
+    }
+
+    return real_StretchBlt(hdcDest, xDest, yDest, wDest, hDest, hdcSrc, xSrc, ySrc, wSrc, hSrc, rop);
 }
 
 HMODULE WINAPI fake_LoadLibraryA(LPCSTR lpLibFileName)

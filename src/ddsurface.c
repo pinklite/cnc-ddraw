@@ -254,7 +254,7 @@ HRESULT dds_Blt(
             }
             else
             {
-                StretchBlt(dst_dc, dst_x, dst_y, dst_w, dst_h, src_dc, src_x, src_y, src_w, src_h, SRCCOPY);
+                real_StretchBlt(dst_dc, dst_x, dst_y, dst_w, dst_h, src_dc, src_x, src_y, src_w, src_h, SRCCOPY);
             }
 
             /*

@@ -29,6 +29,18 @@ int WINAPI fake_MapWindowPoints(HWND hWndFrom, HWND hWndTo, LPPOINT lpPoints, UI
 BOOL WINAPI fake_ShowWindow(HWND hWnd, int nCmdShow);
 HHOOK WINAPI fake_SetWindowsHookExA(int idHook, HOOKPROC lpfn, HINSTANCE hmod, DWORD dwThreadId);
 int WINAPI fake_GetDeviceCaps(HDC hdc, int index);
+BOOL WINAPI fake_StretchBlt(
+    HDC hdcDest,
+    int xDest,
+    int yDest,
+    int wDest,
+    int hDest,
+    HDC hdcSrc,
+    int xSrc,
+    int ySrc,
+    int wSrc,
+    int hSrc,
+    DWORD rop);
 HMODULE WINAPI fake_LoadLibraryA(LPCSTR lpLibFileName);
 HMODULE WINAPI fake_LoadLibraryW(LPCWSTR lpLibFileName);
 HMODULE WINAPI fake_LoadLibraryExA(LPCSTR lpLibFileName, HANDLE hFile, DWORD dwFlags);

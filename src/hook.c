@@ -40,6 +40,7 @@ CREATEWINDOWEXAPROC real_CreateWindowExA = CreateWindowExA;
 DESTROYWINDOWPROC real_DestroyWindow = DestroyWindow;
 MAPWINDOWPOINTSPROC real_MapWindowPoints = MapWindowPoints;
 SHOWWINDOWPROC real_ShowWindow = ShowWindow;
+STRETCHBLTPROC real_StretchBlt = StretchBlt;
 SETWINDOWSHOOKEXAPROC real_SetWindowsHookExA = SetWindowsHookExA;
 GETDEVICECAPSPROC real_GetDeviceCaps = GetDeviceCaps;
 LOADLIBRARYAPROC real_LoadLibraryA = LoadLibraryA;
@@ -82,6 +83,7 @@ static HOOKLIST g_hooks[] =
     {
         "gdi32.dll",
         {
+            { "StretchBlt", (PROC)fake_StretchBlt, (PROC*)&real_StretchBlt, SKIP_HOOK2 | SKIP_HOOK3 },
             { "GetDeviceCaps", (PROC)fake_GetDeviceCaps, (PROC*)&real_GetDeviceCaps, SKIP_HOOK3 },
             { "", NULL, NULL, 0 }
         }
@@ -394,6 +396,7 @@ void hook_create(HOOKLIST* hooks, BOOL initial_hook)
                         continue;
 
                     if (_strnicmp(game_dir, mod_dir, strlen(game_dir)) == 0 ||
+                        _strcmpi(mod_filename, "MSVFW32") == 0 ||
                         _strcmpi(mod_filename, "quartz") == 0 ||
                         _strcmpi(mod_filename, "winmm") == 0)
                     {
@@ -470,6 +473,7 @@ void hook_revert(HOOKLIST* hooks)
                     _splitpath(mod_path, NULL, mod_dir, mod_filename, NULL);
 
                     if (_strnicmp(game_dir, mod_dir, strlen(game_dir)) == 0 ||
+                        _strcmpi(mod_filename, "MSVFW32") == 0 ||
                         _strcmpi(mod_filename, "quartz") == 0 ||
                         _strcmpi(mod_filename, "winmm") == 0)
                     {
