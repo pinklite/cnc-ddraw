@@ -48,10 +48,22 @@ int dbg_exception_handler(EXCEPTION_POINTERS* exception)
 
     if (exception && exception->ExceptionRecord)
     {
-        TRACE(
-            "Exception at %p (%08X)\n",
+        HMODULE mod = NULL;
+        char filename[MAX_PATH] = { 0 };
+
+        if (GetModuleHandleExA(
+            GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS | GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT,
             exception->ExceptionRecord->ExceptionAddress,
-            exception->ExceptionRecord->ExceptionCode);
+            &mod))
+        {
+            GetModuleFileNameA(mod, filename, sizeof(filename) - 1);
+        }
+
+        TRACE(
+            "Exception at %p (%08X) %s\n",
+            exception->ExceptionRecord->ExceptionAddress,
+            exception->ExceptionRecord->ExceptionCode,
+            filename);
     }
 
     return EXCEPTION_EXECUTE_HANDLER;
