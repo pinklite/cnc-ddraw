@@ -559,18 +559,37 @@ BOOL WINAPI fake_StretchBlt(
     int hSrc,
     DWORD rop)
 {
-    if (g_ddraw && g_ddraw->primary && WindowFromDC(hdcDest) == g_ddraw->hwnd)
+    if (g_ddraw && WindowFromDC(hdcDest) == g_ddraw->hwnd)
     {
-        HDC primary_dc;
-        dds_GetDC(g_ddraw->primary, &primary_dc);
-
-        if (primary_dc)
+        if (g_ddraw->primary)
         {
-            BOOL result = real_StretchBlt(primary_dc, xDest, yDest, wDest, hDest, hdcSrc, xSrc, ySrc, wSrc, hSrc, rop);
+            HDC primary_dc;
+            dds_GetDC(g_ddraw->primary, &primary_dc);
 
-            dds_ReleaseDC(g_ddraw->primary, primary_dc);
+            if (primary_dc)
+            {
+                BOOL result = 
+                    real_StretchBlt(primary_dc, xDest, yDest, wDest, hDest, hdcSrc, xSrc, ySrc, wSrc, hSrc, rop);
 
-            return result;
+                dds_ReleaseDC(g_ddraw->primary, primary_dc);
+
+                return result;
+            }
+        }
+        else if (g_ddraw->width > 0)
+        {
+            return real_StretchBlt(
+                hdcDest, 
+                xDest + g_ddraw->render.viewport.x,
+                yDest + g_ddraw->render.viewport.y,
+                wDest * g_ddraw->render.scale_w,
+                hDest * g_ddraw->render.scale_h,
+                hdcSrc, 
+                xSrc, 
+                ySrc, 
+                wSrc, 
+                hSrc, 
+                rop);
         }
     }
 
