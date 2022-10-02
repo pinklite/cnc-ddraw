@@ -559,7 +559,9 @@ BOOL WINAPI fake_StretchBlt(
     int hSrc,
     DWORD rop)
 {
-    if (g_ddraw && WindowFromDC(hdcDest) == g_ddraw->hwnd)
+    HWND hwnd = WindowFromDC(hdcDest);
+
+    if (g_ddraw && (hwnd == g_ddraw->hwnd || (g_ddraw->fixchilds == 3 && IsChild(g_ddraw->hwnd, hwnd))))
     {
         if (g_ddraw->primary)
         {
