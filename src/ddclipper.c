@@ -7,6 +7,9 @@
 
 HRESULT ddc_GetClipList(IDirectDrawClipperImpl* This, LPRECT lpRect, LPRGNDATA lpClipList, LPDWORD lpdwSiz)
 {
+    return DDERR_NOCLIPLIST;
+
+    /* Keep this commented out until we found a game that actually needs it
     if (!This->region)
         return DDERR_NOCLIPLIST;
 
@@ -42,6 +45,7 @@ HRESULT ddc_GetClipList(IDirectDrawClipperImpl* This, LPRECT lpRect, LPRGNDATA l
         return DDERR_REGIONTOOSMALL;
 
     return DD_OK;
+    */
 }
 
 HRESULT ddc_GetHWnd(IDirectDrawClipperImpl* This, HWND FAR* lphWnd)
@@ -54,8 +58,19 @@ HRESULT ddc_GetHWnd(IDirectDrawClipperImpl* This, HWND FAR* lphWnd)
     return DD_OK;
 }
 
+HRESULT ddc_IsClipListChanged(IDirectDrawClipperImpl* This, BOOL FAR* lpbChanged)
+{
+    if (!lpbChanged)
+        return DDERR_INVALIDPARAMS;
+
+    *lpbChanged = FALSE; /* Always return FALSE - See ddc_SetHWnd for remarks */
+
+    return DD_OK;
+}
+
 HRESULT ddc_SetClipList(IDirectDrawClipperImpl* This, LPRGNDATA lpClipList, DWORD dwFlags)
 {
+    /* Keep this commented out until we found a game that actually needs it
     if (This->hwnd)
         return DDERR_CLIPPERISUSINGHWND;
 
@@ -73,13 +88,16 @@ HRESULT ddc_SetClipList(IDirectDrawClipperImpl* This, LPRGNDATA lpClipList, DWOR
     {
         This->region = NULL;
     }
-
+    */
     return DD_OK;
 }
 
 HRESULT ddc_SetHWnd(IDirectDrawClipperImpl* This, DWORD dwFlags, HWND hWnd)
 {
-    /* FIXME: need to set up This->region here (from hwnd region) */
+    /* 
+    We don't use the regions from the hwnd here since everything is emulated and we need the entire
+    emulated surface to be redrawn all the time
+    */
     This->hwnd = hWnd;
 
     return DD_OK;
