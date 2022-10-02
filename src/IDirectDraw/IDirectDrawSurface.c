@@ -350,9 +350,9 @@ HRESULT __stdcall IDirectDrawSurface__Initialize(
     LPDIRECTDRAW lpDD,
     LPDDSURFACEDESC2 lpDDSurfaceDesc)
 {
-    TRACE("NOT_IMPLEMENTED -> %s(This=%p)\n", __FUNCTION__, This);
+    TRACE("-> %s(This=%p)\n", __FUNCTION__, This);
     HRESULT ret = DD_OK;
-    TRACE("NOT_IMPLEMENTED <- %s\n", __FUNCTION__);
+    TRACE("<- %s\n", __FUNCTION__);
     return ret;
 }
 

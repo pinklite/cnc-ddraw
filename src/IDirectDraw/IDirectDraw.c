@@ -371,9 +371,9 @@ HRESULT __stdcall IDirectDraw__GetVerticalBlankStatus(IDirectDrawImpl* This, LPB
 
 HRESULT __stdcall IDirectDraw__Initialize(IDirectDrawImpl* This, GUID* lpGUID)
 {
-    TRACE("NOT_IMPLEMENTED -> %s(This=%p)\n", __FUNCTION__, This);
+    TRACE("-> %s(This=%p)\n", __FUNCTION__, This);
     HRESULT ret = DD_OK;
-    TRACE("NOT_IMPLEMENTED <- %s\n", __FUNCTION__);
+    TRACE("<- %s\n", __FUNCTION__);
     return ret;
 }
 
