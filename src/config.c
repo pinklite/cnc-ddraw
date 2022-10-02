@@ -1001,7 +1001,7 @@ static void cfg_create_ini()
             "nonexclusive=true\n"
             "maxgameticks=60\n"
             "adjmouse=true\n"
-            "fixchilds=2\n"
+            "fixchilds=1\n"
             "maintas=false\n"
             "boxing=false\n"
             "\n"
