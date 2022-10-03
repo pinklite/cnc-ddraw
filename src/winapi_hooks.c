@@ -598,6 +598,54 @@ BOOL WINAPI fake_StretchBlt(
     return real_StretchBlt(hdcDest, xDest, yDest, wDest, hDest, hdcSrc, xSrc, ySrc, wSrc, hSrc, rop);
 }
 
+int WINAPI fake_SetDIBitsToDevice(
+    HDC hdc,
+    int xDest,
+    int yDest,
+    DWORD w,
+    DWORD h,
+    int xSrc,
+    int ySrc,
+    UINT StartScan,
+    UINT cLines,
+    const VOID* lpvBits,
+    const BITMAPINFO* lpbmi,
+    UINT ColorUse)
+{
+    if (g_ddraw && WindowFromDC(hdc) == g_ddraw->hwnd)
+    {
+        if (g_ddraw->primary)
+        {
+            HDC primary_dc;
+            dds_GetDC(g_ddraw->primary, &primary_dc);
+
+            if (primary_dc)
+            {
+                BOOL result =
+                    real_SetDIBitsToDevice(
+                        primary_dc, 
+                        xDest, 
+                        yDest, 
+                        w, 
+                        h, 
+                        xSrc, 
+                        ySrc, 
+                        StartScan, 
+                        cLines, 
+                        lpvBits, 
+                        lpbmi, 
+                        ColorUse);
+
+                dds_ReleaseDC(g_ddraw->primary, primary_dc);
+
+                return result;
+            }
+        }
+    }
+
+    return real_SetDIBitsToDevice(hdc, xDest, yDest, w, h, xSrc, ySrc, StartScan, cLines, lpvBits, lpbmi, ColorUse);
+}
+
 HMODULE WINAPI fake_LoadLibraryA(LPCSTR lpLibFileName)
 {
     HMODULE hmod = real_LoadLibraryA(lpLibFileName);

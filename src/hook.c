@@ -41,6 +41,7 @@ DESTROYWINDOWPROC real_DestroyWindow = DestroyWindow;
 MAPWINDOWPOINTSPROC real_MapWindowPoints = MapWindowPoints;
 SHOWWINDOWPROC real_ShowWindow = ShowWindow;
 STRETCHBLTPROC real_StretchBlt = StretchBlt;
+SETDIBITSTODEVICEPROC real_SetDIBitsToDevice = SetDIBitsToDevice;
 SETWINDOWSHOOKEXAPROC real_SetWindowsHookExA = SetWindowsHookExA;
 GETDEVICECAPSPROC real_GetDeviceCaps = GetDeviceCaps;
 LOADLIBRARYAPROC real_LoadLibraryA = LoadLibraryA;
@@ -84,6 +85,7 @@ static HOOKLIST g_hooks[] =
         "gdi32.dll",
         {
             { "StretchBlt", (PROC)fake_StretchBlt, (PROC*)&real_StretchBlt, SKIP_HOOK2 | SKIP_HOOK3 },
+            { "SetDIBitsToDevice", (PROC)fake_SetDIBitsToDevice, (PROC*)&real_SetDIBitsToDevice, SKIP_HOOK2 | SKIP_HOOK3 },
             { "GetDeviceCaps", (PROC)fake_GetDeviceCaps, (PROC*)&real_GetDeviceCaps, SKIP_HOOK3 },
             { "", NULL, NULL, 0 }
         }
