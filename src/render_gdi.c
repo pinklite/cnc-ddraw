@@ -6,6 +6,7 @@
 #include "opengl_utils.h"
 #include "utils.h"
 #include "wndproc.h"
+#include "hook.h"
 #include "debug.h"
 
 
@@ -144,7 +145,7 @@ DWORD WINAPI gdi_render_main(void)
             }
             else
             {
-                SetDIBitsToDevice(
+                real_SetDIBitsToDevice(
                     g_ddraw->render.hdc,
                     0,
                     0,
