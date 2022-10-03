@@ -706,6 +706,11 @@ HRESULT dd_SetDisplayMode(DWORD dwWidth, DWORD dwHeight, DWORD dwBPP, DWORD dwFl
         int x = (g_config.window_rect.left != -32000) ? g_config.window_rect.left : (cy / 2) - (g_ddraw->render.width / 2);
         int y = (g_config.window_rect.top != -32000) ? g_config.window_rect.top : (cx / 2) - (g_ddraw->render.height / 2);
 
+        if (nonexclusive || (g_ddraw->nonexclusive && !g_ddraw->windowed && g_ddraw->renderer == ogl_render_main))
+        {
+            x = y = 0;
+        }
+
         RECT dst = { x, y, g_ddraw->render.width + x, g_ddraw->render.height + y };
 
         LONG style = real_GetWindowLongA(g_ddraw->hwnd, GWL_STYLE);
