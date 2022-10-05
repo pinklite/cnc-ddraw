@@ -622,7 +622,7 @@ int WINAPI fake_SetDIBitsToDevice(
 
             if (primary_dc)
             {
-                BOOL result =
+                int result =
                     real_SetDIBitsToDevice(
                         primary_dc, 
                         xDest, 
