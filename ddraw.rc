@@ -17,7 +17,7 @@ PRODUCTVERSION VERSION
     {
         BLOCK "040904B0"
         {
-            VALUE "CompanyName", "cncnet.org"
+            VALUE "CompanyName", "github.com/FunkyFr3sh"
             VALUE "FileDescription", "DirectDraw replacement"
             VALUE "FileVersion", VERSION_STRING
             VALUE "InternalName", "ddraw"
@@ -26,7 +26,7 @@ PRODUCTVERSION VERSION
             VALUE "OriginalFileName", "ddraw.dll"
             VALUE "ProductName", "cnc-ddraw"
             VALUE "ProductVersion", VERSION_STRING
-            VALUE "Comments", "https://cncnet.org"
+            VALUE "Comments", "https://github.com/FunkyFr3sh/cnc-ddraw"
         }
     }
 

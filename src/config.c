@@ -237,7 +237,7 @@ static void cfg_create_ini()
     if (fh)
     {
         fputs(
-            "; cnc-ddraw - https://github.com/CnCNet/cnc-ddraw - https://cncnet.org\n"
+            "; cnc-ddraw - https://github.com/FunkyFr3sh/cnc-ddraw\n"
             "\n"
             "[ddraw]\n"
             "; ### Optional settings ###\n"
