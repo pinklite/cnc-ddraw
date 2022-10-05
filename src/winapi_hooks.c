@@ -561,7 +561,7 @@ BOOL WINAPI fake_StretchBlt(
 {
     HWND hwnd = WindowFromDC(hdcDest);
 
-    if (g_ddraw && 
+    if (g_ddraw && g_ddraw->hwnd &&
         (hwnd == g_ddraw->hwnd || (g_ddraw->fixchilds == FIX_CHILDS_DETECT_HIDE && IsChild(g_ddraw->hwnd, hwnd))))
     {
         if (g_ddraw->primary && (g_ddraw->primary->bpp == 16 || g_ddraw->primary->bpp == 32 || g_ddraw->primary->palette))
@@ -613,7 +613,7 @@ int WINAPI fake_SetDIBitsToDevice(
     const BITMAPINFO* lpbmi,
     UINT ColorUse)
 {
-    if (g_ddraw && WindowFromDC(hdc) == g_ddraw->hwnd)
+    if (g_ddraw && g_ddraw->hwnd && WindowFromDC(hdc) == g_ddraw->hwnd)
     {
         if (g_ddraw->primary && (g_ddraw->primary->bpp == 16 || g_ddraw->primary->bpp == 32 || g_ddraw->primary->palette))
         {
@@ -662,7 +662,7 @@ int WINAPI fake_StretchDIBits(
     UINT iUsage,
     DWORD rop)
 {
-    if (g_ddraw && WindowFromDC(hdc) == g_ddraw->hwnd)
+    if (g_ddraw && g_ddraw->hwnd && WindowFromDC(hdc) == g_ddraw->hwnd)
     {
         if (g_ddraw->primary && (g_ddraw->primary->bpp == 16 || g_ddraw->primary->bpp == 32 || g_ddraw->primary->palette))
         {
