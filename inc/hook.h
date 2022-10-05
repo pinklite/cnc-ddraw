@@ -37,6 +37,8 @@ typedef BOOL (WINAPI* SHOWWINDOWPROC)(HWND, int);
 typedef BOOL(WINAPI* STRETCHBLTPROC)(HDC, int, int, int, int, HDC, int, int, int, int, DWORD);
 typedef int (WINAPI* SETDIBITSTODEVICEPROC)(
     HDC, int, int, DWORD, DWORD, int, int, UINT, UINT, const VOID*, const BITMAPINFO*, UINT);
+typedef int (WINAPI* STRETCHDIBITSPROC)(
+    HDC, int, int, int, int, int, int, int, int, const VOID*, const BITMAPINFO*, UINT, DWORD);
 typedef HHOOK(WINAPI* SETWINDOWSHOOKEXAPROC)(int, HOOKPROC, HINSTANCE, DWORD);
 typedef int (WINAPI* GETDEVICECAPSPROC)(HDC, int);
 typedef HMODULE(WINAPI* LOADLIBRARYAPROC)(LPCSTR);
@@ -70,6 +72,7 @@ extern MAPWINDOWPOINTSPROC real_MapWindowPoints;
 extern SHOWWINDOWPROC real_ShowWindow;
 extern STRETCHBLTPROC real_StretchBlt;
 extern SETDIBITSTODEVICEPROC real_SetDIBitsToDevice;
+extern STRETCHDIBITSPROC real_StretchDIBits;
 extern SETWINDOWSHOOKEXAPROC real_SetWindowsHookExA;
 extern GETDEVICECAPSPROC real_GetDeviceCaps;
 extern LOADLIBRARYAPROC real_LoadLibraryA;

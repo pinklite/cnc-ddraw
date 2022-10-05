@@ -647,6 +647,88 @@ int WINAPI fake_SetDIBitsToDevice(
     return real_SetDIBitsToDevice(hdc, xDest, yDest, w, h, xSrc, ySrc, StartScan, cLines, lpvBits, lpbmi, ColorUse);
 }
 
+int WINAPI fake_StretchDIBits(
+    HDC hdc,
+    int xDest,
+    int yDest,
+    int DestWidth,
+    int DestHeight,
+    int xSrc,
+    int ySrc,
+    int SrcWidth,
+    int SrcHeight,
+    const VOID* lpBits,
+    const BITMAPINFO* lpbmi,
+    UINT iUsage,
+    DWORD rop)
+{
+    if (g_ddraw && WindowFromDC(hdc) == g_ddraw->hwnd)
+    {
+        if (g_ddraw->primary && (g_ddraw->primary->bpp == 16 || g_ddraw->primary->bpp == 32 || g_ddraw->primary->palette))
+        {
+            HDC primary_dc;
+            dds_GetDC(g_ddraw->primary, &primary_dc);
+
+            if (primary_dc)
+            {
+                int result =
+                    real_StretchDIBits(
+                        primary_dc,
+                        xDest,
+                        yDest,
+                        DestWidth,
+                        DestHeight,
+                        xSrc,
+                        ySrc,
+                        SrcWidth,
+                        SrcHeight,
+                        lpBits,
+                        lpbmi,
+                        iUsage,
+                        rop);
+
+                dds_ReleaseDC(g_ddraw->primary, primary_dc);
+
+                return result;
+            }
+        }
+        else if (g_ddraw->width > 0)
+        {
+            return
+                real_StretchDIBits(
+                    hdc,
+                    xDest + g_ddraw->render.viewport.x,
+                    yDest + g_ddraw->render.viewport.y,
+                    (int)(DestWidth * g_ddraw->render.scale_w),
+                    (int)(DestHeight * g_ddraw->render.scale_h),
+                    xSrc,
+                    ySrc,
+                    SrcWidth,
+                    SrcHeight,
+                    lpBits,
+                    lpbmi,
+                    iUsage,
+                    rop);
+        }
+    }
+
+    return 
+        real_StretchDIBits(
+            hdc, 
+            xDest, 
+            yDest, 
+            DestWidth, 
+            DestHeight, 
+            xSrc, 
+            ySrc, 
+            SrcWidth, 
+            SrcHeight, 
+            lpBits, 
+            lpbmi, 
+            iUsage, 
+            rop);
+}
+
 HMODULE WINAPI fake_LoadLibraryA(LPCSTR lpLibFileName)
 {
     HMODULE hmod = real_LoadLibraryA(lpLibFileName);

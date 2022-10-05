@@ -110,7 +110,7 @@ DWORD WINAPI gdi_render_main(void)
             }
             else if (upscale_hack)
             {
-                StretchDIBits(
+                real_StretchDIBits(
                     g_ddraw->render.hdc,
                     g_ddraw->render.viewport.x,
                     g_ddraw->render.viewport.y,
@@ -128,7 +128,7 @@ DWORD WINAPI gdi_render_main(void)
             else if (!g_ddraw->child_window_exists &&
                 (g_ddraw->render.width != g_ddraw->width || g_ddraw->render.height != g_ddraw->height))
             {
-                StretchDIBits(
+                real_StretchDIBits(
                     g_ddraw->render.hdc,
                     g_ddraw->render.viewport.x,
                     g_ddraw->render.viewport.y,
