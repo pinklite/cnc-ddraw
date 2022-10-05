@@ -564,7 +564,7 @@ BOOL WINAPI fake_StretchBlt(
     if (g_ddraw && 
         (hwnd == g_ddraw->hwnd || (g_ddraw->fixchilds == FIX_CHILDS_DETECT_HIDE && IsChild(g_ddraw->hwnd, hwnd))))
     {
-        if (g_ddraw->primary)
+        if (g_ddraw->primary && (g_ddraw->primary->bpp == 16 || g_ddraw->primary->bpp == 32 || g_ddraw->primary->palette))
         {
             HDC primary_dc;
             dds_GetDC(g_ddraw->primary, &primary_dc);
@@ -615,7 +615,7 @@ int WINAPI fake_SetDIBitsToDevice(
 {
     if (g_ddraw && WindowFromDC(hdc) == g_ddraw->hwnd)
     {
-        if (g_ddraw->primary)
+        if (g_ddraw->primary && (g_ddraw->primary->bpp == 16 || g_ddraw->primary->bpp == 32 || g_ddraw->primary->palette))
         {
             HDC primary_dc;
             dds_GetDC(g_ddraw->primary, &primary_dc);
