@@ -563,7 +563,7 @@ BOOL WINAPI fake_StretchBlt(
 
     char class_name[MAX_PATH] = { 0 };
 
-    if (g_ddraw && g_ddraw->hwnd && hwnd != g_ddraw->hwnd)
+    if (g_ddraw && g_ddraw->hwnd && hwnd && hwnd != g_ddraw->hwnd)
     {
         GetClassNameA(hwnd, class_name, sizeof(class_name) - 1);
     }
