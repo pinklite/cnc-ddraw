@@ -561,8 +561,19 @@ BOOL WINAPI fake_StretchBlt(
 {
     HWND hwnd = WindowFromDC(hdcDest);
 
+    char class_name[MAX_PATH] = { 0 };
+
+    if (g_ddraw && g_ddraw->hwnd && hwnd != g_ddraw->hwnd)
+    {
+        GetClassNameA(hwnd, class_name, sizeof(class_name) - 1);
+    }
+
     if (g_ddraw && g_ddraw->hwnd &&
-        (hwnd == g_ddraw->hwnd || (g_ddraw->fixchilds == FIX_CHILDS_DETECT_HIDE && IsChild(g_ddraw->hwnd, hwnd))))
+        (hwnd == g_ddraw->hwnd ||
+            (IsChild(g_ddraw->hwnd, hwnd) &&
+                (g_ddraw->fixchilds == FIX_CHILDS_DETECT_HIDE ||
+                    strcmp(class_name, "AVIWnd32") == 0 ||
+                    strcmp(class_name, "MCIWndClass") == 0))))
     {
         if (g_ddraw->primary && (g_ddraw->primary->bpp == 16 || g_ddraw->primary->bpp == 32 || g_ddraw->primary->palette))
         {
@@ -571,7 +582,7 @@ BOOL WINAPI fake_StretchBlt(
 
             if (primary_dc)
             {
-                BOOL result = 
+                BOOL result =
                     real_StretchBlt(primary_dc, xDest, yDest, wDest, hDest, hdcSrc, xSrc, ySrc, wSrc, hSrc, rop);
 
                 dds_ReleaseDC(g_ddraw->primary, primary_dc);
@@ -579,19 +590,19 @@ BOOL WINAPI fake_StretchBlt(
                 return result;
             }
         }
-        else if (g_ddraw->width > 0)
+        else if (g_ddraw->width > 0 && g_ddraw->render.hdc)
         {
             return real_StretchBlt(
-                hdcDest, 
+                g_ddraw->render.hdc,
                 xDest + g_ddraw->render.viewport.x,
                 yDest + g_ddraw->render.viewport.y,
                 (int)(wDest * g_ddraw->render.scale_w),
                 (int)(hDest * g_ddraw->render.scale_h),
-                hdcSrc, 
-                xSrc, 
-                ySrc, 
-                wSrc, 
-                hSrc, 
+                hdcSrc,
+                xSrc,
+                ySrc,
+                wSrc,
+                hSrc,
                 rop);
         }
     }
