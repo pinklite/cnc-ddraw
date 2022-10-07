@@ -570,7 +570,7 @@ BOOL WINAPI fake_StretchBlt(
 
     if (g_ddraw && g_ddraw->hwnd &&
         (hwnd == g_ddraw->hwnd ||
-            (IsChild(g_ddraw->hwnd, hwnd) &&
+            (g_ddraw->fixchilds && IsChild(g_ddraw->hwnd, hwnd) &&
                 (g_ddraw->fixchilds == FIX_CHILDS_DETECT_HIDE ||
                     strcmp(class_name, "AVIWnd32") == 0 ||
                     strcmp(class_name, "MCIWndClass") == 0))))
