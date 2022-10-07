@@ -426,16 +426,13 @@ BOOL CALLBACK util_enum_child_proc(HWND hwnd, LPARAM lparam)
             pos.top);
         */
 
-        char title[MAX_PATH] = { 0 };
-        GetWindowTextA(hwnd, title, sizeof(title) - 1);
-
         char class_name[MAX_PATH] = { 0 };
         GetClassNameA(hwnd, class_name, sizeof(class_name) - 1);
 
-        //TRACE_EXT("     AVIWINDOW class=%s, name=%s\n", class_name, title);
+        //TRACE_EXT("     AVIWINDOW class=%s\n", class_name);
 
         if (g_ddraw->fixchilds == FIX_CHILDS_DETECT_HIDE || 
-            strcmp(title, "ActiveMovie Window") == 0 ||
+            strcmp(class_name, "VideoRenderer") == 0 ||
             strcmp(class_name, "AVIWnd32") == 0 || 
             strcmp(class_name, "MCIWndClass") == 0)
         {
