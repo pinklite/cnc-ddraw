@@ -1233,6 +1233,9 @@ HRESULT dd_CreateSurface(
     dbg_dump_dds_flags(lpDDSurfaceDesc->dwFlags);
     dbg_dump_dds_caps(lpDDSurfaceDesc->ddsCaps.dwCaps);
 
+    if (lpDDSurfaceDesc->ddsCaps.dwCaps & DDSCAPS_OVERLAY)
+        return DDERR_UNSUPPORTED;
+
     if ((lpDDSurfaceDesc->ddsCaps.dwCaps & DDSCAPS_PRIMARYSURFACE) &&
         g_ddraw->primary &&
         g_ddraw->primary->width == g_ddraw->width &&
