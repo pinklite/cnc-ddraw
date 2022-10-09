@@ -105,4 +105,4 @@ Some games may require additional steps before they can be used with cnc-ddraw, 
 There are a lot more games supported but I don't usually update the list, just give it a try and if it doesn't work then check the instructions above.
 
 
-[![](https://img.shields.io/github/downloads/FunkyFr3sh/cnc-ddraw/total)](https://github.com/FunkyFr3sh/cnc-ddraw/releases)
+[![](https://img.shields.io/github/downloads/FunkyFr3sh/cnc-ddraw/total)](https://github.com/FunkyFr3sh/cnc-ddraw/releases/latest/download/cnc-ddraw.zip)
