@@ -39,7 +39,8 @@ HRESULT dds_Blt(
     dbg_dump_dds_blt_flags(dwFlags);
     dbg_dump_dds_blt_fx_flags((dwFlags & DDBLT_DDFX) && lpDDBltFx ? lpDDBltFx->dwDDFX : 0);
 
-    if (g_ddraw->iskkndx &&
+    if (g_ddraw && 
+        g_ddraw->iskkndx &&
         (dwFlags & DDBLT_COLORFILL) &&
         lpDestRect &&
         lpDestRect->right == 640 &&
@@ -239,7 +240,7 @@ HRESULT dds_Blt(
                 {
                     RGBQUAD* quad =
                         src_surface->palette ? src_surface->palette->data_rgb :
-                        g_ddraw->primary && g_ddraw->primary->palette ? g_ddraw->primary->palette->data_rgb :
+                        g_ddraw && g_ddraw->primary && g_ddraw->primary->palette ? g_ddraw->primary->palette->data_rgb :
                         NULL;
 
                     if (quad)
@@ -382,7 +383,7 @@ HRESULT dds_Blt(
         }
     }
 
-    if ((This->caps & DDSCAPS_PRIMARYSURFACE) && g_ddraw->render.run)
+    if ((This->caps & DDSCAPS_PRIMARYSURFACE) && g_ddraw && g_ddraw->render.run)
     {
         InterlockedExchange(&g_ddraw->render.surface_updated, TRUE);
 
@@ -523,7 +524,7 @@ HRESULT dds_BltFast(
                 {
                     RGBQUAD* quad =
                         src_surface->palette ? src_surface->palette->data_rgb :
-                        g_ddraw->primary && g_ddraw->primary->palette ? g_ddraw->primary->palette->data_rgb :
+                        g_ddraw && g_ddraw->primary && g_ddraw->primary->palette ? g_ddraw->primary->palette->data_rgb :
                         NULL;
 
                     if (quad)
@@ -603,7 +604,7 @@ HRESULT dds_BltFast(
         }
     }
 
-    if ((This->caps & DDSCAPS_PRIMARYSURFACE) && g_ddraw->render.run)
+    if ((This->caps & DDSCAPS_PRIMARYSURFACE) && g_ddraw && g_ddraw->render.run)
     {
         InterlockedExchange(&g_ddraw->render.surface_updated, TRUE);
 
@@ -652,7 +653,7 @@ HRESULT dds_GetSurfaceDesc(IDirectDrawSurfaceImpl* This, LPDDSURFACEDESC lpDDSur
         lpDDSurfaceDesc->ddsCaps.dwCaps = This->caps;
         lpDDSurfaceDesc->dwBackBufferCount = This->backbuffer_count;
 
-        if (!g_ddraw->novidmem || (This->caps & (DDSCAPS_PRIMARYSURFACE | DDSCAPS_BACKBUFFER)))
+        if ((g_ddraw && !g_ddraw->novidmem) || (This->caps & (DDSCAPS_PRIMARYSURFACE | DDSCAPS_BACKBUFFER)))
         {
             lpDDSurfaceDesc->ddsCaps.dwCaps |= DDSCAPS_VIDEOMEMORY;
         }
@@ -729,7 +730,7 @@ HRESULT dds_Flip(IDirectDrawSurfaceImpl* This, IDirectDrawSurfaceImpl* lpDDSurfa
         }
     }
 
-    if (This->caps & DDSCAPS_PRIMARYSURFACE && g_ddraw->render.run)
+    if ((This->caps & DDSCAPS_PRIMARYSURFACE) && g_ddraw && g_ddraw->render.run)
     {
         This->last_flip_tick = timeGetTime();
 
@@ -829,7 +830,7 @@ HRESULT dds_GetDC(IDirectDrawSurfaceImpl* This, HDC FAR* lpHDC)
 
     RGBQUAD* data =
         This->palette ? This->palette->data_rgb :
-        g_ddraw->primary && g_ddraw->primary->palette ? g_ddraw->primary->palette->data_rgb :
+        g_ddraw && g_ddraw->primary && g_ddraw->primary->palette ? g_ddraw->primary->palette->data_rgb :
         NULL;
 
     HDC dc = This->hdc;
@@ -904,7 +905,7 @@ HRESULT dds_Lock(
     DWORD dwFlags,
     HANDLE hEvent)
 {
-    if (g_ddraw->lock_surfaces)
+    if (g_ddraw && g_ddraw->lock_surfaces)
         EnterCriticalSection(&This->cs);
 
     dbg_dump_dds_lock_flags(dwFlags);
@@ -938,7 +939,7 @@ HRESULT dds_Lock(
 
 HRESULT dds_ReleaseDC(IDirectDrawSurfaceImpl* This, HDC hDC)
 {
-    if ((This->caps & DDSCAPS_PRIMARYSURFACE) && g_ddraw->render.run)
+    if ((This->caps & DDSCAPS_PRIMARYSURFACE) && g_ddraw && g_ddraw->render.run)
     {
         InterlockedExchange(&g_ddraw->render.surface_updated, TRUE);
 
@@ -991,7 +992,7 @@ HRESULT dds_SetPalette(IDirectDrawSurfaceImpl* This, IDirectDrawPaletteImpl* lpD
     if (This->palette)
         IDirectDrawPalette_Release(This->palette);
 
-    if (This->caps & DDSCAPS_PRIMARYSURFACE)
+    if ((This->caps & DDSCAPS_PRIMARYSURFACE) && g_ddraw)
     {
         EnterCriticalSection(&g_ddraw->cs);
         This->palette = lpDDPalette;
@@ -1014,7 +1015,7 @@ HRESULT dds_SetPalette(IDirectDrawSurfaceImpl* This, IDirectDrawPaletteImpl* lpD
 HRESULT dds_Unlock(IDirectDrawSurfaceImpl* This, LPRECT lpRect)
 {
     /* Hack for Warcraft II BNE and Diablo */
-    HWND hwnd = g_ddraw->bnet_active ? FindWindowEx(HWND_DESKTOP, NULL, "SDlgDialog", NULL) : NULL;
+    HWND hwnd = g_ddraw && g_ddraw->bnet_active ? FindWindowEx(HWND_DESKTOP, NULL, "SDlgDialog", NULL) : NULL;
 
     if (hwnd && (This->caps & DDSCAPS_PRIMARYSURFACE))
     {
@@ -1069,7 +1070,7 @@ HRESULT dds_Unlock(IDirectDrawSurfaceImpl* This, LPRECT lpRect)
     }
 
     /* Hack for Star Trek Armada */
-    hwnd = g_ddraw->armadahack ? FindWindowEx(HWND_DESKTOP, NULL, "#32770", NULL) : NULL;
+    hwnd = g_ddraw && g_ddraw->armadahack ? FindWindowEx(HWND_DESKTOP, NULL, "#32770", NULL) : NULL;
 
     if (hwnd && (This->caps & DDSCAPS_PRIMARYSURFACE))
     {
@@ -1107,7 +1108,7 @@ HRESULT dds_Unlock(IDirectDrawSurfaceImpl* This, LPRECT lpRect)
     }
 
 
-    if ((This->caps & DDSCAPS_PRIMARYSURFACE) && g_ddraw->render.run)
+    if ((This->caps & DDSCAPS_PRIMARYSURFACE) && g_ddraw && g_ddraw->render.run)
     {
         InterlockedExchange(&g_ddraw->render.surface_updated, TRUE);
 
@@ -1123,7 +1124,7 @@ HRESULT dds_Unlock(IDirectDrawSurfaceImpl* This, LPRECT lpRect)
         }
     }
 
-    if (g_ddraw->lock_surfaces)
+    if (g_ddraw && g_ddraw->lock_surfaces)
         LeaveCriticalSection(&This->cs);
 
     return DD_OK;
