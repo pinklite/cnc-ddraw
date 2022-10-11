@@ -154,6 +154,7 @@ typedef struct CNCDDRAW
     BOOL d3d9on12;
     int guard_lines;
     int resolutions;
+    int max_resolutions;
     BOOL armadahack;
     BOOL tshack;
     BOOL infantryhack;

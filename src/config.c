@@ -52,6 +52,7 @@ void cfg_load()
     g_ddraw->allow_wmactivate = cfg_get_bool("allow_wmactivate", FALSE);
     g_ddraw->d3d9_adapter = cfg_get_int("d3d9_adapter", 0);
     g_ddraw->guard_lines = cfg_get_int("guard_lines", 200);
+    g_ddraw->max_resolutions = cfg_get_int("max_resolutions", 0);
     g_ddraw->opengl_core = cfg_get_bool("opengl_core", FALSE);
     cfg_get_string("screenshotdir", ".\\Screenshots\\", g_ddraw->screenshot_dir, sizeof(g_ddraw->screenshot_dir));
 
@@ -357,6 +358,7 @@ static void cfg_create_ini()
             "opengl_core=false\n"
             "d3d9on12=false\n"
             "guard_lines=200\n"
+            "max_resolutions=0\n"
             "game_handles_close=false\n"
             "accuratetimers=false\n"
             "fixpitch=true\n"
@@ -789,6 +791,7 @@ static void cfg_create_ini()
             "devmode=true\n"
             "resolutions=2\n"
             "infantryhack=true\n"
+            "max_resolutions=90\n"
             "\n"
             "; Jagged Alliance 2\n"
             "[ja2]\n"
