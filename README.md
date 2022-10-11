@@ -5,7 +5,7 @@ cnc-ddraw can fix compatibility issues in older games, such as black screen, bad
 
 ### Features
 
- - Supports Windows XP, Vista, 7, 8, 10, 11 and Wine
+ - Supports Windows 2000, XP, Vista, 7, 8, 10, 11, Wine (Linux/macOS) and Virtual Machines
  - GDI / OpenGL / Direct3D 9 renderer (With automatic renderer selection)
  - Upscaling via glsl shaders - https://imgur.com/a/kxsM1oY | https://imgur.com/a/wjrhpFV
  - Windowed Mode / Fullscreen Exclusive Mode / Borderless Mode
@@ -105,4 +105,4 @@ Some games may require additional steps before they can be used with cnc-ddraw, 
 There are a lot more games supported but I don't usually update the list, just give it a try and if it doesn't work then check the instructions above.
 
 
-[![](https://img.shields.io/github/downloads/FunkyFr3sh/cnc-ddraw/total)](https://github.com/FunkyFr3sh/cnc-ddraw/releases)
+[![](https://img.shields.io/github/downloads/FunkyFr3sh/cnc-ddraw/total)](https://github.com/FunkyFr3sh/cnc-ddraw/releases/latest/download/cnc-ddraw.zip)
