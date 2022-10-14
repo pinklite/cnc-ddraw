@@ -827,6 +827,9 @@ HRESULT dd_SetDisplayMode(DWORD dwWidth, DWORD dwHeight, DWORD dwBPP, DWORD dwFl
                 real_GetWindowLongA(g_ddraw->hwnd, GWL_STYLE) | WS_MINIMIZEBOX);
         }
 
+        if (IsIconic(g_ddraw->hwnd))
+            real_ShowWindow(g_ddraw->hwnd, SW_RESTORE);
+
         real_SetWindowPos(
             g_ddraw->hwnd,
             HWND_TOPMOST,
