@@ -748,6 +748,9 @@ HRESULT dd_SetDisplayMode(DWORD dwWidth, DWORD dwHeight, DWORD dwBPP, DWORD dwFl
             x = y = 0;
         }
 
+        if (IsIconic(g_ddraw->hwnd))
+            real_ShowWindow(g_ddraw->hwnd, SW_RESTORE);
+
         RECT dst = { x, y, g_ddraw->render.width + x, g_ddraw->render.height + y };
 
         LONG style = real_GetWindowLongA(g_ddraw->hwnd, GWL_STYLE);
