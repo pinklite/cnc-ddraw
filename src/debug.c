@@ -1389,6 +1389,9 @@ char* dbg_mes_to_str(int id)
     case WM_DISPLAYCHANGE_DDRAW: return "WM_DISPLAYCHANGE_DDRAW";
     case WM_SIZE_DDRAW: return "WM_SIZE_DDRAW";
     case WM_MOVE_DDRAW: return "WM_MOVE_DDRAW";
+    case WM_D3D9DEVICELOST: return "WM_D3D9DEVICELOST";
+    case WM_WINEFULLSCREEN: return "WM_WINEFULLSCREEN";
+    case WM_AUTORENDERER: return "WM_AUTORENDERER";
     }
 
     return 0;
