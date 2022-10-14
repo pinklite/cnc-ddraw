@@ -135,7 +135,9 @@ LRESULT CALLBACK fake_WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam
     }
     case WM_D3D9DEVICELOST:
     {
-        if (g_ddraw->renderer == d3d9_render_main && d3d9_on_device_lost())
+        if ((!g_ddraw->windowed || !IsIconic(g_ddraw->hwnd)) &&
+            g_ddraw->renderer == d3d9_render_main &&
+            d3d9_on_device_lost())
         {
             if (!g_ddraw->windowed)
                 mouse_lock();
