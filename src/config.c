@@ -487,6 +487,7 @@ static void cfg_create_ini()
             "fixchilds=0\n"
             "\n"
             "; Baldur's Gate II\n"
+            "; Note: 'Use 3D Acceleration' must be disabled and 'Full Screen' must be enabled in BGConfig.exe\n"
             "[BGMain]\n"
             "resolutions=2\n"
             "\n"
