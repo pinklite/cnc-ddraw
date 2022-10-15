@@ -740,7 +740,6 @@ static void cfg_create_ini()
             "; Fallout 2\n"
             "[FALLOUT2]\n"
             "dinputhook=true\n"
-            "limit_disk_space=true\n"
             "\n"
             "; Fairy Tale About Father Frost, Ivan and Nastya\n"
             "[mrazik]\n"
