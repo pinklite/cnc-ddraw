@@ -776,6 +776,39 @@ HMODULE WINAPI fake_LoadLibraryExW(LPCWSTR lpLibFileName, HANDLE hFile, DWORD dw
     return hmod;
 }
 
+BOOL WINAPI fake_GetDiskFreeSpaceA(
+    LPCSTR lpRootPathName,
+    LPDWORD lpSectorsPerCluster,
+    LPDWORD lpBytesPerSector,
+    LPDWORD lpNumberOfFreeClusters,
+    LPDWORD lpTotalNumberOfClusters)
+{
+    BOOL result = 
+        real_GetDiskFreeSpaceA(
+            lpRootPathName,
+            lpSectorsPerCluster,
+            lpBytesPerSector,
+            lpNumberOfFreeClusters,
+            lpTotalNumberOfClusters);
+
+    if (cfg_get_bool("limit_disk_space", FALSE))
+    {
+        if (lpSectorsPerCluster)
+            *lpSectorsPerCluster = 0x00000040;
+
+        if (lpBytesPerSector) 
+            *lpBytesPerSector = 0x00000200;
+
+        if (lpNumberOfFreeClusters) 
+            *lpNumberOfFreeClusters = 0x0000FFF6;
+
+        if (lpTotalNumberOfClusters) 
+            *lpTotalNumberOfClusters = 0x0000FFF6;
+    }
+
+    return result; 
+}
+
 BOOL WINAPI fake_DestroyWindow(HWND hWnd)
 {
     BOOL result = real_DestroyWindow(hWnd);
