@@ -53,8 +53,10 @@ HRESULT dd_EnumDisplayModes(
         { 640, 480 },
         { 800, 600 },
         { 1024, 768 },
+        { g_ddraw->resolutions == RESLIST_FULL ? 1280 : 0, g_ddraw->resolutions == RESLIST_FULL ? 960 : 0 },
         { 1280, 1024 },
         { 1600, 1200 },
+        { g_ddraw->resolutions == RESLIST_FULL ? 2048 : 0, g_ddraw->resolutions == RESLIST_FULL ? 1536 : 0 },
         { 1280, 720 },
         { max_w, max_h },
     };
