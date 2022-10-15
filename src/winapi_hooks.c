@@ -791,19 +791,19 @@ BOOL WINAPI fake_GetDiskFreeSpaceA(
             lpNumberOfFreeClusters,
             lpTotalNumberOfClusters);
 
-    if (cfg_get_bool("limit_disk_space", FALSE))
+    if (result && lpSectorsPerCluster && lpBytesPerSector && lpNumberOfFreeClusters)
     {
-        if (lpSectorsPerCluster)
+        long long int free_bytes = (long long int)*lpNumberOfFreeClusters * *lpSectorsPerCluster * *lpBytesPerSector;
+
+        if (free_bytes >= 2147155968)
+        {
             *lpSectorsPerCluster = 0x00000040;
-
-        if (lpBytesPerSector) 
             *lpBytesPerSector = 0x00000200;
-
-        if (lpNumberOfFreeClusters) 
             *lpNumberOfFreeClusters = 0x0000FFF6;
 
-        if (lpTotalNumberOfClusters) 
-            *lpTotalNumberOfClusters = 0x0000FFF6;
+            if (lpTotalNumberOfClusters)
+                *lpTotalNumberOfClusters = 0x0000FFF6;
+        }
     }
 
     return result; 
