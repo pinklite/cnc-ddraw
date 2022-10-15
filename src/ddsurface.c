@@ -115,11 +115,17 @@ HRESULT dds_Blt(
     }
     */
 
+    if (dst_rect.right < 0)
+        dst_rect.right = 0;
+
     if (dst_rect.left < 0)
     {
         src_rect.left += (LONG)(abs(dst_rect.left) * scale_w);
         dst_rect.left = 0;
     }
+
+    if (dst_rect.bottom < 0)
+        dst_rect.bottom = 0;
 
     if (dst_rect.top < 0)
     {
@@ -147,8 +153,14 @@ HRESULT dds_Blt(
 
     if (src_surface)
     {
+        if (src_rect.right < 0)
+            src_rect.right = 0;
+
         if (src_rect.left < 0)
             src_rect.left = 0;
+
+        if (src_rect.bottom < 0)
+            src_rect.bottom = 0;
 
         if (src_rect.top < 0)
             src_rect.top = 0;
@@ -439,8 +451,14 @@ HRESULT dds_BltFast(
 
     if (src_surface)
     {
+        if (src_rect.right < 0)
+            src_rect.right = 0;
+
         if (src_rect.left < 0)
             src_rect.left = 0;
+
+        if (src_rect.bottom < 0)
+            src_rect.bottom = 0;
 
         if (src_rect.top < 0)
             src_rect.top = 0;
@@ -463,8 +481,14 @@ HRESULT dds_BltFast(
 
     RECT dst_rect = { dst_x, dst_y, (src_rect.right - src_rect.left) + dst_x, (src_rect.bottom - src_rect.top) + dst_y };
 
+    if (dst_rect.right < 0)
+        dst_rect.right = 0;
+
     if (dst_rect.left < 0)
         dst_rect.left = 0;
+
+    if (dst_rect.bottom < 0)
+        dst_rect.bottom = 0;
 
     if (dst_rect.top < 0)
         dst_rect.top = 0;
