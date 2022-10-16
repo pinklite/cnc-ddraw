@@ -70,7 +70,7 @@ HRESULT dd_EnumDisplayModes(
         }
     }
 
-    if (g_ddraw->bpp || g_ddraw->resolutions == RESLIST_FULL)
+    if ((g_ddraw->bpp && g_ddraw->resolutions == RESLIST_NORMAL) || g_ddraw->resolutions == RESLIST_FULL)
     {
         TRACE("     g_ddraw->bpp=%u\n", g_ddraw->bpp);
 
@@ -220,7 +220,7 @@ HRESULT dd_EnumDisplayModes(
         }
     }
 
-    if (!g_ddraw->bpp || g_ddraw->resolutions == RESLIST_FULL)
+    if (!g_ddraw->bpp || g_ddraw->resolutions != RESLIST_NORMAL)
     {
         for (i = 0; i < sizeof(resolutions) / sizeof(resolutions[0]); i++)
         {
