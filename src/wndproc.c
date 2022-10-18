@@ -560,12 +560,13 @@ LRESULT CALLBACK fake_WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam
             ip.ki.dwFlags = KEYEVENTF_KEYUP;
             SendInput(1, &ip, sizeof(ip));
 
-            /* For DirectInput 
-            ip.type = INPUT_KEYBOARD;
-            ip.ki.wScan = 56; // LeftAlt
-            ip.ki.dwFlags = KEYEVENTF_KEYUP | KEYEVENTF_SCANCODE;
-            SendInput(1, &ip, sizeof(ip));
-            */
+            if (g_hook_dinput)
+            {
+                ip.type = INPUT_KEYBOARD;
+                ip.ki.wScan = 56; // LeftAlt
+                ip.ki.dwFlags = KEYEVENTF_KEYUP | KEYEVENTF_SCANCODE;
+                SendInput(1, &ip, sizeof(ip));
+            }
         }
 
         if (g_ddraw->windowed || g_ddraw->noactivateapp)
