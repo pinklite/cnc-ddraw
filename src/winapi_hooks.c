@@ -517,6 +517,16 @@ BOOL WINAPI fake_ShowWindow(HWND hWnd, int nCmdShow)
     return real_ShowWindow(hWnd, nCmdShow);
 }
 
+HWND WINAPI fake_GetTopWindow(HWND hWnd)
+{
+    if (g_ddraw && g_ddraw->windowed && g_ddraw->hwnd && !hWnd)
+    {
+        return g_ddraw->hwnd;
+    }
+
+    return real_GetTopWindow(hWnd);
+}
+
 HHOOK WINAPI fake_SetWindowsHookExA(int idHook, HOOKPROC lpfn, HINSTANCE hmod, DWORD dwThreadId)
 {
     if (idHook == WH_KEYBOARD_LL && hmod && GetModuleHandle("AcGenral") == hmod)
