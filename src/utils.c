@@ -62,6 +62,9 @@ BOOL util_is_avx_supported()
 
 void util_limit_game_ticks()
 {
+    if (GetCurrentThreadId() != g_ddraw->gui_thread)
+        return;
+
     if (g_ddraw->ticks_limiter.htimer)
     {
         FILETIME ft = { 0 };
