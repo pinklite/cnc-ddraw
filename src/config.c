@@ -889,6 +889,7 @@ static void cfg_create_ini()
             "; Moorhuhn 2\n"
             "[Moorhuhn2]\n"
             "dinputhook=true\n"
+            "releasealt=true\n"
             "\n"
             "; Outlaws\n"
             "[olwin]\n"
