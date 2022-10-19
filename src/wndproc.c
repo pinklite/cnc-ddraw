@@ -486,7 +486,7 @@ LRESULT CALLBACK fake_WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam
             {
                 mouse_unlock();
 
-                if (GetForegroundWindow() == g_ddraw->hwnd)
+                if (real_GetForegroundWindow() == g_ddraw->hwnd)
                     mouse_lock();
             }
         }
@@ -525,7 +525,7 @@ LRESULT CALLBACK fake_WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam
                     mouse_lock();
                 }
             }
-            else if (g_ddraw->fullscreen && GetForegroundWindow() == g_ddraw->hwnd)
+            else if (g_ddraw->fullscreen && real_GetForegroundWindow() == g_ddraw->hwnd)
             {
                 mouse_lock();
             }

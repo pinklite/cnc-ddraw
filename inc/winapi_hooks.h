@@ -28,6 +28,7 @@ BOOL WINAPI fake_DestroyWindow(HWND hWnd);
 int WINAPI fake_MapWindowPoints(HWND hWndFrom, HWND hWndTo, LPPOINT lpPoints, UINT cPoints);
 BOOL WINAPI fake_ShowWindow(HWND hWnd, int nCmdShow);
 HWND WINAPI fake_GetTopWindow(HWND hWnd);
+HWND WINAPI fake_GetForegroundWindow(void);
 HHOOK WINAPI fake_SetWindowsHookExA(int idHook, HOOKPROC lpfn, HINSTANCE hmod, DWORD dwThreadId);
 int WINAPI fake_GetDeviceCaps(HDC hdc, int index);
 

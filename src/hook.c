@@ -41,6 +41,7 @@ DESTROYWINDOWPROC real_DestroyWindow = DestroyWindow;
 MAPWINDOWPOINTSPROC real_MapWindowPoints = MapWindowPoints;
 SHOWWINDOWPROC real_ShowWindow = ShowWindow;
 GETTOPWINDOWPROC real_GetTopWindow = GetTopWindow;
+GETFOREGROUNDWINDOWPROC real_GetForegroundWindow = GetForegroundWindow;
 STRETCHBLTPROC real_StretchBlt = StretchBlt;
 SETDIBITSTODEVICEPROC real_SetDIBitsToDevice = SetDIBitsToDevice;
 STRETCHDIBITSPROC real_StretchDIBits = StretchDIBits;
@@ -82,6 +83,7 @@ static HOOKLIST g_hooks[] =
             { "MapWindowPoints", (PROC)fake_MapWindowPoints, (PROC*)&real_MapWindowPoints, 0 },
             { "ShowWindow", (PROC)fake_ShowWindow, (PROC*)&real_ShowWindow, 0 },
             { "GetTopWindow", (PROC)fake_GetTopWindow, (PROC*)&real_GetTopWindow, 0 },
+            { "GetForegroundWindow", (PROC)fake_GetForegroundWindow, (PROC*)&real_GetForegroundWindow, 0 },
             { "", NULL, NULL, 0 }
         }
     },

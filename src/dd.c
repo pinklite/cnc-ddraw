@@ -781,7 +781,7 @@ HRESULT dd_SetDisplayMode(DWORD dwWidth, DWORD dwHeight, DWORD dwBPP, DWORD dwFl
             }
         }
 
-        if (lock_mouse || (g_ddraw->fullscreen && GetForegroundWindow() == g_ddraw->hwnd))
+        if (lock_mouse || (g_ddraw->fullscreen && real_GetForegroundWindow() == g_ddraw->hwnd))
             mouse_lock();
     }
     else
