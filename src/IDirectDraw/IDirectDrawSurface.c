@@ -85,7 +85,7 @@ ULONG __stdcall IDirectDrawSurface__Release(IDirectDrawSurfaceImpl* This)
         {
             DeleteObject(This->bitmap);
         }
-        else if (This->surface && !This->custom_surface)
+        else if (This->surface && !This->custom_buf)
         {
             HeapFree(GetProcessHeap(), 0, This->surface);
         }
@@ -96,8 +96,8 @@ ULONG __stdcall IDirectDrawSurface__Release(IDirectDrawSurfaceImpl* This)
         if (This->bmi)
             HeapFree(GetProcessHeap(), 0, This->bmi);
 
-        if (This->surface_mapping)
-            CloseHandle(This->surface_mapping);
+        if (This->mapping)
+            CloseHandle(This->mapping);
 
         if (This->backbuffer)
             IDirectDrawSurface_Release(This->backbuffer);

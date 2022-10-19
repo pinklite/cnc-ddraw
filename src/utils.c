@@ -479,7 +479,7 @@ BOOL CALLBACK util_enum_child_proc(HWND hwnd, LPARAM lparam)
 static unsigned char util_get_pixel(int x, int y)
 {
     return ((unsigned char*)dds_GetBuffer(
-        g_ddraw->primary))[y * g_ddraw->primary->l_pitch + x * g_ddraw->primary->lx_pitch];
+        g_ddraw->primary))[y * g_ddraw->primary->pitch + x * g_ddraw->primary->bytes_pp];
 }
 
 BOOL util_detect_low_res_screen()

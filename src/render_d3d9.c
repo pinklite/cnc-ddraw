@@ -486,7 +486,7 @@ DWORD WINAPI d3d9_render_main(void)
                         g_ddraw->primary->surface,
                         0,
                         0,
-                        g_ddraw->primary->l_pitch,
+                        g_ddraw->primary->pitch,
                         g_ddraw->primary->bpp);
 
                     IDirect3DTexture9_UnlockRect(g_d3d9.surface_tex[tex_index], 0);

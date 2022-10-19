@@ -30,10 +30,10 @@ typedef struct IDirectDrawSurfaceImpl
     IDirectDrawPaletteImpl* palette;
 
     void* surface;
-    HANDLE surface_mapping;
-    DWORD l_pitch;
-    DWORD lx_pitch;
-    BOOL custom_surface;
+    HANDLE mapping;
+    DWORD pitch;
+    DWORD bytes_pp;
+    BOOL custom_buf;
 
     PBITMAPINFO bmi;
     HBITMAP bitmap;

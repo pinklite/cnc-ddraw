@@ -662,7 +662,7 @@ static void ogl_render()
 
                 glBindTexture(GL_TEXTURE_2D, g_ogl.surface_tex_ids[tex_index]);
 
-                DWORD row_len = g_ddraw->primary->l_pitch ? g_ddraw->primary->l_pitch / g_ddraw->primary->lx_pitch : 0;
+                DWORD row_len = g_ddraw->primary->pitch ? g_ddraw->primary->pitch / g_ddraw->primary->bytes_pp : 0;
 
                 if (row_len != g_ddraw->primary->width)
                     glPixelStorei(GL_UNPACK_ROW_LENGTH, row_len);

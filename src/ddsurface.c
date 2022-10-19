@@ -201,7 +201,7 @@ HRESULT dds_Blt(
             dst_y,
             dst_w,
             dst_h,
-            This->l_pitch,
+            This->pitch,
             lpDDBltFx->dwFillColor,
             This->bpp);
     }
@@ -315,11 +315,11 @@ HRESULT dds_Blt(
                     dst_y,
                     dst_w,
                     dst_h,
-                    This->l_pitch,
+                    This->pitch,
                     src_buf,
                     src_x,
                     src_y,
-                    src_surface->l_pitch,
+                    src_surface->pitch,
                     color_key.dwColorSpaceLowValue,
                     color_key.dwColorSpaceHighValue,
                     This->bpp);
@@ -332,13 +332,13 @@ HRESULT dds_Blt(
                     dst_y,
                     dst_w,
                     dst_h,
-                    This->l_pitch,
+                    This->pitch,
                     src_buf,
                     src_x,
                     src_y,
                     src_w,
                     src_h,
-                    src_surface->l_pitch,
+                    src_surface->pitch,
                     color_key.dwColorSpaceLowValue,
                     color_key.dwColorSpaceHighValue,
                     mirror_up_down,
@@ -354,13 +354,13 @@ HRESULT dds_Blt(
                 dst_y,
                 dst_w,
                 dst_h,
-                This->l_pitch,
+                This->pitch,
                 src_buf,
                 src_x,
                 src_y,
                 src_w,
                 src_h,
-                src_surface->l_pitch,
+                src_surface->pitch,
                 This->bpp);
         }
         else if (This == src_surface)
@@ -371,11 +371,11 @@ HRESULT dds_Blt(
                 dst_y,
                 dst_w,
                 dst_h,
-                This->l_pitch,
+                This->pitch,
                 src_buf,
                 src_x,
                 src_y,
-                src_surface->l_pitch,
+                src_surface->pitch,
                 This->bpp);
         }
         else
@@ -386,11 +386,11 @@ HRESULT dds_Blt(
                 dst_y,
                 dst_w,
                 dst_h,
-                This->l_pitch,
+                This->pitch,
                 src_buf,
                 src_x,
                 src_y,
-                src_surface->l_pitch,
+                src_surface->pitch,
                 This->bpp);
         }
     }
@@ -587,11 +587,11 @@ HRESULT dds_BltFast(
                 dst_y,
                 dst_w,
                 dst_h,
-                This->l_pitch,
+                This->pitch,
                 src_buf,
                 src_x,
                 src_y,
-                src_surface->l_pitch,
+                src_surface->pitch,
                 src_surface->color_key.dwColorSpaceLowValue,
                 src_surface->color_key.dwColorSpaceHighValue,
                 This->bpp);
@@ -604,11 +604,11 @@ HRESULT dds_BltFast(
                 dst_y,
                 dst_w,
                 dst_h,
-                This->l_pitch,
+                This->pitch,
                 src_buf,
                 src_x,
                 src_y,
-                src_surface->l_pitch,
+                src_surface->pitch,
                 This->bpp);
         }
         else
@@ -619,11 +619,11 @@ HRESULT dds_BltFast(
                 dst_y,
                 dst_w,
                 dst_h,
-                This->l_pitch,
+                This->pitch,
                 src_buf,
                 src_x,
                 src_y,
-                src_surface->l_pitch,
+                src_surface->pitch,
                 This->bpp);
         }
     }
@@ -669,7 +669,7 @@ HRESULT dds_GetSurfaceDesc(IDirectDrawSurfaceImpl* This, LPDDSURFACEDESC lpDDSur
         lpDDSurfaceDesc->dwFlags = DDSD_WIDTH | DDSD_HEIGHT | DDSD_PITCH | DDSD_PIXELFORMAT | DDSD_LPSURFACE | DDSD_BACKBUFFERCOUNT;
         lpDDSurfaceDesc->dwWidth = This->width;
         lpDDSurfaceDesc->dwHeight = This->height;
-        lpDDSurfaceDesc->lPitch = This->l_pitch;
+        lpDDSurfaceDesc->lPitch = This->pitch;
         lpDDSurfaceDesc->lpSurface = dds_GetBuffer(This);
         lpDDSurfaceDesc->ddpfPixelFormat.dwSize = sizeof(DDPIXELFORMAT);
         lpDDSurfaceDesc->ddpfPixelFormat.dwFlags = DDPF_RGB;
@@ -734,12 +734,12 @@ HRESULT dds_Flip(IDirectDrawSurfaceImpl* This, IDirectDrawSurfaceImpl* lpDDSurfa
         void* buf = InterlockedExchangePointer(&This->surface, backbuffer->surface);
         HBITMAP bitmap = (HBITMAP)InterlockedExchangePointer(&This->bitmap, backbuffer->bitmap);
         HDC dc = (HDC)InterlockedExchangePointer(&This->hdc, backbuffer->hdc);
-        HANDLE map = (HANDLE)InterlockedExchangePointer(&This->surface_mapping, backbuffer->surface_mapping);
+        HANDLE map = (HANDLE)InterlockedExchangePointer(&This->mapping, backbuffer->mapping);
 
         InterlockedExchangePointer(&backbuffer->surface, buf);
         InterlockedExchangePointer(&backbuffer->bitmap, bitmap);
         InterlockedExchangePointer(&backbuffer->hdc, dc);
-        InterlockedExchangePointer(&backbuffer->surface_mapping, map);
+        InterlockedExchangePointer(&backbuffer->mapping, map);
 
         if (g_ddraw->flipclear)
         {
@@ -955,7 +955,7 @@ HRESULT dds_Lock(
         }
 
         lpDDSurfaceDesc->lpSurface =
-            (char*)dds_GetBuffer(This) + (lpDestRect->left * This->lx_pitch) + (lpDestRect->top * This->l_pitch);
+            (char*)dds_GetBuffer(This) + (lpDestRect->left * This->bytes_pp) + (lpDestRect->top * This->pitch);
     }
 
     return ret;
@@ -1181,7 +1181,7 @@ HRESULT dds_SetSurfaceDesc(IDirectDrawSurfaceImpl* This, LPDDSURFACEDESC2 lpDDSD
         DeleteObject(This->bitmap);
         This->bitmap = NULL;
     }
-    else if (This->surface && !This->custom_surface)
+    else if (This->surface && !This->custom_buf)
     {
         HeapFree(GetProcessHeap(), 0, This->surface);
         This->surface = NULL;
@@ -1199,10 +1199,10 @@ HRESULT dds_SetSurfaceDesc(IDirectDrawSurfaceImpl* This, LPDDSURFACEDESC2 lpDDSD
         This->bmi = NULL;
     }
 
-    if (This->surface_mapping)
+    if (This->mapping)
     {
-        CloseHandle(This->surface_mapping);
-        This->surface_mapping = NULL;
+        CloseHandle(This->mapping);
+        This->mapping = NULL;
     }
 
 
@@ -1230,10 +1230,10 @@ HRESULT dds_SetSurfaceDesc(IDirectDrawSurfaceImpl* This, LPDDSURFACEDESC2 lpDDSD
     This->width = lpDDSD->dwWidth;
     This->height = lpDDSD->dwHeight;
     This->surface = lpDDSD->lpSurface;
-    This->l_pitch = lpDDSD->lPitch;
-    This->lx_pitch = This->bpp / 8;
-    This->size = This->l_pitch * This->height;
-    This->custom_surface = TRUE;
+    This->pitch = lpDDSD->lPitch;
+    This->bytes_pp = This->bpp / 8;
+    This->size = This->pitch * This->height;
+    This->custom_buf = TRUE;
 
     return DD_OK;
 }
@@ -1324,21 +1324,21 @@ HRESULT dd_CreateSurface(
     if ((dst_surface->flags & DDSD_LPSURFACE) && (dst_surface->flags & DDSD_PITCH))
     {
         dst_surface->surface = lpDDSurfaceDesc->lpSurface;
-        dst_surface->l_pitch = lpDDSurfaceDesc->lPitch;
-        dst_surface->lx_pitch = dst_surface->bpp / 8;
-        dst_surface->size = dst_surface->l_pitch * dst_surface->height;
-        dst_surface->custom_surface = TRUE;
+        dst_surface->pitch = lpDDSurfaceDesc->lPitch;
+        dst_surface->bytes_pp = dst_surface->bpp / 8;
+        dst_surface->size = dst_surface->pitch * dst_surface->height;
+        dst_surface->custom_buf = TRUE;
     }
     else if (dst_surface->width && dst_surface->height)
     {
-        dst_surface->lx_pitch = dst_surface->bpp / 8;
-        dst_surface->l_pitch = ((dst_surface->width * dst_surface->bpp + 31) & ~31) >> 3;
-        dst_surface->size = dst_surface->l_pitch * dst_surface->height;
+        dst_surface->bytes_pp = dst_surface->bpp / 8;
+        dst_surface->pitch = ((dst_surface->width * dst_surface->bpp + 31) & ~31) >> 3;
+        dst_surface->size = dst_surface->pitch * dst_surface->height;
 
-        DWORD aligned_width = dst_surface->l_pitch / dst_surface->lx_pitch;
+        DWORD aligned_width = dst_surface->pitch / dst_surface->bytes_pp;
 
         DWORD bmi_size = sizeof(BITMAPINFOHEADER) + sizeof(RGBQUAD) * 256;
-        DWORD bmp_size = dst_surface->l_pitch * (dst_surface->height + g_ddraw->guard_lines);
+        DWORD bmp_size = dst_surface->pitch * (dst_surface->height + g_ddraw->guard_lines);
 
         dst_surface->bmi = HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, bmi_size);
         dst_surface->bmi->bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
@@ -1383,7 +1383,7 @@ HRESULT dd_CreateSurface(
 
         dst_surface->hdc = CreateCompatibleDC(g_ddraw->render.hdc);
 
-        dst_surface->surface_mapping =
+        dst_surface->mapping =
             CreateFileMappingA(
                 INVALID_HANDLE_VALUE,
                 NULL,
@@ -1394,9 +1394,9 @@ HRESULT dd_CreateSurface(
 
         DWORD map_offset = 0;
 
-        if (dst_surface->surface_mapping)
+        if (dst_surface->mapping)
         {
-            LPVOID data = MapViewOfFile(dst_surface->surface_mapping, FILE_MAP_ALL_ACCESS, 0, 0, 0);
+            LPVOID data = MapViewOfFile(dst_surface->mapping, FILE_MAP_ALL_ACCESS, 0, 0, 0);
             if (data)
             {
                 while (((DWORD)data + map_offset) % 128) map_offset++;
@@ -1406,8 +1406,8 @@ HRESULT dd_CreateSurface(
             if (!data || (map_offset % sizeof(DWORD)))
             {
                 map_offset = 0;
-                CloseHandle(dst_surface->surface_mapping);
-                dst_surface->surface_mapping = NULL;
+                CloseHandle(dst_surface->mapping);
+                dst_surface->mapping = NULL;
             }
         }
 
@@ -1417,7 +1417,7 @@ HRESULT dd_CreateSurface(
                 dst_surface->bmi,
                 DIB_RGB_COLORS,
                 (void**)&dst_surface->surface,
-                dst_surface->surface_mapping,
+                dst_surface->mapping,
                 map_offset);
 
         dst_surface->bmi->bmiHeader.biHeight = -((int)dst_surface->height);
