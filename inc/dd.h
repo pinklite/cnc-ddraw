@@ -173,7 +173,7 @@ typedef struct CNCDDRAW
     BOOL show_driver_warning;
     SPEEDLIMITER ticks_limiter;
     SPEEDLIMITER flip_limiter;
-    DWORD gui_thread;
+    DWORD gui_thread_id;
 
 } CNCDDRAW;
 

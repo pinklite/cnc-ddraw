@@ -62,7 +62,7 @@ BOOL util_is_avx_supported()
 
 void util_limit_game_ticks()
 {
-    if (GetCurrentThreadId() != g_ddraw->gui_thread)
+    if (GetCurrentThreadId() != g_ddraw->gui_thread_id)
         return;
 
     if (g_ddraw->ticks_limiter.htimer)
