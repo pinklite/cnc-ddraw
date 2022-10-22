@@ -40,7 +40,6 @@ void cfg_load()
     g_ddraw->fixwndprochook = cfg_get_bool("fixwndprochook", FALSE);
     g_ddraw->flipclear = cfg_get_bool("flipclear", FALSE);
     g_ddraw->novidmem = cfg_get_bool("novidmem", FALSE);
-    g_ddraw->fixnotresponding = cfg_get_bool("fixnotresponding", FALSE);
     g_ddraw->locktopleft = cfg_get_bool("locktopleft", FALSE);
     g_ddraw->lock_surfaces = cfg_get_bool("lock_surfaces", FALSE);
     g_ddraw->releasealt = cfg_get_bool("releasealt", FALSE);
@@ -364,7 +363,6 @@ static void cfg_create_ini()
             "fixpitch=true\n"
             "fixwndprochook=false\n"
             "novidmem=false\n"
-            "fixnotresponding=false\n"
             "locktopleft=false\n"
             "lock_surfaces=false\n"
             "releasealt=false\n"
@@ -734,7 +732,6 @@ static void cfg_create_ini()
             "; Economic War\n"
             "[EcoW]\n"
             "maxgameticks=60\n"
-            "fixnotresponding=true\n"
             "\n"
             "; Fallout\n"
             "[falloutw]\n"

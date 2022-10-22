@@ -145,7 +145,6 @@ typedef struct CNCDDRAW
     BOOL nonexclusive;
     int fixchilds;
     BOOL fixwndprochook;
-    BOOL fixnotresponding;
     BOOL flipclear;
     BOOL locktopleft;
     BOOL lock_surfaces;
