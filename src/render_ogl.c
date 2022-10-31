@@ -165,6 +165,24 @@ static void ogl_build_programs()
                 _snprintf(shader_path, sizeof(shader_path) - 1, "%s%s", g_config.game_path, g_ddraw->shader);
             }
 
+            if (GetFileAttributes(shader_path) != INVALID_FILE_ATTRIBUTES)
+            {
+                /* detect common upscaling shaders and disable them if no upscaling is required */
+
+                BOOL is_upscaler =
+                    strstr(g_ddraw->shader, "catmull-rom-bilinear.glsl") != NULL ||
+                    strstr(g_ddraw->shader, "lanczos2-sharp.glsl") != NULL ||
+                    strstr(g_ddraw->shader, "xbr-lv2-noblend.glsl") != NULL ||
+                    strstr(g_ddraw->shader, "xbrz-freescale.glsl") != NULL;
+
+                if (is_upscaler && 
+                    g_ddraw->render.viewport.width == g_ddraw->width && 
+                    g_ddraw->render.viewport.height == g_ddraw->height)
+                {
+                    shader_path[0] = 0;
+                }
+            }
+
             g_ogl.scale_program = oglu_build_program_from_file(shader_path, wglCreateContextAttribsARB != NULL);
         }
         else
@@ -172,7 +190,7 @@ static void ogl_build_programs()
             g_oglu_got_version3 = FALSE;
         }
 
-        g_ogl.filter_bilinear = strstr(g_ddraw->shader, "bilinear.glsl") != 0;
+        g_ogl.filter_bilinear = strstr(g_ddraw->shader, "bilinear.glsl") != NULL;
     }
 
     if (g_oglu_got_version2 && !g_ogl.main_program)
