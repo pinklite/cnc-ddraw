@@ -52,6 +52,7 @@ void cfg_load()
     g_ddraw->d3d9_adapter = cfg_get_int("d3d9_adapter", 0);
     g_ddraw->guard_lines = cfg_get_int("guard_lines", 200);
     g_ddraw->max_resolutions = cfg_get_int("max_resolutions", 0);
+    g_ddraw->limit_bltfast = cfg_get_bool("limit_bltfast", FALSE);
     g_ddraw->opengl_core = cfg_get_bool("opengl_core", FALSE);
     cfg_get_string("screenshotdir", ".\\Screenshots\\", g_ddraw->screenshot_dir, sizeof(g_ddraw->screenshot_dir));
 
@@ -358,6 +359,7 @@ static void cfg_create_ini()
             "d3d9on12=false\n"
             "guard_lines=200\n"
             "max_resolutions=0\n"
+            "limit_bltfast=false\n"
             "game_handles_close=false\n"
             "accuratetimers=false\n"
             "fixpitch=true\n"
@@ -711,6 +713,7 @@ static void cfg_create_ini()
             "[AdSanguo]\n"
             "maxgameticks=60\n"
             "noactivateapp=true\n"
+            "limit_bltfast=true\n"
             "\n"
             "; Dark Reign: The Future of War\n"
             "[DKReign]\n"
@@ -996,6 +999,7 @@ static void cfg_create_ini()
             "[sanguo]\n"
             "maxgameticks=60\n"
             "noactivateapp=true\n"
+            "limit_bltfast=true\n"
             "\n"
             "; Twisted Metal\n"
             "[TWISTED]\n"

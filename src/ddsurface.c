@@ -638,6 +638,12 @@ HRESULT dds_BltFast(
             (This->last_flip_tick + FLIP_REDRAW_TIMEOUT < time && This->last_blt_tick + FLIP_REDRAW_TIMEOUT < time))
         {
             ReleaseSemaphore(g_ddraw->render.sem, 1, NULL);
+
+            if (g_ddraw->limit_bltfast && g_ddraw->ticks_limiter.tick_length > 0)
+            {
+                g_ddraw->ticks_limiter.use_blt_or_flip = TRUE;
+                util_limit_game_ticks();
+            }
         }
     }
 
