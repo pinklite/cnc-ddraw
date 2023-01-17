@@ -916,6 +916,7 @@ static void cfg_create_ini()
             "\n"
             "; ROAD RASH\n"
             "[RoadRash]\n"
+            "adjmouse=true\n"
             "fixchilds=1\n"
             "\n"
             "; Septerra Core\n"
