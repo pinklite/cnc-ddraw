@@ -421,7 +421,6 @@ DWORD WINAPI d3d9_render_main(void)
     fpsl_init();
 
     BOOL needs_update = FALSE;
-    LONG clear_count = 0;
 
     DWORD timeout = g_ddraw->render.minfps > 0 ? g_ddraw->render.minfps_tick_len : 200;
 
@@ -433,9 +432,6 @@ DWORD WINAPI d3d9_render_main(void)
 #endif
 
         static int tex_index = 0, pal_index = 0;
-
-        if (InterlockedExchange(&g_ddraw->render.clear_screen, FALSE))
-            clear_count = 10;
 
         fpsl_frame_start();
 
@@ -538,11 +534,7 @@ DWORD WINAPI d3d9_render_main(void)
 
         LeaveCriticalSection(&g_ddraw->cs);
 
-        if (clear_count > 0)
-        {
-            clear_count--;
-            IDirect3DDevice9_Clear(g_d3d9.device, 0, NULL, D3DCLEAR_TARGET, D3DCOLOR_XRGB(0, 0, 0), 1.0f, 0);
-        }
+        IDirect3DDevice9_Clear(g_d3d9.device, 0, NULL, D3DCLEAR_TARGET, D3DCOLOR_XRGB(0, 0, 0), 1.0f, 0);
 
         IDirect3DDevice9_BeginScene(g_d3d9.device);
         IDirect3DDevice9_DrawPrimitive(g_d3d9.device, D3DPT_TRIANGLESTRIP, 0, 2);
