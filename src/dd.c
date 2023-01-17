@@ -711,12 +711,8 @@ HRESULT dd_SetDisplayMode(DWORD dwWidth, DWORD dwHeight, DWORD dwBPP, DWORD dwFl
 
     if (g_ddraw->windowed)
     {
-        /* workaround for "Not Responding" window problem in cnc games */
-        if (GetCurrentThreadId() == g_ddraw->gui_thread_id)
-        {
-            MSG msg;
-            PeekMessage(&msg, g_ddraw->hwnd, 0, 0, PM_NOREMOVE);
-        }
+        MSG msg; /* workaround for "Not Responding" window problem in cnc games */
+        PeekMessage(&msg, g_ddraw->hwnd, 0, 0, PM_NOREMOVE);
 
         if (!border)
         {

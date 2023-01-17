@@ -940,10 +940,9 @@ HRESULT dds_Lock(
 
     dbg_dump_dds_lock_flags(dwFlags);
 
-    /* workaround for "Not Responding" window problem */
-    if (g_ddraw && g_ddraw->windowed && GetCurrentThreadId() == g_ddraw->gui_thread_id)
+    if (g_ddraw && g_ddraw->fixnotresponding)
     {
-        MSG msg;
+        MSG msg; /* workaround for "Not Responding" window problem */
         PeekMessage(&msg, g_ddraw->hwnd, 0, 0, PM_NOREMOVE);
     }
 
