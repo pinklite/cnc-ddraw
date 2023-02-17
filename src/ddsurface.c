@@ -1374,6 +1374,12 @@ HRESULT dd_CreateSurface(
                 dst_surface->bmi->bmiColors[i].rgbReserved = 0;
             }
         }
+        else if (dst_surface->bpp == 16 && g_ddraw->rgb555)
+        {
+            ((DWORD*)dst_surface->bmi->bmiColors)[0] = 0x7C00;
+            ((DWORD*)dst_surface->bmi->bmiColors)[1] = 0x03E0;
+            ((DWORD*)dst_surface->bmi->bmiColors)[2] = 0x001F;
+        }
         else if (dst_surface->bpp == 16)
         {
             ((DWORD*)dst_surface->bmi->bmiColors)[0] = 0xF800;

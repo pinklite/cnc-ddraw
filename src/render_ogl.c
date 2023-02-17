@@ -245,6 +245,19 @@ static void ogl_create_textures(int width, int height)
                 g_ogl.surface_type = GL_UNSIGNED_BYTE,
                 0);
         }
+        else if (g_ddraw->bpp == 16 && g_ddraw->rgb555)
+        {
+            glTexImage2D(
+                GL_TEXTURE_2D,
+                0,
+                GL_RGB5_A1,
+                g_ogl.surface_tex_width,
+                g_ogl.surface_tex_height,
+                0,
+                g_ogl.surface_format = GL_BGRA,
+                g_ogl.surface_type = GL_UNSIGNED_SHORT_1_5_5_5_REV,
+                0);
+        }
         else if (g_ddraw->bpp == 16)
         {
             glTexImage2D(
