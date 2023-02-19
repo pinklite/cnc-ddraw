@@ -55,6 +55,7 @@ void cfg_load()
     g_ddraw->max_resolutions = cfg_get_int("max_resolutions", 0);
     g_ddraw->limit_bltfast = cfg_get_bool("limit_bltfast", FALSE);
     g_ddraw->opengl_core = cfg_get_bool("opengl_core", FALSE);
+    g_ddraw->rgb555 = cfg_get_bool("rgb555", FALSE);
     cfg_get_string("screenshotdir", ".\\Screenshots\\", g_ddraw->screenshot_dir, sizeof(g_ddraw->screenshot_dir));
 
     if (g_ddraw->locktopleft)
@@ -376,6 +377,7 @@ static void cfg_create_ini()
             "flipclear=false\n"
             "fixmousehook=false\n"
             "bpp=0\n"
+            "rgb555=false\n"
             "\n"
             "\n"
             "\n"

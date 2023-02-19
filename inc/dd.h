@@ -175,6 +175,7 @@ typedef struct CNCDDRAW
     SPEEDLIMITER ticks_limiter;
     SPEEDLIMITER flip_limiter;
     DWORD gui_thread_id;
+    BOOL rgb555;
 
 } CNCDDRAW;
 
