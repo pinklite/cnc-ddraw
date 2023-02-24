@@ -534,7 +534,10 @@ DWORD WINAPI d3d9_render_main(void)
 
         LeaveCriticalSection(&g_ddraw->cs);
 
-        IDirect3DDevice9_Clear(g_d3d9.device, 0, NULL, D3DCLEAR_TARGET, D3DCOLOR_XRGB(0, 0, 0), 1.0f, 0);
+        if (g_ddraw->render.viewport.x != 0 || g_ddraw->render.viewport.y != 0)
+        {
+            IDirect3DDevice9_Clear(g_d3d9.device, 0, NULL, D3DCLEAR_TARGET, D3DCOLOR_XRGB(0, 0, 0), 1.0f, 0);
+        }
 
         IDirect3DDevice9_BeginScene(g_d3d9.device);
         IDirect3DDevice9_DrawPrimitive(g_d3d9.device, D3DPT_TRIANGLESTRIP, 0, 2);
