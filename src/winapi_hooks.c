@@ -557,7 +557,7 @@ BOOL WINAPI fake_PeekMessageA(LPMSG lpMsg, HWND hWnd, UINT wMsgFilterMin, UINT w
 {
     BOOL result = real_PeekMessageA(lpMsg, hWnd, wMsgFilterMin, wMsgFilterMax, wRemoveMsg);
 
-    if (result && g_ddraw->hook_peekmessage)
+    if (result && g_ddraw && g_ddraw->hook_peekmessage)
     {
         switch (lpMsg->message)
         {
