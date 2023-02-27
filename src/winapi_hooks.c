@@ -553,6 +553,102 @@ HHOOK WINAPI fake_SetWindowsHookExA(int idHook, HOOKPROC lpfn, HINSTANCE hmod, D
     return real_SetWindowsHookExA(idHook, lpfn, hmod, dwThreadId);
 }
 
+BOOL WINAPI fake_PeekMessageA(LPMSG lpMsg, HWND hWnd, UINT wMsgFilterMin, UINT wMsgFilterMax, UINT wRemoveMsg)
+{
+    BOOL result = real_PeekMessageA(lpMsg, hWnd, wMsgFilterMin, wMsgFilterMax, wRemoveMsg);
+
+    if (result)
+    {
+        switch (lpMsg->message)
+        {
+        case WM_LBUTTONUP:
+        case WM_RBUTTONUP:
+        case WM_MBUTTONUP:
+        {
+            if (!g_ddraw->devmode && !g_mouse_locked)
+            {
+                int x = GET_X_LPARAM(lpMsg->lParam);
+                int y = GET_Y_LPARAM(lpMsg->lParam);
+
+                if (x > g_ddraw->render.viewport.x + g_ddraw->render.viewport.width ||
+                    x < g_ddraw->render.viewport.x ||
+                    y > g_ddraw->render.viewport.y + g_ddraw->render.viewport.height ||
+                    y < g_ddraw->render.viewport.y)
+                {
+                    x = g_ddraw->width / 2;
+                    y = g_ddraw->height / 2;
+                }
+                else
+                {
+                    x = (DWORD)((x - g_ddraw->render.viewport.x) * g_ddraw->render.unscale_w);
+                    y = (DWORD)((y - g_ddraw->render.viewport.y) * g_ddraw->render.unscale_h);
+                }
+
+                InterlockedExchange((LONG*)&g_ddraw->cursor.x, x);
+                InterlockedExchange((LONG*)&g_ddraw->cursor.y, y);
+
+                mouse_lock();
+                return FALSE;
+            }
+            /* fall through for lParam */
+        }
+        /* down messages are ignored if we have no cursor lock */
+        case WM_XBUTTONDBLCLK:
+        case WM_XBUTTONDOWN:
+        case WM_XBUTTONUP:
+        case WM_MOUSEWHEEL:
+        case WM_MOUSEHOVER:
+        case WM_LBUTTONDBLCLK:
+        case WM_MBUTTONDBLCLK:
+        case WM_RBUTTONDBLCLK:
+        case WM_LBUTTONDOWN:
+        case WM_RBUTTONDOWN:
+        case WM_MBUTTONDOWN:
+        case WM_MOUSEMOVE:
+        {
+            if (!g_ddraw->devmode && !g_mouse_locked)
+            {
+                return FALSE;
+            }
+
+            int x = max(GET_X_LPARAM(lpMsg->lParam) - g_ddraw->mouse.x_adjust, 0);
+            int y = max(GET_Y_LPARAM(lpMsg->lParam) - g_ddraw->mouse.y_adjust, 0);
+
+            if (g_ddraw->adjmouse)
+            {
+                if (g_ddraw->vhack && !g_ddraw->devmode)
+                {
+                    POINT pt = { 0, 0 };
+                    fake_GetCursorPos(&pt);
+
+                    x = pt.x;
+                    y = pt.y;
+                }
+                else
+                {
+                    x = (DWORD)(roundf(x * g_ddraw->render.unscale_w));
+                    y = (DWORD)(roundf(y * g_ddraw->render.unscale_h));
+                }
+            }
+
+            x = min(x, g_ddraw->width - 1);
+            y = min(y, g_ddraw->height - 1);
+
+            InterlockedExchange((LONG*)&g_ddraw->cursor.x, x);
+            InterlockedExchange((LONG*)&g_ddraw->cursor.y, y);
+
+            lpMsg->lParam = MAKELPARAM(x, y);
+            fake_GetCursorPos(&lpMsg->pt);
+
+            break;
+        }
+            
+        }
+    }
+
+    return result;
+}
+
 int WINAPI fake_GetDeviceCaps(HDC hdc, int index)
 {
     if (g_ddraw &&

@@ -30,6 +30,7 @@ BOOL WINAPI fake_ShowWindow(HWND hWnd, int nCmdShow);
 HWND WINAPI fake_GetTopWindow(HWND hWnd);
 HWND WINAPI fake_GetForegroundWindow(void);
 HHOOK WINAPI fake_SetWindowsHookExA(int idHook, HOOKPROC lpfn, HINSTANCE hmod, DWORD dwThreadId);
+BOOL WINAPI fake_PeekMessageA(LPMSG lpMsg, HWND hWnd, UINT wMsgFilterMin, UINT wMsgFilterMax, UINT wRemoveMsg);
 int WINAPI fake_GetDeviceCaps(HDC hdc, int index);
 
 BOOL WINAPI fake_StretchBlt(

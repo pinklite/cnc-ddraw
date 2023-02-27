@@ -9,7 +9,7 @@
 #define SKIP_HOOK3 0x00000002l
 
 typedef struct HOOKLISTDATA { char function_name[32]; PROC new_function; PROC* function; DWORD flags; } HOOKLISTDATA;
-typedef struct HOOKLIST { char module_name[32]; HOOKLISTDATA data[26]; } HOOKLIST;
+typedef struct HOOKLIST { char module_name[32]; HOOKLISTDATA data[27]; } HOOKLIST;
 
 typedef BOOL(WINAPI* GETCURSORPOSPROC)(LPPOINT);
 typedef BOOL(WINAPI* CLIPCURSORPROC)(const RECT*);
@@ -45,6 +45,9 @@ typedef int (WINAPI* STRETCHDIBITSPROC)(
     HDC, int, int, int, int, int, int, int, int, const VOID*, const BITMAPINFO*, UINT, DWORD);
 
 typedef HHOOK(WINAPI* SETWINDOWSHOOKEXAPROC)(int, HOOKPROC, HINSTANCE, DWORD);
+typedef BOOL(WINAPI* PEEKMESSAGEAPROC)(LPMSG, HWND, UINT, UINT, UINT);
+
+
 typedef int (WINAPI* GETDEVICECAPSPROC)(HDC, int);
 typedef HMODULE(WINAPI* LOADLIBRARYAPROC)(LPCSTR);
 typedef HMODULE(WINAPI* LOADLIBRARYWPROC)(LPCWSTR);
@@ -82,6 +85,7 @@ extern STRETCHBLTPROC real_StretchBlt;
 extern SETDIBITSTODEVICEPROC real_SetDIBitsToDevice;
 extern STRETCHDIBITSPROC real_StretchDIBits;
 extern SETWINDOWSHOOKEXAPROC real_SetWindowsHookExA;
+extern PEEKMESSAGEAPROC real_PeekMessageA;
 extern GETDEVICECAPSPROC real_GetDeviceCaps;
 extern LOADLIBRARYAPROC real_LoadLibraryA;
 extern LOADLIBRARYWPROC real_LoadLibraryW;

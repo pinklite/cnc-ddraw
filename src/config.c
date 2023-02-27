@@ -56,6 +56,7 @@ void cfg_load()
     g_ddraw->limit_bltfast = cfg_get_bool("limit_bltfast", FALSE);
     g_ddraw->opengl_core = cfg_get_bool("opengl_core", FALSE);
     g_ddraw->rgb555 = cfg_get_bool("rgb555", FALSE);
+    g_ddraw->hook_peekmessage = cfg_get_bool("hook_peekmessage", FALSE);
     cfg_get_string("screenshotdir", ".\\Screenshots\\", g_ddraw->screenshot_dir, sizeof(g_ddraw->screenshot_dir));
 
     if (g_ddraw->locktopleft)
@@ -378,6 +379,7 @@ static void cfg_create_ini()
             "fixmousehook=false\n"
             "bpp=0\n"
             "rgb555=false\n"
+            "hook_peekmessage=false\n"
             "\n"
             "\n"
             "\n"
@@ -740,7 +742,7 @@ static void cfg_create_ini()
             "[EV Nova]\n"
             "renderer=opengl\n"
             "devmode=true\n"
-            "resizable=false\n"
+            "hook_peekmessage=true\n"
             "rgb555=true\n"
             "keytogglefullscreen=0x46\n"
             "\n"

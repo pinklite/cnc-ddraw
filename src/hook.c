@@ -46,6 +46,7 @@ STRETCHBLTPROC real_StretchBlt = StretchBlt;
 SETDIBITSTODEVICEPROC real_SetDIBitsToDevice = SetDIBitsToDevice;
 STRETCHDIBITSPROC real_StretchDIBits = StretchDIBits;
 SETWINDOWSHOOKEXAPROC real_SetWindowsHookExA = SetWindowsHookExA;
+PEEKMESSAGEAPROC real_PeekMessageA = PeekMessageA;
 GETDEVICECAPSPROC real_GetDeviceCaps = GetDeviceCaps;
 LOADLIBRARYAPROC real_LoadLibraryA = LoadLibraryA;
 LOADLIBRARYWPROC real_LoadLibraryW = LoadLibraryW;
@@ -84,6 +85,7 @@ static HOOKLIST g_hooks[] =
             { "ShowWindow", (PROC)fake_ShowWindow, (PROC*)&real_ShowWindow, 0 },
             { "GetTopWindow", (PROC)fake_GetTopWindow, (PROC*)&real_GetTopWindow, 0 },
             { "GetForegroundWindow", (PROC)fake_GetForegroundWindow, (PROC*)&real_GetForegroundWindow, 0 },
+            { "PeekMessageA", (PROC)fake_PeekMessageA, (PROC*)&real_PeekMessageA, 0 },
             { "", NULL, NULL, 0 }
         }
     },
