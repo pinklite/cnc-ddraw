@@ -745,6 +745,7 @@ static void cfg_create_ini()
             "hook_peekmessage=true\n"
             "rgb555=true\n"
             "keytogglefullscreen=0x46\n"
+            "adjmouse=true\n"
             "\n"
             "; Economic War\n"
             "[EcoW]\n"
