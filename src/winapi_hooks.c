@@ -658,6 +658,14 @@ int WINAPI fake_GetDeviceCaps(HDC hdc, int index)
     {
         return g_ddraw->bpp;
     }
+    
+    if (g_ddraw &&
+        g_ddraw->bpp == 8 &&
+        index == RASTERCAPS &&
+        (g_hook_method != 2 || g_ddraw->renderer == gdi_render_main))
+    {
+        return RC_PALETTE | real_GetDeviceCaps(hdc, index);
+    }
 
     return real_GetDeviceCaps(hdc, index);
 }
