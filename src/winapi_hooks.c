@@ -588,7 +588,7 @@ BOOL WINAPI fake_PeekMessageA(LPMSG lpMsg, HWND hWnd, UINT wMsgFilterMin, UINT w
                 InterlockedExchange((LONG*)&g_ddraw->cursor.y, y);
 
                 mouse_lock();
-                return FALSE;
+                //return FALSE;
             }
             /* fall through for lParam */
         }
