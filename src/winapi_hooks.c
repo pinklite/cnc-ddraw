@@ -608,7 +608,8 @@ BOOL WINAPI fake_PeekMessageA(LPMSG lpMsg, HWND hWnd, UINT wMsgFilterMin, UINT w
         {
             if (!g_ddraw->devmode && !g_mouse_locked)
             {
-                return FALSE;
+                // Does not work with 'New Robinson'
+                //return FALSE;
             }
 
             int x = max(GET_X_LPARAM(lpMsg->lParam) - g_ddraw->mouse.x_adjust, 0);
