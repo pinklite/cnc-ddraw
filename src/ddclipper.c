@@ -7,9 +7,6 @@
 
 HRESULT ddc_GetClipList(IDirectDrawClipperImpl* This, LPRECT lpRect, LPRGNDATA lpClipList, LPDWORD lpdwSiz)
 {
-    return DDERR_NOCLIPLIST;
-
-    /* Keep this commented out until we found a game that actually needs it
     if (!This->region)
         return DDERR_NOCLIPLIST;
 
@@ -45,7 +42,6 @@ HRESULT ddc_GetClipList(IDirectDrawClipperImpl* This, LPRECT lpRect, LPRGNDATA l
         return DDERR_REGIONTOOSMALL;
 
     return DD_OK;
-    */
 }
 
 HRESULT ddc_GetHWnd(IDirectDrawClipperImpl* This, HWND FAR* lphWnd)

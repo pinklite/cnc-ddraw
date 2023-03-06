@@ -988,7 +988,19 @@ HRESULT dds_ReleaseDC(IDirectDrawSurfaceImpl* This, HDC hDC)
 HRESULT dds_SetClipper(IDirectDrawSurfaceImpl* This, IDirectDrawClipperImpl* lpClipper)
 {
     if (lpClipper)
+    {
         IDirectDrawClipper_AddRef(lpClipper);
+
+        if ((This->caps & DDSCAPS_PRIMARYSURFACE) && lpClipper->hwnd)
+        {
+            if (lpClipper->region)
+                DeleteObject(lpClipper->region);
+
+            RECT rc = { 0, 0, This->width, This->height };
+
+            lpClipper->region = CreateRectRgnIndirect(&rc);
+        }
+    }
 
     if (This->clipper)
         IDirectDrawClipper_Release(This->clipper);
