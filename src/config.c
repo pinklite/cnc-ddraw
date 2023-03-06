@@ -910,7 +910,7 @@ static void cfg_create_ini()
             "; New Robinson\n"
             "[ROBY]\n"
             "adjmouse=true\n"
-            "devmode=false\n"
+            "hook_peekmessage=true\n"
             "\n"
             "; Outlaws\n"
             "[olwin]\n"
