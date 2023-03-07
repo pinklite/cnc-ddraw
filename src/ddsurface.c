@@ -1279,6 +1279,12 @@ HRESULT dd_CreateSurface(
     if (lpDDSurfaceDesc->ddsCaps.dwCaps & DDSCAPS_OVERLAY)
         return DDERR_UNSUPPORTED;
 
+    if (!(lpDDSurfaceDesc->ddsCaps.dwCaps & DDSCAPS_PRIMARYSURFACE) && 
+        (lpDDSurfaceDesc->dwWidth > 16384 || lpDDSurfaceDesc->dwHeight > 16384))
+    {
+        return DDERR_INVALIDPARAMS;
+    }
+
     if ((lpDDSurfaceDesc->ddsCaps.dwCaps & DDSCAPS_PRIMARYSURFACE) &&
         g_ddraw->primary &&
         g_ddraw->primary->width == g_ddraw->width &&
