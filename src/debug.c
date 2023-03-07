@@ -60,8 +60,10 @@ int dbg_exception_handler(EXCEPTION_POINTERS* exception)
         }
 
         TRACE(
-            "Exception at %p (%08X) %s\n",
+            "Exception at %p (%p+%p), Code=%08X - %s\n",
             exception->ExceptionRecord->ExceptionAddress,
+            mod,
+            (int)exception->ExceptionRecord->ExceptionAddress - (int)mod,
             exception->ExceptionRecord->ExceptionCode,
             filename);
     }
