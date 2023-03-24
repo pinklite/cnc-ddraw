@@ -449,6 +449,7 @@ static void cfg_create_ini()
             "; American Conquest / Cossacks\n"
             "[DMCR]\n"
             "resolutions=2\n"
+            "guard_lines=300\n"
             "minfps=-2\n"
             "\n"
             "; Age of Wonders\n"
