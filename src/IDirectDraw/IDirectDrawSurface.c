@@ -23,6 +23,8 @@ HRESULT __stdcall IDirectDrawSurface__QueryInterface(IDirectDrawSurfaceImpl* Thi
 
             IDirectDrawSurface_AddRef(This);
 
+            This->queried = TRUE; /* Hack for Baldr Force exe */
+
             *ppvObj = This;
 
             ret = S_OK;
@@ -69,6 +71,12 @@ ULONG __stdcall IDirectDrawSurface__Release(IDirectDrawSurfaceImpl* This)
     TRACE("-> %s(This=%p)\n", __FUNCTION__, This);
 
     ULONG ret = --This->ref;
+
+    if (This->queried && ret == 1) /* Hack for Baldr Force exe */
+    {
+        This->queried = FALSE;
+        ret = 0;
+    }
 
     if (This->ref == 0)
     {

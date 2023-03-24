@@ -41,6 +41,7 @@ typedef struct IDirectDrawSurfaceImpl
     DDCOLORKEY color_key;
     DWORD last_flip_tick;
     DWORD last_blt_tick;
+    BOOL queried;
 
     struct IDirectDrawSurfaceImpl* backbuffer;
     struct IDirectDrawClipperImpl* clipper;
