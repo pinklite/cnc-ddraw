@@ -604,6 +604,42 @@ void blt_rgb565_to_rgba8888(
     }
 }
 
+void blt_rgb555_to_rgba8888(
+    unsigned int* dst,
+    int dst_x,
+    int dst_y,
+    int dst_w,
+    int dst_h,
+    int dst_p,
+    unsigned short* src,
+    int src_x,
+    int src_y,
+    int src_p)
+{
+    size_t s_a = (src_p / sizeof(src[0])) - dst_w;
+    size_t d_a = (dst_p / sizeof(dst[0])) - dst_w;
+
+    src += src_x + ((src_p / sizeof(src[0])) * src_y);
+    dst += dst_x + ((dst_p / sizeof(dst[0])) * dst_y);
+
+    for (unsigned int* h_end = dst + dst_h * (dst_w + d_a); dst < h_end;)
+    {
+        for (unsigned int* w_end = dst + dst_w; dst < w_end;)
+        {
+            unsigned short pixel = *src++;
+
+            BYTE r = ((pixel & 0x7C00) >> 10) << 3;
+            BYTE g = ((pixel & 0x03E0) >> 5) << 3;
+            BYTE b = ((pixel & 0x001F)) << 3;
+
+            *dst++ = (0xFF << 24) | (b << 16) | (g << 8) | r;
+        }
+
+        src += s_a;
+        dst += d_a;
+    }
+}
+
 void blt_bgra8888_to_rgba8888(
     unsigned int* dst,
     int dst_x,

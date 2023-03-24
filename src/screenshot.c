@@ -58,17 +58,34 @@ static BOOL ss_screenshot_16bit(char* filename, IDirectDrawSurfaceImpl* src)
 
     if (buf)
     {
-        blt_rgb565_to_rgba8888(
-            buf,
-            0,
-            0,
-            src->width,
-            src->height,
-            src->width * 4,
-            dds_GetBuffer(src),
-            0,
-            0,
-            src->pitch);
+        if (g_ddraw->rgb555)
+        {
+            blt_rgb555_to_rgba8888(
+                buf,
+                0,
+                0,
+                src->width,
+                src->height,
+                src->width * 4,
+                dds_GetBuffer(src),
+                0,
+                0,
+                src->pitch);
+        }
+        else
+        {
+            blt_rgb565_to_rgba8888(
+                buf,
+                0,
+                0,
+                src->width,
+                src->height,
+                src->width * 4,
+                dds_GetBuffer(src),
+                0,
+                0,
+                src->pitch);
+        }
 
         error = lodepng_encode32_file(filename, (unsigned char*)buf, src->width, src->height);
 
