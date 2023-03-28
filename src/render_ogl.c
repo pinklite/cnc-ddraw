@@ -154,6 +154,8 @@ static void ogl_build_programs()
             }
         }
 
+        BOOL bilinear = FALSE;
+
         if (g_ogl.main_program)
         {
             char shader_path[MAX_PATH] = { 0 };
@@ -188,6 +190,8 @@ static void ogl_build_programs()
                         g_ogl.scale_program = 
                             oglu_build_program(PASSTHROUGH_VERT_SHADER_CORE, CATMULL_ROM_FRAG_SHADER_CORE);
                     }
+
+                    bilinear = TRUE;
                 }
             }
         }
@@ -196,7 +200,7 @@ static void ogl_build_programs()
             g_oglu_got_version3 = FALSE;
         }
 
-        g_ogl.filter_bilinear = strstr(g_ddraw->shader, "bilinear.glsl") != NULL;
+        g_ogl.filter_bilinear = strstr(g_ddraw->shader, "bilinear.glsl") != NULL || bilinear;
     }
 
     if (g_oglu_got_version2 && !g_ogl.main_program)
