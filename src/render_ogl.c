@@ -181,7 +181,9 @@ static void ogl_build_programs()
             {
                 g_ogl.scale_program = oglu_build_program_from_file(shader_path, wglCreateContextAttribsARB != NULL);
 
-                if (!g_ogl.scale_program)
+                if (!g_ogl.scale_program &&
+                    (g_ddraw->render.viewport.width != g_ddraw->width ||
+                    g_ddraw->render.viewport.height != g_ddraw->height))
                 {
                     g_ogl.scale_program = oglu_build_program(PASSTHROUGH_VERT_SHADER, CATMULL_ROM_FRAG_SHADER);
 
