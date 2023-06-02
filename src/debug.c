@@ -13,13 +13,19 @@ DWORD g_dbg_frame_count = 0;
 
 static LONGLONG g_dbg_counter_start_time = 0;
 static double g_dbg_counter_freq = 0.0;
+static int g_crash_count = 0;
 
 #if _DEBUG 
 int dbg_exception_handler(EXCEPTION_POINTERS* exception)
 {
+    g_crash_count++;
+
+    char filename[MAX_PATH] = { 0 };
+    _snprintf(filename, sizeof(filename) - 1, "cnc-ddraw-%d.dmp", g_crash_count == 1 ? 1 : 2);
+
     HANDLE dmp =
         CreateFile(
-            "cnc-ddraw.dmp",
+            filename,
             GENERIC_READ | GENERIC_WRITE,
             FILE_SHARE_WRITE | FILE_SHARE_READ,
             0,
