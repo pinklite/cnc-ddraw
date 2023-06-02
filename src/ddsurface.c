@@ -943,7 +943,7 @@ HRESULT dds_Lock(
     if (g_ddraw && g_ddraw->fixnotresponding)
     {
         MSG msg; /* workaround for "Not Responding" window problem */
-        PeekMessage(&msg, g_ddraw->hwnd, 0, 0, PM_NOREMOVE);
+        real_PeekMessageA(&msg, g_ddraw->hwnd, 0, 0, PM_NOREMOVE);
     }
 
     HRESULT ret = dds_GetSurfaceDesc(This, lpDDSurfaceDesc);
