@@ -10,6 +10,7 @@
 
 double g_dbg_frame_time = 0;
 DWORD g_dbg_frame_count = 0;
+LPTOP_LEVEL_EXCEPTION_FILTER g_dbg_exception_filter;
 
 static LONGLONG g_dbg_counter_start_time = 0;
 static double g_dbg_counter_freq = 0.0;
@@ -73,6 +74,9 @@ int dbg_exception_handler(EXCEPTION_POINTERS* exception)
             exception->ExceptionRecord->ExceptionCode,
             filename);
     }
+
+    if (g_dbg_exception_filter)
+        return g_dbg_exception_filter(exception);
 
     return EXCEPTION_EXECUTE_HANDLER;
 }

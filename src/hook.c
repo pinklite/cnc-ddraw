@@ -54,6 +54,7 @@ LOADLIBRARYEXAPROC real_LoadLibraryExA = LoadLibraryExA;
 LOADLIBRARYEXWPROC real_LoadLibraryExW = LoadLibraryExW;
 GETDISKFREESPACEAPROC real_GetDiskFreeSpaceA = GetDiskFreeSpaceA;
 COCREATEINSTANCEPROC real_CoCreateInstance = CoCreateInstance;
+SETUNHANDLEDEXCEPTIONFILTERPROC real_SetUnhandledExceptionFilter = SetUnhandledExceptionFilter;
 
 static HOOKLIST g_hooks[] =
 {
@@ -567,12 +568,14 @@ void hook_init()
 
 void hook_early_init()
 {
-    /*
+#ifdef _DEBUG && _MSC_VER
+    hook_patch_iat(GetModuleHandle(NULL), FALSE, "kernel32.dll", "SetUnhandledExceptionFilter", (PROC)fake_SetUnhandledExceptionFilter);
+
     DetourTransactionBegin();
     DetourUpdateThread(GetCurrentThread());
-    DetourAttach((PVOID*)&real_CoCreateInstance, (PVOID)fake_CoCreateInstance);
+    DetourAttach((PVOID*)&real_SetUnhandledExceptionFilter, (PVOID)fake_SetUnhandledExceptionFilter);
     DetourTransactionCommit();
-    */
+#endif
 
     hook_patch_iat(GetModuleHandle(NULL), FALSE, "ole32.dll", "CoCreateInstance", (PROC)fake_CoCreateInstance);
     hook_patch_iat(GetModuleHandle("XIIIGame.dll"), FALSE, "ole32.dll", "CoCreateInstance", (PROC)fake_CoCreateInstance); //Hooligans
@@ -632,6 +635,17 @@ void hook_exit()
 
         hook_revert((HOOKLIST*)&g_hooks);
     }
+
+#ifdef _DEBUG && _MSC_VER
+    DetourTransactionBegin();
+    DetourUpdateThread(GetCurrentThread());
+    DetourDetach((PVOID*)&real_SetUnhandledExceptionFilter, (PVOID)fake_SetUnhandledExceptionFilter);
+    DetourTransactionCommit();
+
+    hook_patch_iat(GetModuleHandle(NULL), TRUE, "kernel32.dll", "SetUnhandledExceptionFilter", (PROC)fake_SetUnhandledExceptionFilter);
+
+    real_SetUnhandledExceptionFilter(g_dbg_exception_filter);
+#endif
 
     hook_patch_iat(GetModuleHandle(NULL), TRUE, "ole32.dll", "CoCreateInstance", (PROC)fake_CoCreateInstance);
     hook_patch_iat(GetModuleHandle("XIIIGame.dll"), TRUE, "ole32.dll", "CoCreateInstance", (PROC)fake_CoCreateInstance); //Hooligans

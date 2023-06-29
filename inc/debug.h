@@ -27,6 +27,7 @@ char* dbg_mes_to_str(int id);
 
 extern double g_dbg_frame_time;
 extern DWORD g_dbg_frame_count;
+extern LPTOP_LEVEL_EXCEPTION_FILTER g_dbg_exception_filter;
 
 //#define _DEBUG 1
 

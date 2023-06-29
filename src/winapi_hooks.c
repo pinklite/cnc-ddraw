@@ -1076,3 +1076,13 @@ HRESULT WINAPI fake_CoCreateInstance(REFCLSID rclsid, LPUNKNOWN pUnkOuter, DWORD
 
     return real_CoCreateInstance(rclsid, pUnkOuter, dwClsContext, riid, ppv);
 }
+
+LPTOP_LEVEL_EXCEPTION_FILTER WINAPI fake_SetUnhandledExceptionFilter(
+    LPTOP_LEVEL_EXCEPTION_FILTER lpTopLevelExceptionFilter)
+{
+    LPTOP_LEVEL_EXCEPTION_FILTER old = g_dbg_exception_filter;
+    g_dbg_exception_filter = lpTopLevelExceptionFilter;
+
+    return old;
+    //return real_SetUnhandledExceptionFilter(lpTopLevelExceptionFilter);
+}
