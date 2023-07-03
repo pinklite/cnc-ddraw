@@ -142,6 +142,7 @@ typedef struct CNCDDRAW
     BOOL opengl_core;
     BOOL accurate_timers;
     BOOL resizable;
+    BOOL toggle_borderless;
     BOOL nonexclusive;
     int fixchilds;
     BOOL fixwndprochook;

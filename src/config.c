@@ -15,7 +15,7 @@ static void cfg_init();
 static void cfg_create_ini();
 
 CNCDDRAWCONFIG g_config =
-    { .window_rect = {.left = -32000, .top = -32000, .right = 0, .bottom = 0 }, .window_state = -1 };
+    { .window_rect = {.left = -32000, .top = -32000, .right = 0, .bottom = 0 }, .window_state = -1, .borderless_state = -1 };
 
 void cfg_load()
 {
@@ -35,6 +35,7 @@ void cfg_load()
     g_ddraw->vhack = cfg_get_bool("vhack", FALSE);
     g_ddraw->accurate_timers = cfg_get_bool("accuratetimers", FALSE);
     g_ddraw->resizable = cfg_get_bool("resizable", TRUE);
+    g_ddraw->toggle_borderless = cfg_get_bool("toggle_borderless", FALSE);
     g_ddraw->nonexclusive = cfg_get_bool("nonexclusive", FALSE);
     g_ddraw->fixchilds = cfg_get_int("fixchilds", FIX_CHILDS_DETECT_PAINT);
     g_ddraw->fixwndprochook = cfg_get_bool("fixwndprochook", FALSE);
@@ -126,6 +127,8 @@ void cfg_load()
         g_ddraw->flip_limiter.tick_length_ns = (LONGLONG)(flip_len * 10000);
         g_ddraw->flip_limiter.tick_length = (DWORD)(flip_len + 0.5f);
     }
+
+    g_ddraw->fullscreen = cfg_get_bool("fullscreen", FALSE);
 
     if (cfg_get_bool("singlecpu", TRUE))
     {
@@ -228,6 +231,11 @@ void cfg_save()
     {
         WritePrivateProfileString(section, "windowed", g_config.window_state ? "true" : "false", g_config.ini_path);
     }
+
+    if (g_config.borderless_state != -1)
+    {
+        WritePrivateProfileString(section, "fullscreen", g_config.borderless_state ? "true" : "false", g_config.ini_path);
+    }
 }
 
 static void cfg_create_ini()
@@ -307,6 +315,9 @@ static void cfg_create_ini()
             "\n"
             "; Where should screenshots be saved\n"
             "screenshotdir=.\\Screenshots\\\n"
+            "\n"
+            "; Switch between windowed/borderless modes with alt+enter rather than windowed/fullscreen modes\n"
+            "toggle_borderless=false\n"
             "\n"
             "\n"
             "\n"
