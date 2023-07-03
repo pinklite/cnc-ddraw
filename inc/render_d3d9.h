@@ -20,7 +20,7 @@ typedef struct D3D9RENDERER
     IDirect3DTexture9* surface_tex[D3D9_TEXTURE_COUNT];
     IDirect3DTexture9* palette_tex[D3D9_TEXTURE_COUNT];
     IDirect3DPixelShader9* pixel_shader;
-    IDirect3DPixelShader9* pixel_shader_bilinear;
+    IDirect3DPixelShader9* pixel_shader_upscale;
     float scale_w;
     float scale_h;
     int bits_per_pixel;
