@@ -521,9 +521,6 @@ HRESULT dd_SetDisplayMode(DWORD dwWidth, DWORD dwHeight, DWORD dwBPP, DWORD dwFl
         {
             border = FALSE;
 
-            g_config.window_rect.left = -32000;
-            g_config.window_rect.top = -32000;
-
             /* prevent OpenGL from going automatically into fullscreen exclusive mode */
             if (g_ddraw->renderer == ogl_render_main)
                 nonexclusive = TRUE;
@@ -745,7 +742,7 @@ HRESULT dd_SetDisplayMode(DWORD dwWidth, DWORD dwHeight, DWORD dwBPP, DWORD dwFl
         int x = (g_config.window_rect.left != -32000) ? g_config.window_rect.left : (cy / 2) - (g_ddraw->render.width / 2);
         int y = (g_config.window_rect.top != -32000) ? g_config.window_rect.top : (cx / 2) - (g_ddraw->render.height / 2);
 
-        if (nonexclusive)
+        if (g_ddraw->fullscreen)
         {
             x = y = 0;
         }
