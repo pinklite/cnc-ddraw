@@ -1004,7 +1004,7 @@ static void cfg_create_ini()
             "\n"
             "; Sim City 3000\n"
             "[SC3]\n"
-            "renderer=opengl\n"
+            "fpupreserve=true\n"
             "minfps=-2\n"
             "\n"
             "; Shadow Watch\n"
