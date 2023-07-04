@@ -49,7 +49,7 @@ void cfg_load()
     g_ddraw->gdilinear = cfg_get_bool("gdilinear", FALSE);
     g_ddraw->d3d9on12 = cfg_get_bool("d3d9on12", FALSE);
     g_ddraw->resolutions = cfg_get_int("resolutions", RESLIST_NORMAL);
-    g_ddraw->fpupreserve = cfg_get_bool("fpupreserve", FALSE);
+    g_ddraw->fpupreserve = cfg_get_bool("fpupreserve", TRUE);
     g_ddraw->allow_wmactivate = cfg_get_bool("allow_wmactivate", FALSE);
     g_ddraw->d3d9_adapter = cfg_get_int("d3d9_adapter", 0);
     g_ddraw->guard_lines = cfg_get_int("guard_lines", 200);
