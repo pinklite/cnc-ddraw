@@ -45,7 +45,7 @@ void cfg_load()
     g_ddraw->locktopleft = cfg_get_bool("locktopleft", FALSE);
     g_ddraw->lock_surfaces = cfg_get_bool("lock_surfaces", FALSE);
     g_ddraw->releasealt = cfg_get_bool("releasealt", FALSE);
-    g_ddraw->d3d9linear = cfg_get_bool("d3d9linear", TRUE);
+    g_ddraw->d3d9_filter = cfg_get_int("d3d9_filter", FILTER_CUBIC);
     g_ddraw->gdilinear = cfg_get_bool("gdilinear", FALSE);
     g_ddraw->d3d9on12 = cfg_get_bool("d3d9on12", FALSE);
     g_ddraw->resolutions = cfg_get_int("resolutions", RESLIST_NORMAL);
@@ -304,8 +304,9 @@ static void cfg_create_ini()
             "; Should the window be resizable by the user in windowed mode?\n"
             "resizable=true\n"
             "\n"
-            "; Enable linear (D3DTEXF_LINEAR) upscaling filter for the direct3d9 renderer\n"
-            "d3d9linear=true\n"
+            "; Upscaling filter for the direct3d9 renderer\n"
+            "; Possible values: 0 = nearest-neighbor, 1 = bilinear, 2 = bicubic (16/32bit color depth games only)\n"
+            "d3d9_filter=2\n"
             "\n"
             "; Enable upscale hack for high resolution patches (Supports C&C1, Red Alert 1 and KKND Xtreme)\n"
             "vhack=false\n"

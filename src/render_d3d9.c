@@ -352,7 +352,7 @@ static BOOL d3d9_set_states()
         err = err || FAILED(IDirect3DDevice9_SetTexture(g_d3d9.device, 1, (IDirect3DBaseTexture9*)g_d3d9.palette_tex[0]));
         
         BOOL bilinear =
-            g_ddraw->d3d9linear &&
+            g_ddraw->d3d9_filter &&
             g_d3d9.pixel_shader_upscale &&
             (g_ddraw->render.viewport.width != g_ddraw->width || g_ddraw->render.viewport.height != g_ddraw->height);
 
@@ -369,10 +369,11 @@ static BOOL d3d9_set_states()
     }
     else
     {
-        if (g_ddraw->d3d9linear)
+        if (g_ddraw->d3d9_filter)
         {
             if (SUCCEEDED(IDirect3DDevice9_SetSamplerState(g_d3d9.device, 0, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR)) &&
                 SUCCEEDED(IDirect3DDevice9_SetSamplerState(g_d3d9.device, 0, D3DSAMP_MINFILTER, D3DTEXF_LINEAR)) &&
+                g_ddraw->d3d9_filter == FILTER_CUBIC &&
                 g_d3d9.pixel_shader_upscale &&
                 (g_ddraw->render.viewport.width != g_ddraw->width || g_ddraw->render.viewport.height != g_ddraw->height) &&
                 SUCCEEDED(IDirect3DDevice9_SetPixelShader(g_d3d9.device, g_d3d9.pixel_shader_upscale)))

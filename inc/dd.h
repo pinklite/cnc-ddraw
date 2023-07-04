@@ -32,6 +32,10 @@ HRESULT dd_CreateEx(GUID* lpGuid, LPVOID* lplpDD, REFIID iid, IUnknown* pUnkOute
 #define RESLIST_MINI 1
 #define RESLIST_FULL 2
 
+#define FILTER_NEAREST 0
+#define FILTER_LINEAR 1
+#define FILTER_CUBIC 2
+
 #define SDM_MODE_SET_BY_GAME 0x00000001l
 #define SDM_LEAVE_WINDOWED   0x00000002l
 #define SDM_LEAVE_FULLSCREEN 0x00000004l
@@ -150,7 +154,7 @@ typedef struct CNCDDRAW
     BOOL flipclear;
     BOOL locktopleft;
     BOOL lock_surfaces;
-    BOOL d3d9linear;
+    int d3d9_filter;
     BOOL gdilinear;
     BOOL d3d9on12;
     int guard_lines;
