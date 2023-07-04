@@ -902,7 +902,7 @@ static void cfg_create_ini()
             "\n"
             "; Mech Warrior 3\n"
             "[Mech3]\n"
-            "renderer=opengl\n"
+            "fpupreserve=true\n"
             "nonexclusive=true\n"
             "\n"
             "; Moorhuhn\n"
