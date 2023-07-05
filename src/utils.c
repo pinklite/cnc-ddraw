@@ -333,7 +333,7 @@ void util_toggle_fullscreen()
     if (g_ddraw->bnet_active)
         return;
 
-    if (g_ddraw->toggle_borderless)
+    if (g_ddraw->toggle_borderless && g_ddraw->windowed)
     {
         if (!g_ddraw->fullscreen)
         {
