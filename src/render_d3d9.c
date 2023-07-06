@@ -411,10 +411,10 @@ static BOOL d3d9_update_vertices(BOOL upscale_hack, BOOL stretch)
 
     CUSTOMVERTEX vertices[] =
     {
-        { vp_x - 0.5f, vp_h - 0.5f, 0.0f, 1.0f, 0.0f, s_h },
-        { vp_x - 0.5f, vp_y - 0.5f, 0.0f, 1.0f, 0.0f, 0.0f },
-        { vp_w - 0.5f, vp_h - 0.5f, 0.0f, 1.0f, s_w,  s_h },
-        { vp_w - 0.5f, vp_y - 0.5f, 0.0f, 1.0f, s_w,  0.0f }
+        { vp_x, vp_h, 0.0f, 1.0f, 0.0f, s_h },
+        { vp_x, vp_y, 0.0f, 1.0f, 0.0f, 0.0f },
+        { vp_w, vp_h, 0.0f, 1.0f, s_w,  s_h },
+        { vp_w, vp_y, 0.0f, 1.0f, s_w,  0.0f }
     };
 
     void* data;
