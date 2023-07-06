@@ -183,13 +183,13 @@ static void ogl_build_programs()
 
                 if (!g_ogl.scale_program &&
                     (g_ddraw->render.viewport.width != g_ddraw->width ||
-                    g_ddraw->render.viewport.height != g_ddraw->height))
+                        g_ddraw->render.viewport.height != g_ddraw->height))
                 {
                     g_ogl.scale_program = oglu_build_program(PASSTHROUGH_VERT_SHADER, CATMULL_ROM_FRAG_SHADER);
 
                     if (!g_ogl.scale_program)
                     {
-                        g_ogl.scale_program = 
+                        g_ogl.scale_program =
                             oglu_build_program(PASSTHROUGH_VERT_SHADER_CORE, CATMULL_ROM_FRAG_SHADER_CORE);
                     }
 
@@ -616,8 +616,10 @@ static void ogl_render()
     BOOL needs_update = FALSE;
 
     glViewport(
-        g_ddraw->render.viewport.x, g_ddraw->render.viewport.y,
-        g_ddraw->render.viewport.width, g_ddraw->render.viewport.height);
+        g_ddraw->render.viewport.x, 
+        g_ddraw->render.viewport.y + g_ddraw->render.opengl_y_align,
+        g_ddraw->render.viewport.width, 
+        g_ddraw->render.viewport.height);
 
     if (g_ogl.main_program)
     {
@@ -753,8 +755,10 @@ static void ogl_render()
                     else if (needs_update)
                     {
                         glViewport(
-                            g_ddraw->render.viewport.x, g_ddraw->render.viewport.y,
-                            g_ddraw->render.viewport.width, g_ddraw->render.viewport.height);
+                            g_ddraw->render.viewport.x, 
+                            g_ddraw->render.viewport.y + g_ddraw->render.opengl_y_align,
+                            g_ddraw->render.viewport.width, 
+                            g_ddraw->render.viewport.height);
 
                         needs_update = FALSE;
                     }
@@ -845,7 +849,7 @@ static void ogl_render()
             {
                 glViewport(
                     g_ddraw->render.viewport.x, 
-                    g_ddraw->render.viewport.y,
+                    g_ddraw->render.viewport.y + g_ddraw->render.opengl_y_align,
                     g_ddraw->render.viewport.width, 
                     g_ddraw->render.viewport.height);
             }

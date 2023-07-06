@@ -704,6 +704,11 @@ HRESULT dd_SetDisplayMode(DWORD dwWidth, DWORD dwHeight, DWORD dwBPP, DWORD dwFl
     if (nonexclusive || (g_ddraw->nonexclusive && !g_ddraw->windowed && g_ddraw->renderer == ogl_render_main))
     {
         g_ddraw->render.height++;
+        g_ddraw->render.opengl_y_align = 1;
+    }
+    else
+    {
+        g_ddraw->render.opengl_y_align = 0;
     }
 
     if (g_ddraw->windowed)

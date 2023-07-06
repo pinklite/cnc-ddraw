@@ -82,6 +82,7 @@ typedef struct CNCDDRAW
         int width;
         int height;
         int bpp;
+        int opengl_y_align;
 
         HDC hdc;
         int* tex;
