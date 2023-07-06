@@ -568,7 +568,7 @@ void hook_init()
 
 void hook_early_init()
 {
-#ifdef _DEBUG && _MSC_VER
+#if defined(_DEBUG) && defined(_MSC_VER)
     hook_patch_iat(GetModuleHandle(NULL), FALSE, "kernel32.dll", "SetUnhandledExceptionFilter", (PROC)fake_SetUnhandledExceptionFilter);
 
     DetourTransactionBegin();
@@ -636,7 +636,7 @@ void hook_exit()
         hook_revert((HOOKLIST*)&g_hooks);
     }
 
-#ifdef _DEBUG && _MSC_VER
+#if defined(_DEBUG) && defined(_MSC_VER)
     DetourTransactionBegin();
     DetourUpdateThread(GetCurrentThread());
     DetourDetach((PVOID*)&real_SetUnhandledExceptionFilter, (PVOID)fake_SetUnhandledExceptionFilter);
