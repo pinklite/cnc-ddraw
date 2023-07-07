@@ -854,9 +854,10 @@ HRESULT dd_SetDisplayMode(DWORD dwWidth, DWORD dwHeight, DWORD dwBPP, DWORD dwFl
         mouse_lock();
     }
 
+    RedrawWindow(g_ddraw->hwnd, NULL, NULL, RDW_ERASE | RDW_INVALIDATE);
+
     if (g_ddraw->render.viewport.x != 0 || g_ddraw->render.viewport.y != 0)
     {
-        RedrawWindow(g_ddraw->hwnd, NULL, NULL, RDW_ERASE | RDW_INVALIDATE);
         InterlockedExchange(&g_ddraw->render.clear_screen, TRUE);
     }
 
