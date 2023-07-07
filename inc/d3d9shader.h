@@ -434,6 +434,8 @@ uniform sampler2D SurfaceTex;
 
 float4 TextureSize : register(c0);
 
+#define SourceSize float4(TextureSize.xy, 1.0 / TextureSize.xy)
+
 float4 catmull_rom(float2 coord)
 {
     // The following code is licensed under the MIT license: https://gist.github.com/TheRealMJP/bc503b0b87b643d3505d41eab8b332ae
@@ -443,7 +445,7 @@ float4 catmull_rom(float2 coord)
 
     // Modified to use 5 texture fetches
 
-    float2 samplePos = coord * TextureSize.xy;
+    float2 samplePos = coord * SourceSize.xy;
     float2 texPos1 = floor(samplePos - 0.5f) + 0.5f;
 
     float2 f = samplePos - texPos1;
@@ -460,9 +462,9 @@ float4 catmull_rom(float2 coord)
     float2 texPos3 = texPos1 + 2;
     float2 texPos12 = texPos1 + offset12;
 
-    texPos0 /= TextureSize.xy;
-    texPos3 /= TextureSize.xy;
-    texPos12 /= TextureSize.xy;
+    texPos0  *= SourceSize.zw;
+    texPos3  *= SourceSize.zw;
+    texPos12 *= SourceSize.zw;
 
     float wtm = w12.x * w0.y;
     float wml = w0.x * w12.y;
