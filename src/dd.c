@@ -724,6 +724,9 @@ HRESULT dd_SetDisplayMode(DWORD dwWidth, DWORD dwHeight, DWORD dwBPP, DWORD dwFl
                 real_GetWindowLongA(
                     g_ddraw->hwnd, 
                     GWL_STYLE) & ~(WS_CAPTION | WS_THICKFRAME | WS_MINIMIZE | WS_MAXIMIZE | WS_SYSMENU));
+
+            if (GetMenu(g_ddraw->hwnd))
+                SetMenu(g_ddraw->hwnd, NULL);         
         }
         else
         {
@@ -759,7 +762,7 @@ HRESULT dd_SetDisplayMode(DWORD dwWidth, DWORD dwHeight, DWORD dwBPP, DWORD dwFl
 
         LONG style = real_GetWindowLongA(g_ddraw->hwnd, GWL_STYLE);
         LONG exstyle = real_GetWindowLongA(g_ddraw->hwnd, GWL_EXSTYLE);
-        
+
         AdjustWindowRectEx(&dst, style, GetMenu(g_ddraw->hwnd) != NULL, exstyle);
         
         real_SetWindowPos(
@@ -788,6 +791,9 @@ HRESULT dd_SetDisplayMode(DWORD dwWidth, DWORD dwHeight, DWORD dwBPP, DWORD dwFl
     }
     else
     {
+        if (GetMenu(g_ddraw->hwnd))
+            SetMenu(g_ddraw->hwnd, NULL);
+
         LONG style = real_GetWindowLongA(g_ddraw->hwnd, GWL_STYLE);
 
         DWORD swp_flags = SWP_SHOWWINDOW;
