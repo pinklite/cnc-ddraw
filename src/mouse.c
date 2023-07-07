@@ -61,6 +61,7 @@ void mouse_unlock()
         g_mouse_locked = FALSE;
 
         real_ClipCursor(NULL);
+        //ReleaseCapture();
 
         RECT rc = { 0 };
         real_GetClientRect(g_ddraw->hwnd, &rc);
@@ -73,6 +74,8 @@ void mouse_unlock()
         real_SetCursorPos(
             (int)(rc.left + (cur_x * g_ddraw->render.scale_w)),
             (int)(rc.top + (cur_y * g_ddraw->render.scale_h)));
+
+        real_SetCursor(LoadCursor(NULL, IDC_ARROW));
 
         while (real_ShowCursor(TRUE) < 0);
     }
