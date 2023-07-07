@@ -431,7 +431,7 @@ static BOOL d3d9_update_vertices(BOOL upscale_hack, BOOL stretch)
 
 DWORD WINAPI d3d9_render_main(void)
 {
-    Sleep(500);
+    Sleep(250);
 
     fpsl_init();
 

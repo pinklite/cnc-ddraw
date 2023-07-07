@@ -27,7 +27,7 @@ static OGLRENDERER g_ogl;
 
 DWORD WINAPI ogl_render_main(void)
 {
-    Sleep(500);
+    Sleep(250);
     g_ogl.got_error = g_ogl.use_opengl = FALSE;
 
     g_ogl.context = ogl_create_context(g_ddraw->render.hdc);
