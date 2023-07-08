@@ -764,12 +764,15 @@ HRESULT dd_SetDisplayMode(DWORD dwWidth, DWORD dwHeight, DWORD dwBPP, DWORD dwFl
         LONG exstyle = real_GetWindowLongA(g_ddraw->hwnd, GWL_EXSTYLE);
 
         AdjustWindowRectEx(&dst, style, GetMenu(g_ddraw->hwnd) != NULL, exstyle);
-        
-        real_SetWindowPos(
-            g_ddraw->hwnd, HWND_NOTOPMOST, 0, 0, 0, 0, SWP_SHOWWINDOW | SWP_NOMOVE | SWP_NOSIZE | SWP_FRAMECHANGED);
 
-        real_MoveWindow(
-            g_ddraw->hwnd, dst.left, dst.top, (dst.right - dst.left), (dst.bottom - dst.top), TRUE);
+        real_SetWindowPos(
+            g_ddraw->hwnd, 
+            HWND_NOTOPMOST, 
+            dst.left, 
+            dst.top, 
+            (dst.right - dst.left), 
+            (dst.bottom - dst.top), 
+            SWP_SHOWWINDOW | SWP_FRAMECHANGED);
 
 
         BOOL d3d9_active = FALSE;
