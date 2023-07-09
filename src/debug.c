@@ -108,14 +108,27 @@ void dbg_init()
             RegQueryValueExA(hkey, "BuildLab", NULL, NULL, (PVOID)&build, &build_size);
 
             TRACE("%s (%s)\n", name, build);
+        }
 
-            const char* (CDECL * wine_get_version)() =
-                (void*)GetProcAddress(GetModuleHandleA("ntdll.dll"), "wine_get_version");
+        const char* (CDECL * wine_get_version)() =
+            (void*)GetProcAddress(GetModuleHandleA("ntdll.dll"), "wine_get_version");
 
-            if (wine_get_version)
-            {
-                TRACE("Wine version = %s\n", wine_get_version());
-            }
+        if (wine_get_version)
+        {
+            TRACE("Wine version = %s\n", wine_get_version());
+        }
+
+        void (CDECL* wine_get_host_version)(const char** sysname, const char** release) =
+            (void*)GetProcAddress(GetModuleHandleA("ntdll.dll"), "wine_get_host_version");
+
+        if (wine_get_host_version)
+        {
+            const char* sysname = NULL;
+            const char* release = NULL;
+
+            wine_get_host_version(&sysname, &release);
+
+            TRACE("Wine sysname = %s, release = %s\n", sysname, release);
         }
     }
 }
