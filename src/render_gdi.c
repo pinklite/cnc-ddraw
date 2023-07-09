@@ -86,7 +86,7 @@ DWORD WINAPI gdi_render_main(void)
                 EnumChildWindows(g_ddraw->hwnd, util_enum_child_proc, (LPARAM)g_ddraw->primary);
             }
 
-            if (g_ddraw->primary->palette)
+            if (g_ddraw->bpp == 8 && g_ddraw->primary->palette)
             {
                 memcpy(&g_ddraw->primary->bmi->bmiColors[0], g_ddraw->primary->palette->data_rgb, 256 * sizeof(int));
             }
