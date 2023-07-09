@@ -622,7 +622,6 @@ LRESULT CALLBACK fake_WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam
         if (g_ddraw->hotkeys.toggle_maximize &&
             wParam == g_ddraw->hotkeys.toggle_maximize &&
             g_ddraw->resizable && 
-            !g_ddraw->border && 
             g_ddraw->windowed && 
             !g_ddraw->fullscreen)
         {
