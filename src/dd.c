@@ -832,6 +832,7 @@ HRESULT dd_SetDisplayMode(DWORD dwWidth, DWORD dwHeight, DWORD dwBPP, DWORD dwFl
         {
             g_ddraw->render.run = FALSE;
             g_ddraw->windowed = TRUE;
+            g_ddraw->fullscreen = TRUE;
             return dd_SetDisplayMode(dwWidth, dwHeight, dwBPP, dwFlags);
         }
 
